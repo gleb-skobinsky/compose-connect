@@ -8,12 +8,16 @@ Can be run on platforms: Android/iOS/Web/Desktop
 
 Android:
 
-![Android](https://raw.githubusercontent.com/gleb-skobinsky/studchat/master/screenshots/android.png)
+<img src="https://raw.githubusercontent.com/gleb-skobinsky/compose-connect/main/readme_images/android.png" alt="Android" height="600">
+
+iOS:
+
+<img src="https://raw.githubusercontent.com/gleb-skobinsky/compose-connect/main/readme_images/ios.png" alt="iOS" height="600">
 
 Desktop:
 
-![Desktop](https://raw.githubusercontent.com/gleb-skobinsky/studchat/master/screenshots/desktop.png)
+![Desktop](https://raw.githubusercontent.com/gleb-skobinsky/compose-connect/main/readme_images/desktop.png)
 
 Browser:
 
-![Browser](https://raw.githubusercontent.com/gleb-skobinsky/studchat/master/screenshots/web.png)
+![Browser](https://raw.githubusercontent.com/gleb-skobinsky/compose-connect/main/readme_images/web.png)
