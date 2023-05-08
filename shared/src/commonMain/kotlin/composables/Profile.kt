@@ -76,11 +76,9 @@ fun ProfileScreen(userData: ProfileScreenState, onNavIconPressed: () -> Unit = {
                 }
             }
             ProfileFab(
-                extended = scrollState.value == 0,
                 userIsMe = userData.isMe(),
-                modifier = Modifier.align(Alignment.BottomEnd),
-                onFabClicked = { functionalityNotAvailablePopupShown = true }
-            )
+                modifier = Modifier.align(Alignment.BottomEnd)
+            ) { functionalityNotAvailablePopupShown = true }
         }
     }
 }
@@ -166,7 +164,6 @@ private fun ProfileHeader(
                 modifier = Modifier
                     .height(imageHeight)
                     .width(imageHeight)
-                    // TODO: Update to use offset to avoid recomposition
                     .padding(
                         start = 16.dp,
                         top = offsetDp,
@@ -184,7 +181,6 @@ private fun ProfileHeader(
 @Composable
 fun ProfileProperty(label: String, value: String, isLink: Boolean = false) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
-        // TODO (M3): No Divider, replace when available
         Divider()
         Text(
             text = label,
@@ -206,13 +202,7 @@ fun ProfileProperty(label: String, value: String, isLink: Boolean = false) {
 }
 
 @Composable
-fun ProfileError() {
-    Text("There was an error loading the profile")
-}
-
-@Composable
 fun ProfileFab(
-    extended: Boolean,
     userIsMe: Boolean,
     modifier: Modifier = Modifier,
     onFabClicked: () -> Unit = { },

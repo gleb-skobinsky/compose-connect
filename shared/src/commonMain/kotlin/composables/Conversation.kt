@@ -125,9 +125,3 @@ private fun ConversationContent(
         )
     }
 }
-
-@Composable
-@Suppress("FunctionName")
-private fun UserProfile() {
-
-}
