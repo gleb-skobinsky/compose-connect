@@ -1,10 +1,11 @@
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import composables.Conversation
 import data.AdditionalUiState
-import kotlinx.coroutines.*
 import themes.JetchatTheme
 
 @Composable
