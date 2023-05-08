@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import data.AdditionalUiState
+import data.AppScreenState
 import data.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,6 +31,8 @@ fun Conversation(
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val drawerOpen by uiState.drawerShouldBeOpened.collectAsState()
+    val screenState by uiState.screenState.collectAsState()
+    val currentUser by uiState.selectedUserProfile.collectAsState()
     if (drawerOpen) {
         // Open drawer and reset state in VM.
         LaunchedEffect(Unit) {
@@ -39,14 +42,16 @@ fun Conversation(
     }
 
     JetchatScaffold(
-        scaffoldState,
-        uiState,
-        onChatClicked = {
+        scaffoldState = scaffoldState,
+        uiState = uiState,
+        onChatClicked = { title ->
+            uiState.setCurrentConversation(title)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
-        onProfileClicked = {
+        onProfileClicked = { userId ->
+            uiState.setCurrentAccount(userId)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
@@ -55,15 +60,24 @@ fun Conversation(
             uiState.switchTheme(value.toTheme())
         }
     ) {
-        ConversationContent(
-            conversationUiState = conversationUiState,
-            scrollState = scrollState,
-            scope = coroutineScope
-        ) {
-            coroutineScope.launch {
-                scaffoldState.drawerState.open()
+        when (screenState) {
+            AppScreenState.CHAT -> ConversationContent(
+                conversationUiState = conversationUiState,
+                scrollState = scrollState,
+                scope = coroutineScope
+            ) {
+                coroutineScope.launch {
+                    scaffoldState.drawerState.open()
+                }
+            }
+
+            AppScreenState.ACCOUNT -> ProfileScreen(currentUser!!) {
+                coroutineScope.launch {
+                    scaffoldState.drawerState.open()
+                }
             }
         }
+
     }
 }
 
@@ -89,11 +103,6 @@ private fun ConversationContent(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
                     val message = Message("me", content, timeNow)
-                    /*
-                    coroutineScope.launch {
-                        onMessageWs(client, message)
-                    }
-                     */
                     conversationUiState.sendMessage(message)
                 },
                 resetScroll = {
@@ -115,4 +124,10 @@ private fun ConversationContent(
             modifier = Modifier.statusBarsPaddingMpp(),
         )
     }
+}
+
+@Composable
+@Suppress("FunctionName")
+private fun UserProfile() {
+
 }

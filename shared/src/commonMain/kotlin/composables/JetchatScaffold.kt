@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import data.AdditionalUiState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Suppress("FunctionName")
 fun JetchatScaffold(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     uiState: AdditionalUiState,

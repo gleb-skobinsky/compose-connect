@@ -1,22 +1,8 @@
 package data
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableStateListOf
-import io.ktor.client.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.json.Json
 import resourceBindings.drawable_ali
 import resourceBindings.drawable_someone_else
 import resourceBindings.drawable_sticker
-import themes.ThemeMode
-import transport.getLocalHost
-import kotlin.coroutines.EmptyCoroutineContext
 
 val initialMessages = listOf(
     Message(
@@ -57,11 +43,6 @@ val initialMessages = listOf(
     )
 )
 
-val exampleUiState = ConversationUiState(
-    initialMessages = initialMessages,
-    channelName = "#composers",
-    channelMembers = 42
-)
 
 /**
  * Example colleague profile
@@ -93,81 +74,28 @@ val meProfile = ProfileScreenState(
     commonChannels = null
 )
 
-@Immutable
-data class ProfileScreenState(
-    val userId: String,
-    val photo: String?,
-    val name: String,
-    val status: String,
-    val displayName: String,
-    val position: String,
-    val twitter: String = "",
-    val timeZone: String?, // Null if me
-    val commonChannels: String?, // Null if me
-) {
-    fun isMe() = userId == meProfile.userId
-}
+val initialMessages2 = listOf(
+    Message(
+        "me",
+        "Some message from the second chat",
+        "8:07 PM"
+    )
+)
 
-class ConversationUiState(
-    val channelName: String,
-    val channelMembers: Int,
-    initialMessages: List<Message>,
-) {
-    private val _messages: MutableList<Message> =
-        mutableStateListOf(*initialMessages.toTypedArray())
-    val messages: List<Message> = _messages
+val exampleUiState = mapOf(
+    "composers" to ConversationUiState(
+        initialMessages = initialMessages,
+        channelName = "composers",
+        channelMembers = 42
+    ),
+    "droidcon-nyc" to ConversationUiState(
+        initialMessages = initialMessages2,
+        channelName = "droidcon-nyc",
+        channelMembers = 15
+    )
+)
 
-    fun addMessage(msg: Message) {
-        _messages.add(0, msg) // Add to the beginning of the list
-    }
-}
-
-@Stable
-class AdditionalUiState {
-    private val scope = CoroutineScope(EmptyCoroutineContext)
-    private val client = HttpClient {
-        install(WebSockets) {
-            contentConverter = KotlinxWebsocketSerializationConverter(Json)
-        }
-    }
-    private var session: DefaultClientWebSocketSession? = null
-
-    init {
-        scope.launch {
-            withContext(Dispatchers.Default) {
-                client.webSocket(method = HttpMethod.Get, host = getLocalHost(), port = 8082) {
-                    session = this
-                    while (true) {
-                        this.ensureActive()
-                    }
-                }
-            }
-        }
-    }
-
-    private val _conversationUiState: MutableStateFlow<ConversationUiState> = MutableStateFlow(exampleUiState)
-    val conversationUiState: StateFlow<ConversationUiState> = _conversationUiState
-    private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.LIGHT)
-    val themeMode: StateFlow<ThemeMode> = _themeMode
-    private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val drawerShouldBeOpened: StateFlow<Boolean> = _drawerShouldBeOpened
-    fun openDrawer() {
-        _drawerShouldBeOpened.value = true
-    }
-
-    fun resetOpenDrawerAction() {
-        _drawerShouldBeOpened.value = false
-    }
-
-    fun switchTheme(theme: ThemeMode) {
-        _themeMode.value = theme
-    }
-
-    fun sendMessage(message: Message) {
-        _conversationUiState.value.addMessage(message)
-        scope.launch {
-            println("Session is: $session")
-            session?.sendSerialized(message)
-        }
-    }
-}
+val exampleAccountsState = mapOf(
+    "me" to meProfile,
+    "12345" to colleagueProfile
+)
