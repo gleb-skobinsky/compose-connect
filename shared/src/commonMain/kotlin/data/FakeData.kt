@@ -7,7 +7,6 @@ import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
-import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +16,6 @@ import resourceBindings.drawable_someone_else
 import resourceBindings.drawable_sticker
 import themes.ThemeMode
 import transport.getLocalHost
-import transport.inputMessages
-import transport.outputMessages
 import kotlin.coroutines.EmptyCoroutineContext
 
 val initialMessages = listOf(
@@ -134,6 +131,7 @@ class AdditionalUiState {
         }
     }
     private var session: DefaultClientWebSocketSession? = null
+
     init {
         scope.launch {
             withContext(Dispatchers.Default) {
@@ -146,6 +144,7 @@ class AdditionalUiState {
             }
         }
     }
+
     private val _conversationUiState: MutableStateFlow<ConversationUiState> = MutableStateFlow(exampleUiState)
     val conversationUiState: StateFlow<ConversationUiState> = _conversationUiState
     private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.LIGHT)
@@ -163,17 +162,12 @@ class AdditionalUiState {
     fun switchTheme(theme: ThemeMode) {
         _themeMode.value = theme
     }
+
     fun sendMessage(message: Message) {
         _conversationUiState.value.addMessage(message)
         scope.launch {
             println("Session is: $session")
             session?.sendSerialized(message)
-        }
-    }
-    fun disconnect() {
-        scope.launch {
-            session?.close(CloseReason(CloseReason.Codes.NORMAL, "Disconnecting"))
-            client.close()
         }
     }
 }
