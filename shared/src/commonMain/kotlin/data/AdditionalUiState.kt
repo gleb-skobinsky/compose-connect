@@ -50,9 +50,6 @@ class AdditionalUiState {
 
     private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val drawerShouldBeOpened: StateFlow<Boolean> = _drawerShouldBeOpened
-    fun openDrawer() {
-        _drawerShouldBeOpened.value = true
-    }
 
     fun setCurrentConversation(title: String) {
         _screenState.value = AppScreenState.CHAT
