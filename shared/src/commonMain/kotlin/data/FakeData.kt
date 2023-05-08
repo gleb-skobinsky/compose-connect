@@ -3,12 +3,23 @@ package data
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
+import io.ktor.client.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.*
+import io.ktor.websocket.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.json.Json
 import resourceBindings.drawable_ali
 import resourceBindings.drawable_someone_else
 import resourceBindings.drawable_sticker
 import themes.ThemeMode
+import transport.getLocalHost
+import transport.inputMessages
+import transport.outputMessages
+import kotlin.coroutines.EmptyCoroutineContext
 
 val initialMessages = listOf(
     Message(
@@ -116,6 +127,27 @@ class ConversationUiState(
 
 @Stable
 class AdditionalUiState {
+    private val scope = CoroutineScope(EmptyCoroutineContext)
+    private val client = HttpClient {
+        install(WebSockets) {
+            contentConverter = KotlinxWebsocketSerializationConverter(Json)
+        }
+    }
+    private var session: DefaultClientWebSocketSession? = null
+    init {
+        scope.launch {
+            withContext(Dispatchers.Default) {
+                client.webSocket(method = HttpMethod.Get, host = getLocalHost(), port = 8082) {
+                    session = this
+                    while (true) {
+                        this.ensureActive()
+                    }
+                }
+            }
+        }
+    }
+    private val _conversationUiState: MutableStateFlow<ConversationUiState> = MutableStateFlow(exampleUiState)
+    val conversationUiState: StateFlow<ConversationUiState> = _conversationUiState
     private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.LIGHT)
     val themeMode: StateFlow<ThemeMode> = _themeMode
     private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -130,5 +162,39 @@ class AdditionalUiState {
 
     fun switchTheme(theme: ThemeMode) {
         _themeMode.value = theme
+    }
+    fun sendMessage(message: Message) {
+        _conversationUiState.value.addMessage(message)
+        scope.launch {
+            println("Session is: $session")
+            session?.sendSerialized(message)
+        }
+    }
+    fun disconnect() {
+        scope.launch {
+            session?.close(CloseReason(CloseReason.Codes.NORMAL, "Disconnecting"))
+            client.close()
+        }
+    }
+}
+
+fun getWebsocket(scope: CoroutineScope) {
+    scope.launch {
+        withContext(Dispatchers.Default) {
+            val client = HttpClient {
+                install(WebSockets) {
+                    contentConverter = KotlinxWebsocketSerializationConverter(Json)
+                }
+            }
+            client.webSocket(method = HttpMethod.Get, host = "127.0.0.1", port = 8080, path = "/chat") {
+                val messageOutputRoutine = launch { outputMessages() }
+                val userInputRoutine = launch { inputMessages() }
+
+                userInputRoutine.join() // Wait for completion; either "exit" or error
+                messageOutputRoutine.cancelAndJoin()
+            }
+            client.close()
+            println("Connection closed. Goodbye!")
+        }
     }
 }

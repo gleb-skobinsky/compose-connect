@@ -7,15 +7,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import data.AdditionalUiState
-import data.ConversationUiState
 import data.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -23,18 +19,16 @@ import platform.statusBarsPaddingMpp
 import platform.userInputModifier
 import themes.toTheme
 import transport.getTimeNow
-import transport.onMessageEnter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Suppress("FunctionName")
 fun Conversation(
-    conversationUiState: ConversationUiState,
-    scope: CoroutineScope,
+    conversationUiState: AdditionalUiState,
     scrollState: LazyListState,
-    webSocket: Any?,
     uiState: AdditionalUiState,
 ) {
     val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
     val drawerOpen by uiState.drawerShouldBeOpened.collectAsState()
     if (drawerOpen) {
         // Open drawer and reset state in VM.
@@ -48,12 +42,12 @@ fun Conversation(
         scaffoldState,
         uiState,
         onChatClicked = {
-            scope.launch {
+            coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
         onProfileClicked = {
-            scope.launch {
+            coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
@@ -64,29 +58,28 @@ fun Conversation(
         ConversationContent(
             conversationUiState = conversationUiState,
             scrollState = scrollState,
-            webSocket = webSocket,
-            scope = scope,
-            onNavIconPressed = {
-                scope.launch {
-                    scaffoldState.drawerState.open()
-                }
+            scope = coroutineScope
+        ) {
+            coroutineScope.launch {
+                scaffoldState.drawerState.open()
             }
-        )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Suppress("FunctionName")
 private fun ConversationContent(
-    conversationUiState: ConversationUiState,
+    conversationUiState: AdditionalUiState,
     scrollState: LazyListState,
-    webSocket: Any?,
     scope: CoroutineScope,
     onNavIconPressed: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val messagesState by conversationUiState.conversationUiState.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
-        Messages(conversationUiState, scrollState)
+        Messages(messagesState, scrollState)
         Column(
             Modifier
                 .align(Alignment.BottomCenter)
@@ -96,8 +89,12 @@ private fun ConversationContent(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
                     val message = Message("me", content, timeNow)
-                    webSocket?.let { onMessageEnter(message, it) }
-                    conversationUiState.addMessage(message)
+                    /*
+                    coroutineScope.launch {
+                        onMessageWs(client, message)
+                    }
+                     */
+                    conversationUiState.sendMessage(message)
                 },
                 resetScroll = {
                     scope.launch {
@@ -110,8 +107,8 @@ private fun ConversationContent(
             )
         }
         ChannelNameBar(
-            channelName = conversationUiState.channelName,
-            channelMembers = conversationUiState.channelMembers,
+            channelName = messagesState.channelName,
+            channelMembers = messagesState.channelMembers,
             onNavIconPressed = onNavIconPressed,
             scrollBehavior = scrollBehavior,
             // Use statusBarsPadding() to move the app bar content below the status bar

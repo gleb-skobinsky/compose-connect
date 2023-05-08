@@ -19,6 +19,6 @@ fun main() = application {
         SideEffect {
             window.iconImage = iconPainter.toAwtImage(density, LayoutDirection.Ltr, Size(128f, 128f))
         }
-        MainView()
+        Application()
     }
 }
