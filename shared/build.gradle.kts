@@ -15,6 +15,11 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
+
     cocoapods {
         version = "1.0.0"
         summary = "Some description for the Shared Module"
@@ -27,9 +32,8 @@ kotlin {
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
-
+    val ktorVersion = "2.3.0"
     sourceSets {
-        val ktorVersion = "2.3.0"
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
@@ -67,6 +71,11 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.common)
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
             }
         }
     }

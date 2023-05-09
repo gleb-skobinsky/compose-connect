@@ -30,6 +30,7 @@ kotlin {
             dependencies {
                 implementation(compose.web.core)
                 implementation(compose.runtime)
+                implementation(project(":shared"))
             }
         }
         val jsTest by getting {
@@ -38,4 +39,8 @@ kotlin {
             }
         }
     }
+}
+
+compose.experimental {
+    web.application {}
 }
