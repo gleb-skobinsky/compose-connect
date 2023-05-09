@@ -1,32 +1,17 @@
 package transport
 
+import data.Message
+import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
 
 expect fun getTimeNow(): String
 
-expect fun getLocalHost(): String
+expect val localHost: String
 
-suspend fun DefaultClientWebSocketSession.outputMessages() {
-    try {
-        for (message in incoming) {
-            message as? Frame.Text ?: continue
-            println(message.readText())
-        }
-    } catch (e: Exception) {
-        println("Error while receiving: " + e.message)
-    }
-}
+typealias WsSession = Any
 
-suspend fun DefaultClientWebSocketSession.inputMessages() {
-    while (true) {
-        val message = ""
-        if (message.equals("exit", true)) return
-        try {
-            send(message)
-        } catch (e: Exception) {
-            println("Error while sending: " + e.message)
-            return
-        }
-    }
-}
+expect suspend fun webSocketSession(client: HttpClient): WsSession?
+
+expect suspend fun WsSession?.sendMessage(message: Message)
+

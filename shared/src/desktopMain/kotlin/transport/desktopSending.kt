@@ -1,25 +1,31 @@
 package transport
 
+import data.Message
+import io.ktor.client.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import java.util.*
 
 actual fun getTimeNow(): String = Calendar.getInstance().time.toString()
 
-actual fun getLocalHost(): String = "127.0.0.1"
+actual val localHost: String = "127.0.0.1"
 
-/*
-actual fun getPlatformWebsocket(): Any? {
-    val client by lazy { OkHttpClient() }
-    val request: Request = Request.Builder().url("ws://10.0.2.2:8082/").build()
-    val listener = object: WebSocketListener() {
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            val currentTime: Date = Calendar.getInstance().time
-            exampleUiState.addMessage(Message("Web", text, currentTime.toString()))
+actual suspend fun webSocketSession(client: HttpClient): WsSession? {
+    var session: DefaultClientWebSocketSession? = null
+    withContext(Dispatchers.Default) {
+        client.webSocket(method = HttpMethod.Get, host = localHost, port = 8082) {
+            session = this
+            while (true) {
+                this.ensureActive()
+            }
         }
     }
-    return client.newWebSocket(request, listener)
+    return session
 }
 
-actual fun onMessageEnter(message: Message, ws: Any) {
-    (ws as WebSocket).send(message.content)
+actual suspend fun WsSession?.sendMessage(message: Message) {
+    (this as DefaultClientWebSocketSession?)?.sendSerialized(message)
 }
- */

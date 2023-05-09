@@ -3,14 +3,16 @@ package data
 import androidx.compose.runtime.Stable
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
-import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import themes.ThemeMode
-import transport.getLocalHost
+import transport.WsSession
+import transport.sendMessage
+import transport.webSocketSession
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Stable
@@ -21,18 +23,11 @@ class AdditionalUiState {
             contentConverter = KotlinxWebsocketSerializationConverter(Json)
         }
     }
-    private var session: DefaultClientWebSocketSession? = null
+    private var session: WsSession? = null
 
     init {
         scope.launch {
-            withContext(Dispatchers.Default) {
-                client.webSocket(method = HttpMethod.Get, host = getLocalHost(), port = 8082) {
-                    session = this
-                    while (true) {
-                        this.ensureActive()
-                    }
-                }
-            }
+            session = webSocketSession(client)
         }
     }
 
@@ -72,7 +67,7 @@ class AdditionalUiState {
     fun sendMessage(message: Message) {
         _conversationUiState.value.addMessage(message)
         scope.launch {
-            session?.sendSerialized(message)
+            session?.sendMessage(message)
         }
     }
 }
@@ -81,3 +76,4 @@ enum class AppScreenState {
     CHAT,
     ACCOUNT
 }
+
