@@ -15,11 +15,15 @@ actual val localHost: String = "127.0.0.1"
 actual suspend fun webSocketSession(client: HttpClient): WsSession? {
     var session: DefaultClientWebSocketSession? = null
     withContext(Dispatchers.Default) {
-        client.webSocket(method = HttpMethod.Get, host = localHost, port = 8082) {
-            session = this
-            while (true) {
-                this.ensureActive()
+        try {
+            client.webSocket(method = HttpMethod.Get, host = localHost, port = 8082) {
+                session = this
+                while (true) {
+                    this.ensureActive()
+                }
             }
+        } catch(e: io.ktor.client.engine.darwin.DarwinHttpRequestException) {
+            println("Failed to connect to websocket on $localHost! Session not initialized.")
         }
     }
     return session
