@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 
 actual fun getTimeNow(): String = ""
 
-actual val localHost: String = "127.0.0.1"
+actual val localHost: String = "localhost"
 
 actual suspend fun webSocketSession(client: HttpClient): WsSession? {
     var session: DefaultClientWebSocketSession? = null
