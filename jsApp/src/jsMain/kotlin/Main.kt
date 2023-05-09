@@ -1,8 +1,4 @@
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import data.AdditionalUiState
 import kotlinx.browser.document
