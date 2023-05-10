@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,45 +25,44 @@ import transport.getTimeNow
 @Composable
 @Suppress("FunctionName")
 fun Conversation(
-    conversationUiState: MainViewModel,
-    scrollState: LazyListState,
-    uiState: MainViewModel,
+    viewModel: MainViewModel,
 ) {
+    val scrollState = rememberLazyListState()
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-    val drawerOpen by uiState.drawerShouldBeOpened.collectAsState()
-    val screenState by uiState.screenState.collectAsState()
-    val currentUser by uiState.selectedUserProfile.collectAsState()
+    val drawerOpen by viewModel.drawerShouldBeOpened.collectAsState()
+    val screenState by viewModel.screenState.collectAsState()
+    val currentUser by viewModel.selectedUserProfile.collectAsState()
     if (drawerOpen) {
         // Open drawer and reset state in VM.
         LaunchedEffect(Unit) {
             scaffoldState.drawerState.open()
-            uiState.resetOpenDrawerAction()
+            viewModel.resetOpenDrawerAction()
         }
     }
 
     JetchatScaffold(
         scaffoldState = scaffoldState,
-        uiState = uiState,
+        uiState = viewModel,
         onChatClicked = { title ->
-            uiState.setCurrentConversation(title)
+            viewModel.setCurrentConversation(title)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
         onProfileClicked = { userId ->
-            uiState.setCurrentAccount(userId)
+            viewModel.setCurrentAccount(userId)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
         onThemeChange = { value ->
-            uiState.switchTheme(value.toTheme())
+            viewModel.switchTheme(value.toTheme())
         }
     ) {
         when (screenState) {
             AppScreenState.CHAT -> ConversationContent(
-                conversationUiState = conversationUiState,
+                viewModel = viewModel,
                 scrollState = scrollState,
                 scope = coroutineScope
             ) {
@@ -85,13 +85,13 @@ fun Conversation(
 @Composable
 @Suppress("FunctionName")
 private fun ConversationContent(
-    conversationUiState: MainViewModel,
+    viewModel: MainViewModel,
     scrollState: LazyListState,
     scope: CoroutineScope,
     onNavIconPressed: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val messagesState by conversationUiState.conversationUiState.collectAsState()
+    val messagesState by viewModel.conversationUiState.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Messages(messagesState, scrollState)
         Column(
@@ -103,7 +103,7 @@ private fun ConversationContent(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
                     val message = Message("me", content, timeNow)
-                    conversationUiState.sendMessage(message)
+                    viewModel.sendMessage(message)
                 },
                 resetScroll = {
                     scope.launch {

@@ -1,4 +1,3 @@
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.window.Window
 import data.MainViewModel
 import kotlinx.browser.document
@@ -11,9 +10,7 @@ fun main() {
     resizeCanvas()
     onWasmReady {
         Window {
-            val scrollState = rememberLazyListState()
-            val uiState = MainViewModel()
-            ThemeWrapper(uiState, scrollState)
+            Application()
         }
     }
 }

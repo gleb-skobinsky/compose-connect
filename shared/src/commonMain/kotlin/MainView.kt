@@ -1,6 +1,4 @@
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,24 +10,20 @@ import themes.JetchatTheme
 @Composable
 @Suppress("FunctionName")
 fun Application() {
-    val uiState = remember { MainViewModel() }
-    val scrollState = rememberLazyListState()
-    ThemeWrapper(uiState, scrollState)
+    val viewModel = remember { MainViewModel() }
+    ThemeWrapper(viewModel)
 }
 
 @Composable
 @Suppress("FunctionName")
 fun ThemeWrapper(
-    uiState: MainViewModel,
-    scrollState: LazyListState,
+    viewModel: MainViewModel
 ) {
-    val theme by uiState.themeMode.collectAsState()
+    val theme by viewModel.themeMode.collectAsState()
     JetchatTheme(theme) {
         Column {
             Conversation(
-                conversationUiState = uiState,
-                scrollState = scrollState,
-                uiState = uiState
+                viewModel = viewModel
             )
         }
     }
