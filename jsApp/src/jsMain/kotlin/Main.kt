@@ -1,5 +1,4 @@
 import androidx.compose.ui.window.Window
-import data.MainViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.skiko.wasm.onWasmReady
