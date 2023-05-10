@@ -45,7 +45,7 @@ compose.experimental {
     web.application {}
 }
 
-// TODO: temporary workaround for issue: https://github.com/JetBrains/compose-multiplatform/issues/2815
+// TODO: temporary workaround because of issue: https://github.com/JetBrains/compose-multiplatform/issues/2815
 tasks.getByName("jsBrowserDevelopmentRun").doFirst {
     val error = "throw new NotImplementedError('An operation is not implemented: implement native toLanguageTag');"
     val implementation = "return \"\";"
