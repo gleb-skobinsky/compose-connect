@@ -25,7 +25,7 @@ import data.MainViewModel
 import themes.toBoolean
 
 @Composable
-fun CommonThemeSwitch(uiState: MainViewModel, onThemeChange: (Boolean) -> Unit) {
+fun ThemeSwitch(uiState: MainViewModel, onThemeChange: (Boolean) -> Unit) {
     Box(
         Modifier
             .defaultMinSize(300.dp, 48.dp)

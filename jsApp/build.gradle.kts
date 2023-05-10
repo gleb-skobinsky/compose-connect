@@ -44,3 +44,14 @@ kotlin {
 compose.experimental {
     web.application {}
 }
+
+tasks.getByName("jsBrowserDevelopmentRun").doFirst {
+    val error = "throw new NotImplementedError('An operation is not implemented: implement native toLanguageTag');"
+    val implementation = "return \"\";"
+    val file = file("../build/js/packages/MyApplication-jsApp/kotlin/androidx-ui-text.js")
+    val buffer = StringBuffer()
+    file.forEachLine { line ->
+        buffer.appendLine(line.replace(error, implementation))
+    }
+    file.writeText(buffer.toString())
+}
