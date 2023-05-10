@@ -27,7 +27,7 @@ fun JetchatDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onThemeChange: (Boolean) -> Unit,
-    uiState: AdditionalUiState,
+    uiState: MainViewModel,
 ) {
     val selectedChatTitle by uiState.conversationUiState.collectAsState()
     // Use statusBarsHeight() to add a spacer which pushes the drawer content

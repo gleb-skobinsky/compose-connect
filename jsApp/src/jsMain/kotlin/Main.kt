@@ -1,6 +1,6 @@
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.window.Window
-import data.AdditionalUiState
+import data.MainViewModel
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.skiko.wasm.onWasmReady
@@ -12,7 +12,7 @@ fun main() {
     onWasmReady {
         Window {
             val scrollState = rememberLazyListState()
-            val uiState = AdditionalUiState()
+            val uiState = MainViewModel()
             ThemeWrapper(uiState, scrollState)
         }
     }

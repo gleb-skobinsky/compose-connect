@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import data.AdditionalUiState
+import data.MainViewModel
 import data.AppScreenState
 import data.Message
 import kotlinx.coroutines.CoroutineScope
@@ -24,9 +24,9 @@ import transport.getTimeNow
 @Composable
 @Suppress("FunctionName")
 fun Conversation(
-    conversationUiState: AdditionalUiState,
+    conversationUiState: MainViewModel,
     scrollState: LazyListState,
-    uiState: AdditionalUiState,
+    uiState: MainViewModel,
 ) {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -85,7 +85,7 @@ fun Conversation(
 @Composable
 @Suppress("FunctionName")
 private fun ConversationContent(
-    conversationUiState: AdditionalUiState,
+    conversationUiState: MainViewModel,
     scrollState: LazyListState,
     scope: CoroutineScope,
     onNavIconPressed: () -> Unit,

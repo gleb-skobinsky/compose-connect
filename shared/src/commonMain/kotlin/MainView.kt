@@ -6,13 +6,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import composables.Conversation
-import data.AdditionalUiState
+import data.MainViewModel
 import themes.JetchatTheme
 
 @Composable
 @Suppress("FunctionName")
 fun Application() {
-    val uiState = remember { AdditionalUiState() }
+    val uiState = remember { MainViewModel() }
     val scrollState = rememberLazyListState()
     ThemeWrapper(uiState, scrollState)
 }
@@ -20,7 +20,7 @@ fun Application() {
 @Composable
 @Suppress("FunctionName")
 fun ThemeWrapper(
-    uiState: AdditionalUiState,
+    uiState: MainViewModel,
     scrollState: LazyListState,
 ) {
     val theme by uiState.themeMode.collectAsState()

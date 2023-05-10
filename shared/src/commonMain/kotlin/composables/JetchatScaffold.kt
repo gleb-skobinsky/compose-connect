@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import data.AdditionalUiState
+import data.MainViewModel
 
 @Composable
 @Suppress("FunctionName")
 fun JetchatScaffold(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    uiState: AdditionalUiState,
+    uiState: MainViewModel,
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onThemeChange: (Boolean) -> Unit,

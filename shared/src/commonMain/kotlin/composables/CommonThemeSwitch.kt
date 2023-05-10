@@ -21,11 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import data.AdditionalUiState
+import data.MainViewModel
 import themes.toBoolean
 
 @Composable
-fun CommonThemeSwitch(uiState: AdditionalUiState, onThemeChange: (Boolean) -> Unit) {
+fun CommonThemeSwitch(uiState: MainViewModel, onThemeChange: (Boolean) -> Unit) {
     Box(
         Modifier
             .defaultMinSize(300.dp, 48.dp)

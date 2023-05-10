@@ -16,7 +16,7 @@ import transport.webSocketSession
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Stable
-class AdditionalUiState {
+class MainViewModel {
     private val scope = CoroutineScope(EmptyCoroutineContext)
     private val client = HttpClient {
         install(WebSockets) {

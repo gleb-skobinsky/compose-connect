@@ -1,11 +1,11 @@
 package composables
 
 import androidx.compose.runtime.Composable
-import data.AdditionalUiState
+import data.MainViewModel
 
 @Composable
 actual fun ThemeSwitch(
-    uiState: AdditionalUiState,
+    uiState: MainViewModel,
     onThemeChange: (Boolean) -> Unit
 ) {
     CommonThemeSwitch(uiState, onThemeChange)
