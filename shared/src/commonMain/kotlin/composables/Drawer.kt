@@ -23,13 +23,14 @@ import org.jetbrains.compose.resources.painterResource
 import resourceBindings.drawable_jetchat_icon_mpp
 
 @Composable
-fun JetchatDrawer(
+@Suppress("FunctionName")
+fun AppDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onThemeChange: (Boolean) -> Unit,
-    uiState: MainViewModel,
+    viewModel: MainViewModel,
 ) {
-    val selectedChatTitle by uiState.conversationUiState.collectAsState()
+    val selectedChatTitle by viewModel.conversationUiState.collectAsState()
     // Use statusBarsHeight() to add a spacer which pushes the drawer content
     // below the status bar (y-axis)
     Spacer(Modifier.height(3.dp))
@@ -47,11 +48,12 @@ fun JetchatDrawer(
         val profile = exampleAccountsState.getValue(profileId)
         ProfileItem(profile.name, profile.photo) { onProfileClicked(profileId) }
     }
-    ThemeSwitch(uiState, onThemeChange)
+    ThemeSwitch(viewModel, onThemeChange)
 }
 
 
 @Composable
+@Suppress("FunctionName")
 private fun DrawerHeader() {
     Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         JetchatIcon(
@@ -64,6 +66,7 @@ private fun DrawerHeader() {
 }
 
 @Composable
+@Suppress("FunctionName")
 private fun DrawerItemHeader(text: String) {
     Box(
         modifier = Modifier
@@ -81,6 +84,7 @@ private fun DrawerItemHeader(text: String) {
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
+@Suppress("FunctionName")
 private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit) {
     val background = if (selected) {
         Modifier.background(MaterialTheme.colorScheme.tertiary)
@@ -123,6 +127,7 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
+@Suppress("FunctionName")
 private fun ProfileItem(text: String, profilePic: String?, onProfileClicked: () -> Unit) {
     Row(
         modifier = Modifier
@@ -156,8 +161,8 @@ private fun ProfileItem(text: String, profilePic: String?, onProfileClicked: () 
 }
 
 @Composable
+@Suppress("FunctionName")
 fun DividerItem(modifier: Modifier = Modifier) {
-    // TODO (M3): No Divider, replace when available
     Divider(
         modifier = modifier,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)

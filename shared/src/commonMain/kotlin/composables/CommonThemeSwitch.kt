@@ -25,7 +25,8 @@ import data.MainViewModel
 import themes.toBoolean
 
 @Composable
-fun ThemeSwitch(uiState: MainViewModel, onThemeChange: (Boolean) -> Unit) {
+@Suppress("FunctionName")
+fun ThemeSwitch(viewModel: MainViewModel, onThemeChange: (Boolean) -> Unit) {
     Box(
         Modifier
             .defaultMinSize(300.dp, 48.dp)
@@ -39,7 +40,7 @@ fun ThemeSwitch(uiState: MainViewModel, onThemeChange: (Boolean) -> Unit) {
                 .clip(CircleShape)
         ) {
 
-            val checkedState by uiState.themeMode.collectAsState()
+            val checkedState by viewModel.themeMode.collectAsState()
             val iconColor = MaterialTheme.colorScheme.onSecondary
             val commonModifier = Modifier.align(Alignment.CenterVertically)
             Icon(

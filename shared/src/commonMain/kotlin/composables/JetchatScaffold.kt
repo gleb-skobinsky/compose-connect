@@ -24,9 +24,9 @@ import data.MainViewModel
 
 @Composable
 @Suppress("FunctionName")
-fun JetchatScaffold(
+fun AppScaffold(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    uiState: MainViewModel,
+    viewModel: MainViewModel,
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onThemeChange: (Boolean) -> Unit,
@@ -41,11 +41,11 @@ fun JetchatScaffold(
                     .fillMaxHeight()
                     .width(300.dp)
             ) {
-                JetchatDrawer(
+                AppDrawer(
                     onProfileClicked = onProfileClicked,
                     onChatClicked = onChatClicked,
                     onThemeChange = onThemeChange,
-                    uiState = uiState
+                    viewModel = viewModel
                 )
             }
         },

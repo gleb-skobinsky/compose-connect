@@ -41,9 +41,9 @@ fun Conversation(
         }
     }
 
-    JetchatScaffold(
+    AppScaffold(
         scaffoldState = scaffoldState,
-        uiState = viewModel,
+        viewModel = viewModel,
         onChatClicked = { title ->
             viewModel.setCurrentConversation(title)
             coroutineScope.launch {
