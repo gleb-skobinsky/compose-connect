@@ -9,6 +9,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isOutOfBounds
 import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.browser.document
 import org.w3c.dom.HTMLCanvasElement
 
 actual fun Modifier.userInputModifier(): Modifier = this
@@ -16,13 +17,12 @@ actual fun Modifier.userInputModifier(): Modifier = this
 actual fun Modifier.statusBarsPaddingMpp(): Modifier = this
 
 fun Modifier.jsCursor(cursor: String) = composed {
-    val canvas = remember { kotlinx.browser.document.getElementById("ComposeTarget") as HTMLCanvasElement }
     val hovered = remember { mutableStateOf(false) }
 
     if (hovered.value) {
-        canvas.style.cursor = cursor
+        document.body?.style?.cursor = cursor
     } else {
-        canvas.style.cursor = "default"
+        document.body?.style?.cursor = "default"
     }
 
     this.pointerInput(Unit) {
