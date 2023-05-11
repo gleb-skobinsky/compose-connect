@@ -18,6 +18,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import platform.pointerCursor
 import resourceBindings.drawable_jetchat_icon_mpp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +48,7 @@ fun JetchatAppBar(
                     modifier = Modifier
                         .size(64.dp)
                         .clickable(onClick = onNavIconPressed)
+                        .pointerCursor()
                         .padding(16.dp)
                 )
             }

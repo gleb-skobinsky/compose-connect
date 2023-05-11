@@ -74,6 +74,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import platform.pointerCursor
+import platform.textCursor
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -212,14 +214,13 @@ private fun UserInputText(
     focusState: Boolean,
     onMessageSent: () -> Unit,
 ) {
-    val a11ylabel = "Text input"
     val textColor = MaterialTheme.colorScheme.onSecondary
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
             .semantics {
-                contentDescription = a11ylabel
+                contentDescription = "Text input"
             },
         horizontalArrangement = Arrangement.End
     ) {
@@ -240,6 +241,7 @@ private fun UserInputText(
                         .fillMaxWidth()
                         .padding(start = 32.dp)
                         .align(Alignment.CenterStart)
+                        .textCursor()
                         .onFocusChanged { state ->
                             if (lastFocusState != state.isFocused) {
                                 onTextFieldFocused(state.isFocused)
@@ -365,7 +367,7 @@ private fun UserInputSelector(
 
         // Send button
         Button(
-            modifier = Modifier.height(36.dp),
+            modifier = Modifier.height(36.dp).pointerCursor(),
             enabled = sendMessageEnabled,
             onClick = onMessageSent,
             colors = buttonColors,

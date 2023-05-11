@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import data.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import platform.pointerCursor
 import resourceBindings.drawable_jetchat_icon_mpp
 
 @Composable
@@ -44,8 +45,7 @@ fun AppDrawer(
     }
     DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
     DrawerItemHeader("Recent Profiles")
-    exampleAccountsState.keys.forEach { profileId ->
-        val profile = exampleAccountsState.getValue(profileId)
+    exampleAccountsState.entries.forEach { (profileId, profile) ->
         ProfileItem(profile.name, profile.photo) { onProfileClicked(profileId) }
     }
     ThemeSwitch(viewModel, onThemeChange)
@@ -96,6 +96,7 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
             .height(56.dp)
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
+            .pointerCursor()
             .clip(CircleShape)
             .then(background)
             .clickable(onClick = onChatClicked),
@@ -135,6 +136,7 @@ private fun ProfileItem(text: String, profilePic: String?, onProfileClicked: () 
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .clip(CircleShape)
+            .pointerCursor()
             .clickable(onClick = onProfileClicked),
         verticalAlignment = Alignment.CenterVertically
     ) {
