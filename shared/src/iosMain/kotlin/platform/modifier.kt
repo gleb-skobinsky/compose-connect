@@ -1,7 +1,6 @@
 package platform
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 actual fun Modifier.userInputModifier(): Modifier = this
 

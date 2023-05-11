@@ -1,7 +1,6 @@
 package platform
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 
