@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import composables.Conversation
 import data.MainViewModel
-import themes.JetchatTheme
+import themes.ApplicationTheme
 
 @Composable
 @Suppress("FunctionName")
@@ -20,7 +20,7 @@ fun ThemeWrapper(
     viewModel: MainViewModel
 ) {
     val theme by viewModel.themeMode.collectAsState()
-    JetchatTheme(theme) {
+    ApplicationTheme(theme) {
         Column {
             Conversation(
                 viewModel = viewModel
