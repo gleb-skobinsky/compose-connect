@@ -10,7 +10,6 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isOutOfBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.browser.document
-import org.w3c.dom.HTMLCanvasElement
 
 actual fun Modifier.userInputModifier(): Modifier = this
 
