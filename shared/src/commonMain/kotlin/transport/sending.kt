@@ -2,7 +2,6 @@ package transport
 
 import data.Message
 import io.ktor.client.*
-import kotlinx.serialization.Serializable
 
 expect fun getTimeNow(): String
 
