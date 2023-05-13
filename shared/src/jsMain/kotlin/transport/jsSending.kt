@@ -13,8 +13,19 @@ external val self: ServiceWorkerGlobalScope
 
 actual val localHost: String = "127.0.0.1"
 
-actual suspend fun webSocketSession(client: HttpClient): WsSession? {
-    return WebSocket("ws://$localHost:8082")
+actual suspend fun webSocketSession(client: HttpClient, onMessageReceive: (String) -> Unit): WsSession? {
+    val ws = WebSocket("ws://$localHost:8082")
+    ws.onopen = {
+        ws.send("hello from js client")
+    }
+    ws.onmessage = { event ->
+        try {
+            console.log(event.data)
+        } catch (e: Exception) {
+            console.log("Error: $e.message")
+        }
+    }
+    return ws
 }
 
 actual suspend fun WsSession?.sendMessage(message: Message) {

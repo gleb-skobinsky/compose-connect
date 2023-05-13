@@ -12,7 +12,7 @@ actual fun getTimeNow(): String = ""
 
 actual val localHost: String = "localhost"
 
-actual suspend fun webSocketSession(client: HttpClient): WsSession? {
+actual suspend fun webSocketSession(client: HttpClient, onMessageReceive: (String) -> Unit): WsSession? {
     var session: DefaultClientWebSocketSession? = null
     withContext(Dispatchers.Default) {
         try {

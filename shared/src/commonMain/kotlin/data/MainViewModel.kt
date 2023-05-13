@@ -27,7 +27,9 @@ class MainViewModel {
 
     init {
         scope.launch {
-            session = webSocketSession(client)
+            session = webSocketSession(client) { message ->
+                println(message)
+            }
         }
     }
 

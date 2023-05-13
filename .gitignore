@@ -15,3 +15,7 @@ iosApp/iosApp.xcodeproj/*
 shared/shared.podspec
 /backend/node_modules/
 /backend/package-lock.json
+/server/serverenv/
+/server/venv/
+/server/compose_connect_backend/db.sqlite3
+/server/compose_connect/db.sqlite3

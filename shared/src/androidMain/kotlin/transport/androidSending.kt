@@ -13,7 +13,7 @@ actual fun getTimeNow(): String = Calendar.getInstance().time.toString()
 
 actual val localHost: String = "10.0.2.2"
 
-actual suspend fun webSocketSession(client: HttpClient): WsSession? {
+actual suspend fun webSocketSession(client: HttpClient, onMessageReceive: (String) -> Unit): WsSession? {
     var session: DefaultClientWebSocketSession? = null
     withContext(Dispatchers.Default) {
         try {
