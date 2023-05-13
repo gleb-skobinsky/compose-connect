@@ -11,13 +11,13 @@ import java.util.*
 
 actual fun getTimeNow(): String = Calendar.getInstance().time.toString()
 
-actual val localHost: String = "127.0.0.1"
+actual val localHost: String = "0.0.0.0"
 
-actual suspend fun webSocketSession(client: HttpClient, onMessageReceive: (String) -> Unit): WsSession? {
+actual suspend fun webSocketSession(client: HttpClient, path: String, onMessageReceive: (String) -> Unit): WsSession? {
     var session: DefaultClientWebSocketSession? = null
     withContext(Dispatchers.Default) {
         try {
-            client.webSocket(method = HttpMethod.Get, host = localHost, port = 8082) {
+            client.webSocket(method = HttpMethod.Get, host = localHost, port = 8080, path = path) {
                 session = this
                 for (frame in incoming) {
                     frame as? Frame.Text ?: continue

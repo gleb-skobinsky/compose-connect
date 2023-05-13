@@ -11,10 +11,10 @@ actual fun getTimeNow(): String = Date().toTimeString()
 
 external val self: ServiceWorkerGlobalScope
 
-actual val localHost: String = "127.0.0.1"
+actual val localHost: String = "0.0.0.0"
 
-actual suspend fun webSocketSession(client: HttpClient, onMessageReceive: (String) -> Unit): WsSession? {
-    val ws = WebSocket("ws://$localHost:8082")
+actual suspend fun webSocketSession(client: HttpClient, path: String, onMessageReceive: (String) -> Unit): WsSession? {
+    val ws = WebSocket("ws://$localHost:8080/$path")
     ws.onopen = {
         ws.send("hello from js client")
     }

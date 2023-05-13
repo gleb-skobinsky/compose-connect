@@ -10,7 +10,7 @@ expect val localHost: String
 
 typealias WsSession = Any
 
-expect suspend fun webSocketSession(client: HttpClient, onMessageReceive: (String) -> Unit = {}): WsSession?
+expect suspend fun webSocketSession(client: HttpClient, path: String, onMessageReceive: (String) -> Unit = {}): WsSession?
 
 expect suspend fun WsSession?.sendMessage(message: Message)
 
