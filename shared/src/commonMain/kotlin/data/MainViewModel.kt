@@ -28,7 +28,7 @@ class MainViewModel {
     init {
         scope.launch {
             session = webSocketSession(client, "composers") { message ->
-                println(message)
+                _conversationUiState.value.addMessage(message)
             }
         }
     }
