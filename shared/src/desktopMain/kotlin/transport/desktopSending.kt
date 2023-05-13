@@ -15,7 +15,7 @@ actual val localHost: String = "0.0.0.0"
 
 actual suspend fun webSocketSession(client: HttpClient, path: String, onMessageReceive: (Message) -> Unit): WsSession? {
     val session = CompletableDeferred<DefaultClientWebSocketSession?>()
-    val job = CoroutineScope(Dispatchers.Default).launch {
+    CoroutineScope(Dispatchers.Default).launch {
         try {
             client.webSocket(method = HttpMethod.Get, host = localHost, port = 8080, path = path) {
                 session.complete(this)
