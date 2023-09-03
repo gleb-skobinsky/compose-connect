@@ -1,54 +1,82 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import java.awt.Point
 
 fun main() {
     application {
+        val state = WindowState(WindowPlacement.Maximized)
+        val composePlacement = remember { mutableStateOf(WindowPlacement.Maximized) }
         Window(
             title = "ComposeConnect",
             onCloseRequest = ::exitApplication,
             undecorated = true,
-            state = WindowState(WindowPlacement.Maximized)
+            state = state,
+            transparent = true,
         ) {
             SetAppIcon()
-            Column {
-                with(window) {
-                    ToolingHeader(::exitApplication)
+            Surface(
+                shape = if (state.placement == WindowPlacement.Maximized) RectangleShape else RoundedCornerShape(10.dp),
+                color = Color.Transparent
+            ) {
+                Column {
+                    WindowDraggableArea(
+                        Modifier
+                            .pointerInput(Unit) {
+                                detectDragGestures { _, _ ->
+                                    if (state.placement == WindowPlacement.Maximized) {
+                                        state.placement = WindowPlacement.Floating
+                                        composePlacement.value = WindowPlacement.Floating
+                                    }
+                                }
+                            }
+                    ) {
+                        ToolingHeader(composePlacement, ::exitApplication)
+                    }
+                    ChatApplication()
                 }
-                ChatApplication()
             }
         }
     }
 }
 
+operator fun Point.plus(value: Offset) = Point(x + value.x.toInt(), y + value.y.toInt())
+
 private val hover = Color.Gray.copy(alpha = 0.2f)
 
+
 @Composable
-fun ComposeWindow.ToolingHeader(
+fun FrameWindowScope.ToolingHeader(
+    composePlacement: MutableState<WindowPlacement>,
     onWindowClose: () -> Unit,
 ) {
-    var composePlacement by remember { mutableStateOf(WindowPlacement.Maximized) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,24 +89,24 @@ fun ComposeWindow.ToolingHeader(
             imageVector = MinimizeWindow,
             hoverColor = hover,
         ) {
-            isMinimized = true
+            window.isMinimized = true
         }
 
-        if (composePlacement == WindowPlacement.Maximized) {
+        if (composePlacement.value == WindowPlacement.Maximized) {
             ToolingHeaderIcon(
                 imageVector = FloatingWindow,
                 hoverColor = hover
             ) {
-                placement = WindowPlacement.Floating
-                composePlacement = WindowPlacement.Floating
+                window.placement = WindowPlacement.Floating
+                composePlacement.value = WindowPlacement.Floating
             }
         } else {
             ToolingHeaderIcon(
                 imageVector = MaximizeWindow,
                 hoverColor = hover,
             ) {
-                placement = WindowPlacement.Maximized
-                composePlacement = WindowPlacement.Maximized
+                window.placement = WindowPlacement.Maximized
+                composePlacement.value = WindowPlacement.Maximized
             }
         }
         ToolingHeaderIcon(
@@ -87,6 +115,7 @@ fun ComposeWindow.ToolingHeader(
             onClick = onWindowClose
         )
     }
+
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -112,18 +141,6 @@ fun ToolingHeaderIcon(
             .padding(12.dp),
         tint = if (hovered.value) Color.White else Color.Gray
     )
-}
-
-private fun WindowPlacement.toResizable() = when (this) {
-    WindowPlacement.Maximized -> false
-    WindowPlacement.Floating -> true
-    WindowPlacement.Fullscreen -> false
-}
-
-fun WindowPlacement.toIcon() = when (this) {
-    WindowPlacement.Maximized -> FloatingWindow
-    WindowPlacement.Floating -> MaximizeWindow
-    WindowPlacement.Fullscreen -> FloatingWindow
 }
 
 @Composable
