@@ -1,33 +1,23 @@
 package data
 
 import androidx.compose.runtime.Stable
-import io.ktor.client.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.serialization.kotlinx.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import themes.ThemeMode
-import transport.WsSession
-import transport.sendMessage
-import transport.webSocketSession
+import transport.WsHandler
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Stable
 class MainViewModel {
     private val scope = CoroutineScope(EmptyCoroutineContext)
-    private val client = HttpClient {
-        install(WebSockets) {
-            contentConverter = KotlinxWebsocketSerializationConverter(Json)
-        }
-    }
-    private var session: WsSession? = null
+    private val connectionsHandler = WsHandler()
 
     init {
-        scope.launch {
-            session = webSocketSession(client, "composers") { message ->
+        scope.launch(Dispatchers.Default) {
+            connectionsHandler.connectRoom("chat/composers/") { message ->
                 _conversationUiState.value.addMessage(message)
             }
         }
@@ -67,9 +57,8 @@ class MainViewModel {
     }
 
     fun sendMessage(message: Message) {
-        _conversationUiState.value.addMessage(message)
         scope.launch {
-            session?.sendMessage(message)
+            connectionsHandler.sendMessage(message)
         }
     }
 }

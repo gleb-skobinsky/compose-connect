@@ -45,7 +45,7 @@ fun Messages(
             .background(mainBackground),
         state = scrollState
     ) {
-        items(count = messages.size) { index ->
+        items(count = messages.size, { messages[it].hashCode() } ) { index ->
             val msg: Message = messages[index]
             val prevAuthor = messages.getOrNull(index - 1)?.author
             val nextAuthor = messages.getOrNull(index + 1)?.author
