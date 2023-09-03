@@ -23,7 +23,6 @@ import themes.toTheme
 import transport.getTimeNow
 
 @Composable
-@Suppress("FunctionName")
 fun Conversation(
     viewModel: MainViewModel,
 ) {
@@ -83,7 +82,6 @@ fun Conversation(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Suppress("FunctionName")
 private fun ConversationContent(
     viewModel: MainViewModel,
     scrollState: LazyListState,

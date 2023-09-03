@@ -24,7 +24,6 @@ import platform.pointerCursor
 import resourceBindings.drawable_jetchat_icon_mpp
 
 @Composable
-@Suppress("FunctionName")
 fun AppDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
@@ -53,7 +52,6 @@ fun AppDrawer(
 
 
 @Composable
-@Suppress("FunctionName")
 private fun DrawerHeader() {
     Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         JetchatIcon(
@@ -66,7 +64,6 @@ private fun DrawerHeader() {
 }
 
 @Composable
-@Suppress("FunctionName")
 private fun DrawerItemHeader(text: String) {
     Box(
         modifier = Modifier
@@ -84,7 +81,6 @@ private fun DrawerItemHeader(text: String) {
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-@Suppress("FunctionName")
 private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit) {
     val background = if (selected) {
         Modifier.background(MaterialTheme.colorScheme.tertiary)
@@ -128,7 +124,6 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-@Suppress("FunctionName")
 private fun ProfileItem(text: String, profilePic: String?, onProfileClicked: () -> Unit) {
     Row(
         modifier = Modifier
@@ -163,7 +158,6 @@ private fun ProfileItem(text: String, profilePic: String?, onProfileClicked: () 
 }
 
 @Composable
-@Suppress("FunctionName")
 fun DividerItem(modifier: Modifier = Modifier) {
     Divider(
         modifier = modifier,

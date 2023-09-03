@@ -25,7 +25,6 @@ import data.MainViewModel
 import themes.toBoolean
 
 @Composable
-@Suppress("FunctionName")
 fun ThemeSwitch(viewModel: MainViewModel, onThemeChange: (Boolean) -> Unit) {
     Box(
         Modifier

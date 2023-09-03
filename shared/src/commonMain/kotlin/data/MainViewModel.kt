@@ -1,22 +1,20 @@
 package data
 
 import androidx.compose.runtime.Stable
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import themes.ThemeMode
 import transport.WsHandler
-import kotlin.coroutines.EmptyCoroutineContext
+import viewmodel.ViewModelPlatformImpl
 
 @Stable
-class MainViewModel {
-    private val scope = CoroutineScope(EmptyCoroutineContext)
+class MainViewModel : ViewModelPlatformImpl() {
     private val connectionsHandler = WsHandler()
 
     init {
-        scope.launch(Dispatchers.Default) {
+        vmScope.launch(Dispatchers.Default) {
             connectionsHandler.connectRoom("chat/composers/") { message ->
                 _conversationUiState.value.addMessage(message)
             }
@@ -57,7 +55,7 @@ class MainViewModel {
     }
 
     fun sendMessage(message: Message) {
-        scope.launch {
+        vmScope.launch {
             connectionsHandler.sendMessage(message)
         }
     }

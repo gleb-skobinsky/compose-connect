@@ -8,14 +8,12 @@ import data.MainViewModel
 import themes.ApplicationTheme
 
 @Composable
-@Suppress("FunctionName")
 fun Application() {
     val viewModel = remember { MainViewModel() }
     ThemeWrapper(viewModel)
 }
 
 @Composable
-@Suppress("FunctionName")
 fun ThemeWrapper(
     viewModel: MainViewModel
 ) {

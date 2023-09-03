@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import data.MainViewModel
 
 @Composable
-@Suppress("FunctionName")
 fun AppScaffold(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     viewModel: MainViewModel,
