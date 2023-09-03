@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -22,27 +23,32 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 
-fun main() = application {
-    val windowState = remember { WindowState(WindowPlacement.Maximized) }
-    Window(
-        title = "ComposeConnect",
-        onCloseRequest = ::exitApplication,
-        state = windowState,
-        undecorated = true,
-        resizable = windowState.placement.toResizable()
-    ) {
-        SetAppIcon()
-        Column {
-            ToolingHeader(windowState)
-            ChatApplication()
+fun main() {
+    application {
+        Window(
+            title = "ComposeConnect",
+            onCloseRequest = ::exitApplication,
+            undecorated = true,
+            state = WindowState(WindowPlacement.Maximized)
+        ) {
+            SetAppIcon()
+            Column {
+                with(window) {
+                    ToolingHeader(::exitApplication)
+                }
+                ChatApplication()
+            }
         }
     }
 }
 
+private val hover = Color.Gray.copy(alpha = 0.2f)
+
 @Composable
-fun ApplicationScope.ToolingHeader(
-    windowState: WindowState,
+fun ComposeWindow.ToolingHeader(
+    onWindowClose: () -> Unit,
 ) {
+    var composePlacement by remember { mutableStateOf(WindowPlacement.Maximized) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,36 +59,58 @@ fun ApplicationScope.ToolingHeader(
     ) {
         ToolingHeaderIcon(
             imageVector = MinimizeWindow,
-            hoverColor = Color.Gray.copy(alpha = 0.2f)
+            hoverColor = hover,
         ) {
-            windowState.isMinimized = true
+            isMinimized = true
+        }
+
+        if (composePlacement == WindowPlacement.Maximized) {
+            ToolingHeaderIcon(
+                imageVector = FloatingWindow,
+                hoverColor = hover
+            ) {
+                placement = WindowPlacement.Floating
+                composePlacement = WindowPlacement.Floating
+            }
+        } else {
+            ToolingHeaderIcon(
+                imageVector = MaximizeWindow,
+                hoverColor = hover,
+            ) {
+                placement = WindowPlacement.Maximized
+                composePlacement = WindowPlacement.Maximized
+            }
         }
         ToolingHeaderIcon(
             imageVector = Icons.Outlined.Close,
             hoverColor = Color.Red,
-            onClick = ::exitApplication
+            onClick = onWindowClose
         )
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ToolingHeaderIcon(imageVector: ImageVector, hoverColor: Color, onClick: () -> Unit) {
-    var hovered by remember { mutableStateOf(false) }
+fun ToolingHeaderIcon(
+    imageVector: ImageVector,
+    hoverColor: Color,
+    hovered: MutableState<Boolean> = remember { mutableStateOf(false) },
+    onClick: () -> Unit,
+) {
     Icon(
         imageVector = imageVector,
         contentDescription = null,
         modifier = Modifier
             .clickable(onClick = onClick)
             .onPointerEvent(PointerEventType.Enter) {
-                hovered = true
+                hovered.value = true
             }
             .onPointerEvent(PointerEventType.Exit) {
-                hovered = false
+                hovered.value = false
             }
-            .background(if (hovered) hoverColor else Color.Transparent)
-            .padding(10.dp),
-        tint = if (hovered) Color.White else Color.Gray
+            .background(if (hovered.value) hoverColor else Color.Transparent)
+            .padding(12.dp),
+        tint = if (hovered.value) Color.White else Color.Gray
     )
 }
 
@@ -90,6 +118,12 @@ private fun WindowPlacement.toResizable() = when (this) {
     WindowPlacement.Maximized -> false
     WindowPlacement.Floating -> true
     WindowPlacement.Fullscreen -> false
+}
+
+fun WindowPlacement.toIcon() = when (this) {
+    WindowPlacement.Maximized -> FloatingWindow
+    WindowPlacement.Floating -> MaximizeWindow
+    WindowPlacement.Fullscreen -> FloatingWindow
 }
 
 @Composable

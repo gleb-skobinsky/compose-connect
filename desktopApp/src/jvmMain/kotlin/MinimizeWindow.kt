@@ -5,10 +5,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 val MinimizeWindow: ImageVector
     get() {
-        if (_close != null) {
-            return _close!!
+        if (close != null) {
+            return close!!
         }
-        _close = materialIcon(name = "Outlined.Close") {
+        close = materialIcon(name = "MinimizeWindow") {
             materialPath {
                 moveTo(6.41f, 10.59f)
                 lineTo(6.41f, 12.97f)
@@ -18,7 +18,7 @@ val MinimizeWindow: ImageVector
                 close()
             }
         }
-        return _close!!
+        return close!!
     }
 
-private var _close: ImageVector? = null
+private var close: ImageVector? = null
