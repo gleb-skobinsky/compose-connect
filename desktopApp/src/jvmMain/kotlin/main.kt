@@ -21,9 +21,6 @@ import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 
 fun main() = application {
     val windowState = remember { WindowState(WindowPlacement.Maximized) }
