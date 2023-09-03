@@ -6,5 +6,5 @@ actual fun getPlatformName(): String = "Desktop"
 @Preview
 @Composable
 fun AppPreview() {
-    Application()
+    ChatApplication()
 }

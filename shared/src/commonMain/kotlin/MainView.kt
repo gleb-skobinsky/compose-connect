@@ -8,7 +8,7 @@ import data.MainViewModel
 import themes.ApplicationTheme
 
 @Composable
-fun Application() {
+fun ChatApplication() {
     val viewModel = remember { MainViewModel() }
     ThemeWrapper(viewModel)
 }
