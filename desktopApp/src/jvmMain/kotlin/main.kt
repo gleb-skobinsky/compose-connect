@@ -30,11 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import java.awt.Point
 
-fun WindowPlacement.toResizable() = when (this) {
-    WindowPlacement.Maximized -> false
-    else -> true
-}
-
 fun main() {
     application {
         val state = rememberWindowState(WindowPlacement.Maximized)
