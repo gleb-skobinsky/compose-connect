@@ -30,10 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import java.awt.Point
 
+fun WindowPlacement.toResizable() = when (this) {
+    WindowPlacement.Maximized -> false
+    else -> true
+}
+
 fun main() {
     application {
-        val state = WindowState(WindowPlacement.Maximized)
-        val composePlacement = remember { mutableStateOf(WindowPlacement.Maximized) }
+        val state = rememberWindowState(WindowPlacement.Maximized)
         Window(
             title = "ComposeConnect",
             onCloseRequest = ::exitApplication,
@@ -47,19 +51,7 @@ fun main() {
                 color = Color.Transparent
             ) {
                 Column {
-                    WindowDraggableArea(
-                        Modifier
-                            .pointerInput(Unit) {
-                                detectDragGestures { _, _ ->
-                                    if (state.placement == WindowPlacement.Maximized) {
-                                        state.placement = WindowPlacement.Floating
-                                        composePlacement.value = WindowPlacement.Floating
-                                    }
-                                }
-                            }
-                    ) {
-                        ToolingHeader(composePlacement, ::exitApplication)
-                    }
+                    ToolingHeader(onWindowClose = ::exitApplication)
                     ChatApplication()
                 }
             }
@@ -74,48 +66,58 @@ private val hover = Color.Gray.copy(alpha = 0.2f)
 
 @Composable
 fun FrameWindowScope.ToolingHeader(
-    composePlacement: MutableState<WindowPlacement>,
     onWindowClose: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .requiredHeight(42.dp)
-            .background(Color(39, 39, 42)),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
-    ) {
-        ToolingHeaderIcon(
-            imageVector = MinimizeWindow,
-            hoverColor = hover,
-        ) {
-            window.isMinimized = true
-        }
-
-        if (composePlacement.value == WindowPlacement.Maximized) {
-            ToolingHeaderIcon(
-                imageVector = FloatingWindow,
-                hoverColor = hover
-            ) {
-                window.placement = WindowPlacement.Floating
-                composePlacement.value = WindowPlacement.Floating
+    val composePlacement = remember { mutableStateOf(WindowPlacement.Maximized) }
+    WindowDraggableArea(
+        Modifier
+            .pointerInput(Unit) {
+                detectDragGestures { _, _ ->
+                    if (window.placement == WindowPlacement.Maximized) {
+                        window.placement = WindowPlacement.Floating
+                    }
+                }
             }
-        } else {
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .requiredHeight(42.dp)
+                .background(Color(39, 39, 42)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
             ToolingHeaderIcon(
-                imageVector = MaximizeWindow,
+                imageVector = MinimizeWindow,
                 hoverColor = hover,
             ) {
-                window.placement = WindowPlacement.Maximized
-                composePlacement.value = WindowPlacement.Maximized
+                window.isMinimized = true
             }
-        }
-        ToolingHeaderIcon(
-            imageVector = Icons.Outlined.Close,
-            hoverColor = Color.Red,
-            onClick = onWindowClose
-        )
-    }
 
+            if (composePlacement.value == WindowPlacement.Maximized) {
+                ToolingHeaderIcon(
+                    imageVector = FloatingWindow,
+                    hoverColor = hover
+                ) {
+                    window.placement = WindowPlacement.Floating
+                    composePlacement.value = WindowPlacement.Floating
+                }
+            } else {
+                ToolingHeaderIcon(
+                    imageVector = MaximizeWindow,
+                    hoverColor = hover,
+                ) {
+                    window.placement = WindowPlacement.Maximized
+                    composePlacement.value = WindowPlacement.Maximized
+                }
+            }
+            ToolingHeaderIcon(
+                imageVector = Icons.Outlined.Close,
+                hoverColor = Color.Red,
+                onClick = onWindowClose
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

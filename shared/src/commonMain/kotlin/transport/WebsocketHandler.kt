@@ -27,25 +27,31 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
     private lateinit var ktorWebSocketSession: DefaultClientWebSocketSession
 
     override suspend fun connectRoom(path: String, onMessageReceive: (Message) -> Unit) {
-        client.webSocket(
-            method = HttpMethod.Get,
-            host = localHost,
-            port = 8080,
-            path = path,
-            request = {
-                header("origin", "http://127.0.0.1")
+        try {
+            client.webSocket(
+                method = HttpMethod.Get,
+                host = localHost,
+                port = 8080,
+                path = path,
+                request = {
+                    header("origin", "http://127.0.0.1")
+                }
+            ) {
+                ktorWebSocketSession = this
+                for (frame in incoming) {
+                    frame as? Frame.Text ?: continue
+                    val receivedText = frame.readText()
+                    onMessageReceive(Json.decodeFromString(Message.serializer(), receivedText))
+                }
             }
-        ) {
-            ktorWebSocketSession = this
-            for (frame in incoming) {
-                frame as? Frame.Text ?: continue
-                val receivedText = frame.readText()
-                onMessageReceive(Json.decodeFromString(Message.serializer(), receivedText))
-            }
+        } catch (e: Exception) {
+            println("Failed to connect to websocket server")
         }
     }
 
     override suspend fun sendMessage(message: Message) {
-        ktorWebSocketSession.sendSerialized(message)
+        if (this::ktorWebSocketSession.isInitialized) {
+            ktorWebSocketSession.sendSerialized(message)
+        }
     }
 }
