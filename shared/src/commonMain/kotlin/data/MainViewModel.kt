@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import themes.ThemeMode
 import transport.WsHandler
@@ -19,6 +20,13 @@ class MainViewModel : ViewModelPlatformImpl() {
                 _conversationUiState.value.addMessage(message)
             }
         }
+    }
+
+    private val _user: MutableStateFlow<User?> = MutableStateFlow(null)
+    val user = _user.asStateFlow()
+
+    fun setUser(user: User) {
+        _user.value = user
     }
 
     private val _screenState: MutableStateFlow<AppScreenState> = MutableStateFlow(AppScreenState.CHAT)
