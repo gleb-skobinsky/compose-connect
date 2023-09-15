@@ -6,7 +6,6 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
-import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
 
