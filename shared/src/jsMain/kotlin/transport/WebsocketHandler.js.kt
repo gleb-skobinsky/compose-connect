@@ -8,7 +8,7 @@ actual class WsHandler : WebSocketHandlerPlatform {
 
     private lateinit var ws: WebSocket
     override suspend fun connectRoom(path: String, onMessageReceive: (Message) -> Unit) {
-        ws = WebSocket("ws://$localHost:8080/$path")
+        ws = WebSocket("ws://${Routes.development.js}/$path")
         ws.onopen = {
 
         }
@@ -20,7 +20,7 @@ actual class WsHandler : WebSocketHandlerPlatform {
                 }
                 console.log(event.data)
             } catch (e: Exception) {
-                console.log("Error: $e.message")
+                console.log("Error: ${e.message}")
             }
         }
     }

@@ -2,7 +2,7 @@ const uuid = require("uuid");
 
 const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({ host: "127.0.0.1", port: 8082 });
+const wss = new WebSocket.Server({ host: "127.0.0.1", port: 80 });
 
 wss.on("connection", (ws) => {
   ws.id = uuid.v4();

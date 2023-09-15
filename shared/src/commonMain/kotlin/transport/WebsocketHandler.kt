@@ -6,6 +6,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
+import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
 
@@ -30,11 +31,11 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         try {
             client.webSocket(
                 method = HttpMethod.Get,
-                host = localHost,
-                port = 8080,
+                host = "http://${Routes.development.desktop}",
+                port = Routes.port,
                 path = path,
                 request = {
-                    header("origin", "http://127.0.0.1")
+                    header("origin", "http://${Routes.development.desktop}")
                 }
             ) {
                 ktorWebSocketSession = this
@@ -45,7 +46,7 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
                 }
             }
         } catch (e: Exception) {
-            println("Failed to connect to websocket server")
+            println("Failed to connect to websocket server:")
         }
     }
 
