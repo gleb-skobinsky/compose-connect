@@ -30,7 +30,7 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         try {
             client.webSocket(
                 method = HttpMethod.Get,
-                host = "http://${Routes.development.desktop}",
+                host = Routes.development[platformName],
                 port = Routes.port,
                 path = path,
                 request = {

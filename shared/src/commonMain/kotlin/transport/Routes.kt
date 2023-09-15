@@ -5,7 +5,17 @@ data class PlatformHosts(
     val js: String,
     val android: String,
     val ios: String,
-)
+) {
+    operator fun get(label: String): String {
+        return when (label) {
+            "desktop" -> desktop
+            "js" -> js
+            "android" -> android
+            "ios" -> ios
+            else -> ""
+        }
+    }
+}
 
 object Routes {
     val development = PlatformHosts(
