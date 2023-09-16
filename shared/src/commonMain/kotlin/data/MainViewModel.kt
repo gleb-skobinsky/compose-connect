@@ -1,22 +1,41 @@
 package data
 
 import androidx.compose.runtime.Stable
+import buildVariant.mode
+import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import themes.ThemeMode
+import transport.Routes
 import transport.WsHandler
+import transport.platformName
 import viewmodel.ViewModelPlatformImpl
 
 @Stable
 class MainViewModel : ViewModelPlatformImpl() {
-    private val connectionsHandler = WsHandler()
+    private val httpClient = HttpClient() {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            })
+        }
+    }
+    private val websocketHandler = WsHandler()
 
     init {
         vmScope.launch(Dispatchers.Default) {
-            connectionsHandler.connectRoom("chat/composers/") { message ->
+            websocketHandler.connectRoom("chat/composers/") { message ->
                 _conversationUiState.value.addMessage(message)
             }
         }
@@ -71,14 +90,24 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun sendMessage(message: Message) {
         vmScope.launch {
-            connectionsHandler.sendMessage(message)
+            websocketHandler.sendMessage(message)
         }
     }
 
     fun loginUser(email: String, password: String) {
-
+        vmScope.launch {
+            val response = httpClient.post("http://${Routes[mode][platformName]}/chat/api/login/") {
+                contentType(ContentType.Application.Json)
+                setBody(LoginForm(email, password))
+            }
+            val responseBody = response.bodyAsText()
+            println("Response: $responseBody")
+        }
     }
 }
+
+@Serializable
+data class LoginForm(val email: String, val password: String)
 
 enum class AppScreenState {
     CHAT,

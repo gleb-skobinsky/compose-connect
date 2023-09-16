@@ -1,5 +1,6 @@
 package transport
 
+import buildVariant.mode
 import data.Message
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
@@ -30,11 +31,11 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         try {
             client.webSocket(
                 method = HttpMethod.Get,
-                host = Routes.development[platformName],
-                port = Routes.port,
+                host = Routes[mode][platformName],
+                port = mode.toPort(),
                 path = path,
                 request = {
-                    header("origin", "http://${Routes.development.desktop}")
+                    header("origin", "http://${Routes[mode][platformName]}")
                 }
             ) {
                 ktorWebSocketSession = this

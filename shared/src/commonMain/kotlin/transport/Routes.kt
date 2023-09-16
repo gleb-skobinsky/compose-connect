@@ -1,5 +1,7 @@
 package transport
 
+import buildVariant.RuntimeMode
+
 data class PlatformHosts(
     val desktop: String,
     val js: String,
@@ -31,5 +33,8 @@ object Routes {
         ios = "https://chirrio.mooo.com"
     )
 
-    const val port = 8081
+    operator fun get(mode: RuntimeMode) = when (mode) {
+        RuntimeMode.DEVELOPMENT -> development
+        RuntimeMode.PRODUCTION -> production
+    }
 }
