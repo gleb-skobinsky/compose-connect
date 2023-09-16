@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import composables.AuthScreen
 import composables.Conversation
-import composables.LoginScreen
 import data.MainViewModel
 import themes.ApplicationTheme
 
@@ -31,17 +31,15 @@ fun ThemeWrapper(
                 transitionSpec = {
                     val durationMillis = 1000
                     if (targetState != initialState && targetState) {
-                        (slideInVertically(animationSpec = tween(durationMillis)) { height -> height })
-                            .with(slideOutVertically(animationSpec = tween(durationMillis)) { height -> -height })
+                        slideInVertically(tween(durationMillis)) { it } togetherWith slideOutVertically(tween(durationMillis)) { it }
                     } else {
-                        slideInVertically(animationSpec = tween(durationMillis)) { height -> -height } with
-                                slideOutVertically(animationSpec = tween(durationMillis)) { height -> height }
+                        slideInVertically(tween(durationMillis)) { it } togetherWith slideOutVertically(tween(durationMillis)) { it }
                     }.using(
                         SizeTransform(clip = false)
                     )
                 }
             ) {
-                if (it) Conversation(viewModel) else LoginScreen(viewModel)
+                if (it) Conversation(viewModel) else AuthScreen(viewModel)
             }
         }
     }

@@ -1,85 +1,160 @@
 package composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import data.LoginScreenState
 import data.MainViewModel
-import data.User
 
 @Composable
-fun LoginScreen(viewModel: MainViewModel) {
+fun AuthScreen(viewModel: MainViewModel) {
+    val screenMode by viewModel.loginScreenMode.collectAsState()
+    Box(
+        Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        when (screenMode) {
+            LoginScreenState.LOGIN -> LoginScreen(viewModel)
+            LoginScreenState.REGISTER -> SignupScreen(viewModel)
+        }
+    }
+}
+
+@Composable
+fun BoxScope.SignupScreen(viewModel: MainViewModel) {
     var email by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
-    val loginButtonEnabled = email.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank()
-    Box(
-        Modifier.fillMaxSize()
-            .background(
-                brush = Brush.horizontalGradient(
-                    0f to Color(26, 73, 255),
-                    1f to Color(255, 65, 252)
-                )
-            )
+    val signupButtonEnabled = email.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank()
+
+    Column(
+        modifier = Modifier.align(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+        LoginHeaderText("Register")
+        LoginTextField(
+            label = "Email:",
+            value = email,
+            onValueChange = { email = it },
+        )
+        LoginTextField(
+            label = "First name:",
+            value = firstName,
+            onValueChange = { firstName = it }
+        )
+        LoginTextField(
+            label = "Last name:",
+            value = lastName,
+            onValueChange = { lastName = it }
+        )
+        AuthButton(
+            enabled = signupButtonEnabled,
+            text = "Sign up"
         ) {
-            LoginHeaderText("Please log in to start messaging")
-            LoginTextField(
-                value = email,
-                onValueChange = { email = it },
-            )
-            LoginTextField(
-                value = firstName,
-                onValueChange = { firstName = it }
-            )
-            LoginTextField(
-                value = lastName,
-                onValueChange = { lastName = it }
-            )
-            Button(
-                enabled = loginButtonEnabled,
-                onClick = {
-                    viewModel.setUser(
-                        User(
-                            email = email,
-                            firstName = firstName,
-                            lastName = lastName
-                        )
-                    )
-                }
-            ) {
-                Text("Log in", color = Color.White)
-            }
+
+        }
+        Row(Modifier.padding(top = 32.dp)) {
+            SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
+            SecondaryLoginText("Log in", Modifier.clickable { viewModel.setLoginMode(LoginScreenState.LOGIN) })
+        }
+    }
+}
+
+@Composable
+fun BoxScope.LoginScreen(viewModel: MainViewModel) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
+    Column(
+        modifier = Modifier.align(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LoginHeaderText("Please log in to start messaging")
+        LoginTextField(
+            label = "Email:",
+            value = email,
+            onValueChange = { email = it },
+        )
+        LoginTextField(
+            label = "Password:",
+            value = password,
+            onValueChange = { password = it },
+        )
+        AuthButton(
+            enabled = loginButtonEnabled,
+            text = "Log in"
+        ) {
+            viewModel.loginUser(email, password)
+        }
+        Row(Modifier.padding(top = 32.dp)) {
+            SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
+            SecondaryLoginText("Register", Modifier.clickable { viewModel.setLoginMode(LoginScreenState.REGISTER) })
         }
     }
 }
 
 @Composable
 fun LoginTextField(
+    label: String,
     value: String,
     onValueChange: (String) -> Unit,
-) = BasicTextField(
-    value = value,
-    onValueChange = onValueChange,
-    modifier = Modifier
-        .padding(bottom = 24.dp)
-        .width(300.dp)
-        .background(Color(252, 211, 172), RoundedCornerShape(12.dp))
-        .padding(6.dp)
-)
+) = Column {
+    SecondaryLoginText(
+        text = label,
+        modifier = Modifier.padding(top = 12.dp, bottom = 6.dp)
+    )
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .padding(bottom = 24.dp)
+            .width(300.dp)
+            .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(12.dp))
+            .padding(6.dp)
+    )
+}
+
+@Composable
+fun SecondaryLoginText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        color = MaterialTheme.colorScheme.primaryContainer,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun AuthButton(
+    enabled: Boolean,
+    text: String,
+    action: () -> Unit,
+) {
+    Button(
+        enabled = enabled,
+        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+        onClick = action,
+        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface)
+    ) {
+        Text(text, color = MaterialTheme.colorScheme.onSecondaryContainer)
+    }
+}
 
 @Composable
 fun LoginHeaderText(
@@ -87,7 +162,7 @@ fun LoginHeaderText(
 ) = Text(
     text = text,
     fontSize = 56.sp,
-    color = Color.White,
+    color = MaterialTheme.colorScheme.primary,
     textAlign = TextAlign.Center,
     modifier = Modifier.padding(bottom = 32.dp)
 )

@@ -29,6 +29,13 @@ class MainViewModel : ViewModelPlatformImpl() {
         _user.value = user
     }
 
+    private val _loginScreenMode = MutableStateFlow(LoginScreenState.LOGIN)
+    val loginScreenMode = _loginScreenMode.asStateFlow()
+
+    fun setLoginMode(mode: LoginScreenState) {
+        _loginScreenMode.value = mode
+    }
+
     private val _screenState: MutableStateFlow<AppScreenState> = MutableStateFlow(AppScreenState.CHAT)
     val screenState: StateFlow<AppScreenState> = _screenState
 
@@ -67,6 +74,10 @@ class MainViewModel : ViewModelPlatformImpl() {
             connectionsHandler.sendMessage(message)
         }
     }
+
+    fun loginUser(email: String, password: String) {
+
+    }
 }
 
 enum class AppScreenState {
@@ -74,3 +85,7 @@ enum class AppScreenState {
     ACCOUNT
 }
 
+enum class LoginScreenState {
+    LOGIN,
+    REGISTER
+}
