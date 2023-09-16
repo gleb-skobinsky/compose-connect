@@ -14,16 +14,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import themes.ThemeMode
 import transport.Routes
 import transport.WsHandler
 import transport.platformName
 import viewmodel.ViewModelPlatformImpl
+import kotlin.coroutines.cancellation.CancellationException
 
 @Stable
 class MainViewModel : ViewModelPlatformImpl() {
-    private val httpClient = HttpClient() {
+    private val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
@@ -44,7 +46,7 @@ class MainViewModel : ViewModelPlatformImpl() {
     private val _user: MutableStateFlow<User?> = MutableStateFlow(null)
     val user = _user.asStateFlow()
 
-    fun setUser(user: User) {
+    private fun setUser(user: User) {
         _user.value = user
     }
 
@@ -96,12 +98,23 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun loginUser(email: String, password: String) {
         vmScope.launch {
-            val response = httpClient.post("http://${Routes[mode][platformName]}/chat/api/login/") {
-                contentType(ContentType.Application.Json)
-                setBody(LoginForm(email, password))
+            try {
+
+                val response = httpClient.post("http://${Routes[mode][platformName]}/token/") {
+                    contentType(ContentType.Application.Json)
+                    setBody(LoginForm(email, password))
+                }
+                if (response.status.value in 200..299) {
+                    val credentials = Json.decodeFromString<CredentialsResponse>(response.bodyAsText())
+                    setUser(
+                        User(email = email, accessToken = credentials.access, refreshToken = credentials.refresh)
+                    )
+                } else {
+                    throw CancellationException("Wrong response status: ${response.status}")
+                }
+            } catch (e: Exception) {
+                println("Error connecting to server")
             }
-            val responseBody = response.bodyAsText()
-            println("Response: $responseBody")
         }
     }
 }
