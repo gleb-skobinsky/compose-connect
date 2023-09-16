@@ -207,7 +207,6 @@ fun ProfileFab(
     modifier: Modifier = Modifier,
     onFabClicked: () -> Unit = { },
 ) {
-
     key(userIsMe) { // Prevent multiple invocations to execute during composition
         FloatingActionButton(
             onClick = onFabClicked,

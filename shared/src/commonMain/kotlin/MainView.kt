@@ -1,7 +1,6 @@
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -46,8 +45,8 @@ fun ThemeWrapper(
                             SizeTransform(clip = true)
                         )
                     }
-                ) {
-                    if (it) Conversation(viewModel) else AuthScreen(viewModel)
+                ) { loggedIn ->
+                    if (loggedIn) Conversation(viewModel) else AuthScreen(viewModel)
                 }
             }
         }

@@ -12,14 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import data.MainViewModel
 import data.AppScreenState
+import data.MainViewModel
 import data.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import platform.statusBarsPaddingMpp
 import platform.userInputModifier
-import themes.toTheme
 import transport.getTimeNow
 
 @Composable
@@ -54,9 +53,6 @@ fun Conversation(
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
-        },
-        onThemeChange = { value ->
-            viewModel.switchTheme(value.toTheme())
         }
     ) {
         when (screenState) {
@@ -76,7 +72,6 @@ fun Conversation(
                 }
             }
         }
-
     }
 }
 

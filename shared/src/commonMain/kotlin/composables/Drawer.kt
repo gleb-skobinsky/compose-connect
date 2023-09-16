@@ -27,7 +27,6 @@ import resourceBindings.drawable_jetchat_icon_mpp
 fun AppDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
-    onThemeChange: (Boolean) -> Unit,
     viewModel: MainViewModel,
 ) {
     val selectedChatTitle by viewModel.conversationUiState.collectAsState()
@@ -47,7 +46,7 @@ fun AppDrawer(
     exampleAccountsState.entries.forEach { (profileId, profile) ->
         ProfileItem(profile.name, profile.photo) { onProfileClicked(profileId) }
     }
-    ThemeSwitch(viewModel, onThemeChange)
+    ThemeSwitch(viewModel)
 }
 
 

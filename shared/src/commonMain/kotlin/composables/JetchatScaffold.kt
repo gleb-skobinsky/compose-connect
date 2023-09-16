@@ -28,7 +28,6 @@ fun AppScaffold(
     viewModel: MainViewModel,
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
-    onThemeChange: (Boolean) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -43,7 +42,6 @@ fun AppScaffold(
                 AppDrawer(
                     onProfileClicked = onProfileClicked,
                     onChatClicked = onChatClicked,
-                    onThemeChange = onThemeChange,
                     viewModel = viewModel
                 )
             }

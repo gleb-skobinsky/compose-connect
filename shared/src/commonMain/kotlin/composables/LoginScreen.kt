@@ -5,10 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,13 +25,31 @@ import data.MainViewModel
 @Composable
 fun AuthScreen(viewModel: MainViewModel) {
     val screenMode by viewModel.loginScreenMode.collectAsState()
-    Box(
-        Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+    Scaffold(
+        floatingActionButton = {
+            Surface(
+                modifier = Modifier
+                    .requiredSize(120.dp, 48.dp)
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .clickable {
+                        viewModel.switchTheme(!viewModel.themeMode.value)
+                    },
+                shape = RoundedCornerShape(50),
+                elevation = 18.dp,
+                color = MaterialTheme.colorScheme.secondary
+            ) {
+                ThemeSwitch(viewModel)
+            }
+        }
     ) {
-        when (screenMode) {
-            LoginScreenState.LOGIN -> LoginScreen(viewModel)
-            LoginScreenState.REGISTER -> SignupScreen(viewModel)
+        Box(
+            Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            when (screenMode) {
+                LoginScreenState.LOGIN -> LoginScreen(viewModel)
+                LoginScreenState.REGISTER -> SignupScreen(viewModel)
+            }
         }
     }
 }
@@ -150,9 +170,9 @@ fun AuthButton(
         enabled = enabled,
         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
         onClick = action,
-        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface)
+        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
     ) {
-        Text(text, color = MaterialTheme.colorScheme.onSecondaryContainer)
+        Text(text, color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
