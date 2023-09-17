@@ -92,10 +92,7 @@ class MainViewModel : ViewModelPlatformImpl() {
         vmScope.launch {
             user.value?.let { user ->
                 _user.value = null
-                when (val result = UserRepository.logout(user)) {
-                    is Resource.Data -> Unit
-                    is Resource.Error -> _errorMessage.value = result
-                }
+                UserRepository.logout(user)
             }
         }
     }

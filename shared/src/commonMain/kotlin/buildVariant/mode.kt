@@ -10,4 +10,4 @@ enum class RuntimeMode {
     }
 }
 
-val mode = RuntimeMode.PRODUCTION
+val mode = RuntimeMode.DEVELOPMENT
