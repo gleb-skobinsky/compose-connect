@@ -5,8 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +24,10 @@ import data.MainViewModel
 @Composable
 fun AuthScreen(viewModel: MainViewModel) {
     val screenMode by viewModel.loginScreenMode.collectAsState()
+    val scaffoldState = rememberScaffoldState()
+    ShowOrHideSnackbar(viewModel, scaffoldState)
     Scaffold(
+        scaffoldState = scaffoldState,
         floatingActionButton = {
             Surface(
                 modifier = Modifier
@@ -50,6 +52,21 @@ fun AuthScreen(viewModel: MainViewModel) {
                 LoginScreenState.LOGIN -> LoginScreen(viewModel)
                 LoginScreenState.REGISTER -> SignupScreen(viewModel)
             }
+        }
+    }
+}
+
+@Composable
+fun ShowOrHideSnackbar(viewModel: MainViewModel, scaffoldState: ScaffoldState) {
+    val error by viewModel.errorMessage.collectAsState()
+    LaunchedEffect(error) {
+        error?.let {
+            println(it)
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = "${it.message}. Http status: ${it.status.value} - ${it.status.description}",
+                actionLabel = null,
+                duration = SnackbarDuration.Short
+            )
         }
     }
 }

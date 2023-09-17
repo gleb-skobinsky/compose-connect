@@ -2,30 +2,18 @@ package data
 
 import androidx.compose.runtime.Stable
 import data.repositories.UserRepository
-import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import themes.ThemeMode
 import transport.WsHandler
 import viewmodel.ViewModelPlatformImpl
 
 @Stable
 class MainViewModel : ViewModelPlatformImpl() {
-    private val httpClient = HttpClient {
-        install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-            })
-        }
-    }
     private val websocketHandler = WsHandler()
 
     init {
@@ -45,6 +33,9 @@ class MainViewModel : ViewModelPlatformImpl() {
     fun setLoginMode(mode: LoginScreenState) {
         _loginScreenMode.value = mode
     }
+
+    private val _errorMessage = MutableStateFlow<Resource.Error<*>?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
 
     private val _screenState: MutableStateFlow<AppScreenState> = MutableStateFlow(AppScreenState.CHAT)
     val screenState: StateFlow<AppScreenState> = _screenState
@@ -89,7 +80,10 @@ class MainViewModel : ViewModelPlatformImpl() {
         vmScope.launch {
             when (val result = UserRepository.login(email, password)) {
                 is Resource.Data -> _user.value = result.payload
-                is Resource.Error -> _user.value = null
+                is Resource.Error -> {
+                    _user.value = null
+                    _errorMessage.value = result
+                }
             }
         }
     }
@@ -100,7 +94,7 @@ class MainViewModel : ViewModelPlatformImpl() {
                 _user.value = null
                 when (val result = UserRepository.logout(user)) {
                     is Resource.Data -> Unit
-                    is Resource.Error -> Unit
+                    is Resource.Error -> _errorMessage.value = result
                 }
             }
         }

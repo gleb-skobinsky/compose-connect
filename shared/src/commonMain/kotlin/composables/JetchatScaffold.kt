@@ -30,6 +30,7 @@ fun AppScaffold(
     onChatClicked: (String) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    ShowOrHideSnackbar(viewModel, scaffoldState)
     Scaffold(
         scaffoldState = scaffoldState,
         drawerContent = {
