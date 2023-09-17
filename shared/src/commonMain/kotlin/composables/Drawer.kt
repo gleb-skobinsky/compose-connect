@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import data.*
+import data.MainViewModel
+import data.exampleAccountsState
+import data.exampleUiState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import platform.pointerCursor
@@ -30,23 +32,44 @@ fun AppDrawer(
     viewModel: MainViewModel,
 ) {
     val selectedChatTitle by viewModel.conversationUiState.collectAsState()
-    // Use statusBarsHeight() to add a spacer which pushes the drawer content
-    // below the status bar (y-axis)
-    Spacer(Modifier.height(3.dp))
-    DrawerHeader()
-    DividerItem()
-    DrawerItemHeader("Chats")
-    exampleUiState.keys.forEach { title ->
-        ChatItem(title, selectedChatTitle.channelName == title) {
-            onChatClicked(title)
+    val currentUser by viewModel.user.collectAsState()
+    Box {
+        Column {
+            Spacer(Modifier.height(3.dp))
+            DrawerHeader()
+            DividerItem()
+            DrawerItemHeader("Chats")
+            exampleUiState.keys.forEach { title ->
+                ChatItem(title, selectedChatTitle.channelName == title) {
+                    onChatClicked(title)
+                }
+            }
+            DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
+            DrawerItemHeader("Recent Profiles")
+            exampleAccountsState.entries.forEach { (profileId, profile) ->
+                ProfileItem(profile.name, profile.photo) { onProfileClicked(profileId) }
+            }
+            ThemeSwitch(viewModel)
+        }
+        Row(Modifier.padding(24.dp).align(Alignment.BottomCenter)) {
+            currentUser?.let {
+                Text(
+                    text = "Logged in as ${it.firstName} ${it.lastName}",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(12.dp))
+                LogoutButton(viewModel, Modifier.weight(1f))
+            }
         }
     }
-    DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
-    DrawerItemHeader("Recent Profiles")
-    exampleAccountsState.entries.forEach { (profileId, profile) ->
-        ProfileItem(profile.name, profile.photo) { onProfileClicked(profileId) }
+}
+
+@Composable
+private fun LogoutButton(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+    AuthButton(true, "Log out", modifier) {
+        viewModel.logoutUser()
     }
-    ThemeSwitch(viewModel)
 }
 
 

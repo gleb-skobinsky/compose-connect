@@ -164,11 +164,12 @@ fun SecondaryLoginText(
 fun AuthButton(
     enabled: Boolean,
     text: String,
+    modifier: Modifier = Modifier,
     action: () -> Unit,
 ) {
     Button(
         enabled = enabled,
-        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+        modifier = modifier.pointerHoverIcon(PointerIcon.Hand),
         onClick = action,
         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
     ) {

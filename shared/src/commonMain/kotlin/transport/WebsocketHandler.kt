@@ -31,11 +31,11 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         try {
             client.webSocket(
                 method = HttpMethod.Get,
-                host = Routes[mode][platformName],
+                host = LocalRoute[mode][platformName],
                 port = mode.toPort(),
                 path = path,
                 request = {
-                    header("origin", "http://${Routes[mode][platformName]}")
+                    header("origin", "http://${LocalRoute[mode][platformName]}")
                 }
             ) {
                 ktorWebSocketSession = this

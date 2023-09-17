@@ -8,7 +8,7 @@ actual class WsHandler : WebSocketHandlerPlatform {
 
     private lateinit var ws: WebSocket
     override suspend fun connectRoom(path: String, onMessageReceive: (Message) -> Unit) {
-        ws = WebSocket("ws://${Routes.development.js}/$path")
+        ws = WebSocket("ws://${LocalRoute.development.js}/$path")
         ws.onopen = {
 
         }
