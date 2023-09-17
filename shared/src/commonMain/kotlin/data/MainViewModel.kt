@@ -99,6 +99,18 @@ class MainViewModel : ViewModelPlatformImpl() {
             }
         }
     }
+
+    fun signupUser(email: String, firstName: String, lastName: String, password: String) {
+        vmScope.launch {
+            val result = UserRepository.signupUser(
+                SignupRequest(email, firstName, lastName, password)
+            )
+            when (result) {
+                is Resource.Data -> _user.value = result.payload
+                is Resource.Error -> _errorMessage.value = result
+            }
+        }
+    }
 }
 
 @Serializable

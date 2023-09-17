@@ -6,14 +6,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,9 +66,8 @@ fun ShowOrHideSnackbar(viewModel: MainViewModel, scaffoldState: ScaffoldState) {
     val error by viewModel.errorMessage.collectAsState()
     LaunchedEffect(error) {
         error?.let {
-            println(it)
             scaffoldState.snackbarHostState.showSnackbar(
-                message = "${it.message}. Http status: ${it.status.value} - ${it.status.description}",
+                message = "${it.message} Http status: ${it.status.value} - ${it.status.description}",
                 actionLabel = null,
                 duration = SnackbarDuration.Short
             )
@@ -75,8 +80,14 @@ fun BoxScope.SignupScreen(viewModel: MainViewModel) {
     var email by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
-    val signupButtonEnabled = email.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank()
-
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    val signupButtonEnabled = email.isNotBlank() &&
+            firstName.isNotBlank() &&
+            lastName.isNotBlank() &&
+            password.isNotBlank() &&
+            confirmPassword.isNotBlank() &&
+            password == confirmPassword
     Column(
         modifier = Modifier.align(Alignment.Center),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -97,11 +108,23 @@ fun BoxScope.SignupScreen(viewModel: MainViewModel) {
             value = lastName,
             onValueChange = { lastName = it }
         )
+        LoginTextField(
+            label = "Password:",
+            value = password,
+            isPassword = true,
+            onValueChange = { password = it }
+        )
+        LoginTextField(
+            label = "Confirm password:",
+            value = confirmPassword,
+            isPassword = true,
+            onValueChange = { confirmPassword = it }
+        )
         AuthButton(
             enabled = signupButtonEnabled,
             text = "Sign up"
         ) {
-
+            viewModel.signupUser(email, firstName, lastName, password)
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
@@ -128,8 +151,8 @@ fun BoxScope.LoginScreen(viewModel: MainViewModel) {
         LoginTextField(
             label = "Password:",
             value = password,
-            onValueChange = { password = it },
-        )
+            isPassword = true
+        ) { password = it }
         AuthButton(
             enabled = loginButtonEnabled,
             text = "Log in"
@@ -147,8 +170,10 @@ fun BoxScope.LoginScreen(viewModel: MainViewModel) {
 fun LoginTextField(
     label: String,
     value: String,
+    isPassword: Boolean = false,
     onValueChange: (String) -> Unit,
 ) = Column {
+    var passwordVisible by remember { mutableStateOf(false) }
     SecondaryLoginText(
         text = label,
         modifier = Modifier.padding(top = 12.dp, bottom = 6.dp)
@@ -156,6 +181,26 @@ fun LoginTextField(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
+        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+        decorationBox = { innerTextField ->
+            if (isPassword) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                        contentDescription = "Show password",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .pointerHoverIcon(PointerIcon.Hand)
+                            .clickable { passwordVisible = !passwordVisible }
+                    )
+                }
+
+            } else Unit
+            innerTextField()
+        },
         modifier = Modifier
             .padding(bottom = 24.dp)
             .width(300.dp)

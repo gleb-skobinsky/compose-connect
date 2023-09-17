@@ -66,5 +66,28 @@ object UserRepository {
             )
         }
     }
+
+    suspend fun signupUser(request: SignupRequest): Resource<User> {
+        try {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/signup/") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+            return if (response.status.value in 200..299) {
+                val user = Json.decodeFromString<User>(response.bodyAsText())
+                Resource.Data(user)
+            } else {
+                Resource.Error(
+                    message = "Error during signup. Check your email and password.",
+                    status = response.status
+                )
+            }
+        } catch (e: Exception) {
+            return Resource.Error(
+                message = "Couldn't reach server.",
+                status = HttpStatusCode.ServiceUnavailable
+            )
+        }
+    }
 }
 

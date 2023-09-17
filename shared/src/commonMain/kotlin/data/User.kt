@@ -23,3 +23,6 @@ data class CredentialsResponse(
 data class LogoutRequest(
     val refreshToken: String,
 )
+
+@Serializable
+data class SignupRequest(val email: String, val firstName: String, val lastName: String, val password: String)
