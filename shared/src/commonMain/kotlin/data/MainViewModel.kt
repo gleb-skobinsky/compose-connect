@@ -18,7 +18,7 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     init {
         vmScope.launch(Dispatchers.Default) {
-            websocketHandler.connectRoom("composers/") { message ->
+            websocketHandler.connectRoom("chat/composers/") { message ->
                 _conversationUiState.value.addMessage(message)
             }
         }
