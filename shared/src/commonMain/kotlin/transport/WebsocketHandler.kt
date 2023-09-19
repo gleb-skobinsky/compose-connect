@@ -1,6 +1,5 @@
 package transport
 
-import buildVariant.mode
 import data.Message
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
