@@ -6,13 +6,10 @@ import org.w3c.dom.WebSocket
 
 actual class WsHandler : WebSocketHandlerPlatform {
 
-
     private lateinit var ws: WebSocket
     override suspend fun connectRoom(path: String, onMessageReceive: (Message) -> Unit) {
         ws = WebSocket("${LocalRoute.currentWsUrl}/$path")
-        ws.onopen = {
-
-        }
+        ws.onopen = {}
         ws.onmessage = { event ->
             try {
                 console.log(event.data)
