@@ -31,11 +31,10 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         try {
             client.webSocket(
                 method = HttpMethod.Get,
-                host = LocalRoute[mode][platformName],
-                port = mode.toPort(),
+                host = LocalRoute.current,
                 path = path,
                 request = {
-                    header("origin", "http://${LocalRoute[mode][platformName]}")
+                    header("origin", LocalRoute.currentUrl)
                 }
             ) {
                 ktorWebSocketSession = this
@@ -47,6 +46,7 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
             }
         } catch (e: Exception) {
             println("Failed to connect to websocket server:")
+            println(e.message)
         }
     }
 

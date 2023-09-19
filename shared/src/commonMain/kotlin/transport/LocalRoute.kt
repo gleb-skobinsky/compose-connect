@@ -34,7 +34,7 @@ object LocalRoute {
         ios = "chirrio.mooo.com"
     )
 
-    operator fun get(mode: RuntimeMode) = when (mode) {
+    private operator fun get(mode: RuntimeMode) = when (mode) {
         RuntimeMode.DEVELOPMENT -> development
         RuntimeMode.PRODUCTION -> production
     }
@@ -46,6 +46,18 @@ object LocalRoute {
         RuntimeMode.PRODUCTION -> "https://"
     }
 
+    private val wsProtocol = when (mode) {
+        RuntimeMode.DEVELOPMENT -> "ws://"
+        RuntimeMode.PRODUCTION -> "wss://"
+    }
+
     val currentUrl = protocol + current
+
+    val currentWsUrl = wsProtocol + current
+
+    init {
+        println("WEBSOCKET URL:")
+        println(currentWsUrl)
+    }
 }
 

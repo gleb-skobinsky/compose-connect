@@ -46,7 +46,7 @@ class MainViewModel : ViewModelPlatformImpl() {
     private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
     val selectedUserProfile: StateFlow<ProfileScreenState?> = _selectedUserProfile
 
-    private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.LIGHT)
+    private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.DARK)
     val themeMode: StateFlow<ThemeMode> = _themeMode
 
     private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
