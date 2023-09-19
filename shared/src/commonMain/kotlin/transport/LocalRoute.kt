@@ -51,13 +51,8 @@ object LocalRoute {
         RuntimeMode.PRODUCTION -> "wss://"
     }
 
-    val currentUrl = protocol + current
+    val currentUrl = "$protocol$current:8000"
 
     val currentWsUrl = wsProtocol + current
-
-    init {
-        println("WEBSOCKET URL:")
-        println(currentWsUrl)
-    }
 }
 

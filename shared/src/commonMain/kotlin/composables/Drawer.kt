@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import data.MainViewModel
@@ -51,7 +52,13 @@ fun AppDrawer(
             }
             ThemeSwitch(viewModel)
         }
-        Row(Modifier.padding(24.dp).align(Alignment.BottomCenter)) {
+        Row(
+            Modifier
+                .shadow(32.dp)
+                .background(MaterialTheme.colorScheme.onBackground)
+                .padding(24.dp)
+                .align(Alignment.BottomCenter)
+        ) {
             currentUser?.let {
                 Text(
                     text = "Logged in as ${it.firstName} ${it.lastName}",
