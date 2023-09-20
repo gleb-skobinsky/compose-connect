@@ -2,7 +2,6 @@ package data
 
 import resourceBindings.drawable_ali
 import resourceBindings.drawable_someone_else
-import resourceBindings.drawable_sticker
 
 
 /**
