@@ -5,7 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,11 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import data.MainViewModel
 import data.exampleAccountsState
-import data.exampleUiState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import platform.pointerCursor
@@ -34,17 +38,19 @@ fun AppDrawer(
 ) {
     val selectedChatTitle by viewModel.conversationUiState.collectAsState()
     val currentUser by viewModel.user.collectAsState()
+    val chats by viewModel.chats.collectAsState()
     Box {
         Column {
             Spacer(Modifier.height(3.dp))
             DrawerHeader()
             DividerItem()
             DrawerItemHeader("Chats")
-            exampleUiState.keys.forEach { title ->
-                ChatItem(title, selectedChatTitle.channelName == title) {
-                    onChatClicked(title)
+            chats.entries.forEach { (id, chat) ->
+                ChatItem(chat.channelName, selectedChatTitle.channelName == chat.channelName) {
+                    onChatClicked(id)
                 }
             }
+            RoomCreationButton(viewModel)
             DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
             DrawerItemHeader("Recent Profiles")
             exampleAccountsState.entries.forEach { (profileId, profile) ->
@@ -68,6 +74,33 @@ fun AppDrawer(
                 Spacer(Modifier.width(12.dp))
                 LogoutButton(viewModel, Modifier.weight(1f))
             }
+        }
+    }
+}
+
+@Composable
+private fun RoomCreationButton(viewModel: MainViewModel) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Column(
+            Modifier
+                .size(48.dp)
+                .shadow(18.dp, RoundedCornerShape(50))
+                .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(50))
+                .pointerHoverIcon(PointerIcon.Hand)
+                .clickable {
+                    viewModel.openRoomDialog()
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add room",
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

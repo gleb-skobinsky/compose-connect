@@ -82,19 +82,6 @@ val initialMessages2 = listOf(
     )
 )
 
-val exampleUiState = mapOf(
-    "composers" to ConversationUiState(
-        initialMessages = initialMessages,
-        channelName = "composers",
-        channelMembers = 42
-    ),
-    "droidcon-nyc" to ConversationUiState(
-        initialMessages = initialMessages2,
-        channelName = "droidcon-nyc",
-        channelMembers = 15
-    )
-)
-
 val exampleAccountsState = mapOf(
     "me" to meProfile,
     "12345" to colleagueProfile

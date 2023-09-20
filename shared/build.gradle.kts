@@ -80,6 +80,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation(npm("uuid", "9.0.1"))
             }
         }
     }

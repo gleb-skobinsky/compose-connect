@@ -85,6 +85,7 @@ private fun ConversationContent(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val messagesState by viewModel.conversationUiState.collectAsState()
+    RoomCreationDialog(viewModel)
     Box(modifier = Modifier.fillMaxSize()) {
         Messages(messagesState, scrollState)
         Column(
@@ -95,8 +96,10 @@ private fun ConversationContent(
             UserInput(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
-                    val message = Message("me", content, timeNow)
-                    viewModel.sendMessage(message)
+                    viewModel.user.value?.let { user ->
+                        val message = Message(user.email, content, timeNow)
+                        viewModel.sendMessage(message)
+                    }
                 },
                 resetScroll = {
                     scope.launch {
