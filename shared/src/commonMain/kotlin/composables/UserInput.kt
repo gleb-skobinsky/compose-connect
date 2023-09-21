@@ -1,57 +1,19 @@
 package composables
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AlternateEmail
-import androidx.compose.material.icons.outlined.Duo
-import androidx.compose.material.icons.outlined.InsertPhoto
-import androidx.compose.material.icons.outlined.Mood
-import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -60,24 +22,19 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import platform.pointerCursor
 import platform.textCursor
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserInput(
     onMessageSent: (String) -> Unit,
@@ -92,16 +49,16 @@ fun UserInput(
 //        BackPressHandler(onBackPressed = dismissKeyboard)
 //    }
 
-    var textState by remember { mutableStateOf(TextFieldValue()) }
+    var textState by remember { mutableStateOf("") }
 
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     Surface(elevation = 2.dp) {
         val actualOnMessageSent = {
-            onMessageSent(textState.text.trim())
+            onMessageSent(textState.trim())
             // Reset text field and close keyboard
-            textState = TextFieldValue()
+            textState = ""
             // Move scroll to bottom
             resetScroll()
             dismissKeyboard()
@@ -128,13 +85,13 @@ fun UserInput(
             )
             UserInputSelector(
                 onSelectorChange = { currentInputSelector = it },
-                sendMessageEnabled = textState.text.isNotBlank(),
+                sendMessageEnabled = textState.isNotBlank(),
                 onMessageSent = actualOnMessageSent,
                 currentInputSelector = currentInputSelector
             )
             SelectorExpanded(
                 onCloseRequested = dismissKeyboard,
-                onTextAdded = { textState = textState.copy(text = textState.text + it) },
+                onTextAdded = { textState += it },
                 currentSelector = currentInputSelector
             )
         }
@@ -172,7 +129,6 @@ private fun SelectorExpanded(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FunctionalityNotAvailablePanel() {
     AnimatedVisibility(
@@ -203,13 +159,12 @@ fun FunctionalityNotAvailablePanel() {
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalFoundationApi
 @Composable
 private fun UserInputText(
     keyboardType: KeyboardType = KeyboardType.Text,
-    onTextChanged: (TextFieldValue) -> Unit,
-    textFieldValue: TextFieldValue,
+    onTextChanged: (String) -> Unit,
+    textFieldValue: String,
     onTextFieldFocused: (Boolean) -> Unit,
     focusState: Boolean,
     onMessageSent: () -> Unit,
@@ -288,7 +243,7 @@ private fun UserInputText(
                 )
 
                 val disableContentColor = Color.LightGray
-                if (textFieldValue.text.isEmpty() && !focusState) {
+                if (textFieldValue.isEmpty() && !focusState) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterStart)
