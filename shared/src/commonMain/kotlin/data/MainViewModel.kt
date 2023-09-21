@@ -45,7 +45,7 @@ class MainViewModel : ViewModelPlatformImpl() {
     val errorMessage = _errorMessage.asStateFlow()
 
     private val _screenState: MutableStateFlow<AppScreenState> = MutableStateFlow(AppScreenState.CHAT)
-    val screenState: StateFlow<AppScreenState> = _screenState
+    val screenState: StateFlow<AppScreenState> = _screenState.asStateFlow()
 
     private val _chats: MutableStateFlow<Map<String, ConversationUiState>> = MutableStateFlow(emptyMap())
     val chats = _chats.asStateFlow()
@@ -54,13 +54,27 @@ class MainViewModel : ViewModelPlatformImpl() {
     val conversationUiState = _conversationUiState.asStateFlow()
 
     private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
-    val selectedUserProfile: StateFlow<ProfileScreenState?> = _selectedUserProfile
+    val selectedUserProfile: StateFlow<ProfileScreenState?> = _selectedUserProfile.asStateFlow()
 
     private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.DARK)
-    val themeMode: StateFlow<ThemeMode> = _themeMode
+    val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
     private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val drawerShouldBeOpened: StateFlow<Boolean> = _drawerShouldBeOpened
+    val drawerShouldBeOpened: StateFlow<Boolean> = _drawerShouldBeOpened.asStateFlow()
+
+    private val _searchedUsers = MutableStateFlow(emptyList<User>())
+    val searchedUsers = _searchedUsers.asStateFlow()
+
+    private val _selectedUsers = MutableStateFlow(emptySet<String>())
+    val selectedUsers = _selectedUsers.asStateFlow()
+
+    fun selectUser(email: String) {
+        _selectedUsers.update { it + email }
+    }
+
+    fun unselectUser(email: String) {
+        _selectedUsers.update { it - email }
+    }
 
     fun setCurrentConversation(id: String) {
         _screenState.value = AppScreenState.CHAT
@@ -153,7 +167,7 @@ class MainViewModel : ViewModelPlatformImpl() {
                 room = ChatRoomCreationDto(
                     id = uuid(),
                     name = roomName,
-                    users = listOf(user.value.email)
+                    users = listOf(user.value.email) + selectedUsers.value.toList()
                 ),
                 currentUser = user.value
             )
@@ -169,6 +183,22 @@ class MainViewModel : ViewModelPlatformImpl() {
             }
             closeRoomDialog()
         }
+    }
+
+    fun searchUsers(email: String) {
+        vmScope.launch {
+            when (val searched = UserRepository.search(SearchUser(email), _user.value)) {
+                is Resource.Data -> {
+                    _searchedUsers.value = searched.payload.users
+                }
+
+                is Resource.Error -> Unit
+            }
+        }
+    }
+
+    fun clearSearch() {
+        _searchedUsers.value = emptyList()
     }
 
     operator fun get(chatRoomId: String?): ConversationUiState =

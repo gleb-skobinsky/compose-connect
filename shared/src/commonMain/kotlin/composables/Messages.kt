@@ -58,7 +58,7 @@ fun Messages(
             MessageWidget(
                 onAuthorClick = { name -> println(name) },
                 msg = msg,
-                isUserMe = msg.author == user?.email,
+                isUserMe = msg.author.email == user?.email,
                 isFirstMessageByAuthor = isFirstMessageByAuthor,
                 isLastMessageByAuthor = isLastMessageByAuthor,
             )
@@ -86,7 +86,7 @@ fun MessageWidget(
         if (isLastMessageByAuthor) {
             Image(
                 modifier = Modifier
-                    .clickable(onClick = { onAuthorClick(msg.author) })
+                    .clickable(onClick = { onAuthorClick(msg.author.email) })
                     .padding(horizontal = 16.dp)
                     .size(42.dp)
                     .border(1.5.dp, borderColor, CircleShape)
@@ -124,7 +124,7 @@ fun AuthorAndTextMessage(
 ) {
     Column(modifier = modifier) {
         if (isLastMessageByAuthor) {
-            AuthorNameTimestamp(msg)
+            AuthorNameTimestamp(msg, isUserMe)
         }
         ChatItemBubble(msg, isUserMe, authorClicked = authorClicked)
         if (isFirstMessageByAuthor) {
@@ -138,12 +138,11 @@ fun AuthorAndTextMessage(
 }
 
 @Composable
-private fun AuthorNameTimestamp(msg: Message) {
+private fun AuthorNameTimestamp(msg: Message, isUserMe: Boolean) {
     val textColor = MaterialTheme.colorScheme.onSurfaceVariant
-    // Combine author and timestamp for a11y.
     Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
         Text(
-            text = msg.author,
+            text = if (isUserMe) "Me" else msg.author.fullName,
             style = MaterialTheme.typography.titleMedium,
             color = textColor,
             modifier = Modifier

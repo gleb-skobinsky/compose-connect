@@ -14,7 +14,7 @@ data class Message(
     @Transient
     val id: String = uuid(),
     val roomId: String, // uid
-    val author: String, // user email
+    val author: User,
     val content: String,
     val timestamp: String,
     val image: String? = null,
@@ -26,7 +26,7 @@ data class MessageDto(
     @SerialName("chatroom_id")
     val chatRoom: String,
     @SerialName("user_id")
-    val userEmail: String,
+    val user: User,
     val text: String,
     val timestamp: String,
 )
@@ -37,6 +37,6 @@ data class InitialMessages(
     val messages: List<MessageDto>,
 ) {
     fun toConvState() = messages.map {
-        Message(roomId = it.chatRoom, author = it.userEmail, content = it.text, timestamp = it.timestamp)
+        Message(roomId = it.chatRoom, author = it.user, content = it.text, timestamp = it.timestamp)
     }
 }

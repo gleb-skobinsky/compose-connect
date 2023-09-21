@@ -23,7 +23,7 @@ import transport.getTimeNow
 import util.uuid
 
 @Composable
-fun Conversation(
+fun MainBody(
     viewModel: MainViewModel,
 ) {
     val scrollState = rememberLazyListState()
@@ -40,6 +40,7 @@ fun Conversation(
         }
     }
 
+    RoomCreationDialog(viewModel)
     AppScaffold(
         scaffoldState = scaffoldState,
         viewModel = viewModel,
@@ -87,7 +88,6 @@ private fun ConversationContent(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val selectedRoom by viewModel.conversationUiState.collectAsState()
     val user by viewModel.user.collectAsState()
-    RoomCreationDialog(viewModel)
     Box(modifier = Modifier.fillMaxSize()) {
         Messages(selectedRoom, user, scrollState)
         Column(
@@ -101,7 +101,7 @@ private fun ConversationContent(
                     val message = Message(
                         id = uuid(),
                         roomId = selectedRoom.id,
-                        author = viewModel.user.value.email,
+                        author = viewModel.user.value,
                         content = content,
                         timestamp = timeNow
                     )

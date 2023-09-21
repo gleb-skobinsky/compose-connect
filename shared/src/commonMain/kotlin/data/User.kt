@@ -19,6 +19,8 @@ data class User(
 ) {
     fun getBearer() = "Bearer $accessToken"
 
+    val fullName = "$firstName $lastName"
+
     companion object {
         val Empty = User(email = "")
     }
@@ -43,4 +45,14 @@ data class SignupRequest(
     @SerialName("last_name")
     val lastName: String,
     val password: String,
+)
+
+@Serializable
+data class SearchUser(
+    val email: String,
+)
+
+@Serializable
+data class SearchUserResponse(
+    val users: List<User>,
 )

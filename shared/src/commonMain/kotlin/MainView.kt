@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import composables.AuthScreen
-import composables.Conversation
+import composables.MainBody
 import data.MainViewModel
 import data.User
 import themes.ApplicationTheme
@@ -47,7 +47,7 @@ fun ThemeWrapper(
                         )
                     }
                 ) { loggedIn ->
-                    if (loggedIn) Conversation(viewModel) else AuthScreen(viewModel)
+                    if (loggedIn) MainBody(viewModel) else AuthScreen(viewModel)
                 }
             }
         }

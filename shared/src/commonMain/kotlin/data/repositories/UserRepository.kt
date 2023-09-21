@@ -89,5 +89,29 @@ object UserRepository {
             )
         }
     }
+
+    suspend fun search(request: SearchUser, user: User): Resource<SearchUserResponse> {
+        try {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/user-search/") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+                headers.append("Authorization", user.getBearer())
+            }
+            return if (response.status.value in 200..299) {
+                val users = Json.decodeFromString<SearchUserResponse>(response.bodyAsText())
+                Resource.Data(users)
+            } else {
+                Resource.Error(
+                    message = "Error during search.",
+                    status = response.status
+                )
+            }
+        } catch (e: Exception) {
+            return Resource.Error(
+                message = "Couldn't reach server.",
+                status = HttpStatusCode.ServiceUnavailable
+            )
+        }
+    }
 }
 
