@@ -1,11 +1,10 @@
 package data.repositories
 
-import data.ChatRoomCreationDto
-import data.Resource
-import data.User
+import data.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import transport.LocalRoute
 import transport.chirrioClient
@@ -24,6 +23,20 @@ object RoomRepository {
             println("Error")
             println(e.message)
             Resource.Error("Error creating room", response.status)
+        }
+    }
+
+    suspend fun getRoomsByUser(user: User): Resource<Map<String, ConversationUiState>> {
+        val roomsResponse = chirrioClient.post("${LocalRoute.currentUrl}/rooms-by-user/") {
+            contentType(ContentType.Application.Json)
+            setBody(user)
+            headers.append("Authorization", user.getBearer())
+        }
+        return try {
+            val rooms = Json.decodeFromString<UserRooms>(roomsResponse.bodyAsText()).toConvState()
+            return Resource.Data(rooms)
+        } catch (e: Exception) {
+            Resource.Error("Error: ${e.message}", roomsResponse.status)
         }
     }
 }

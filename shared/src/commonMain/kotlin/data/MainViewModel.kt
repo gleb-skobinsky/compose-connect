@@ -96,7 +96,17 @@ class MainViewModel : ViewModelPlatformImpl() {
     fun loginUser(email: String, password: String) {
         vmScope.launch {
             when (val result = UserRepository.login(email, password)) {
-                is Resource.Data -> _user.value = result.payload
+                is Resource.Data -> {
+                    _user.value = result.payload
+                    when (val rooms = RoomRepository.getRoomsByUser(result.payload)) {
+                        is Resource.Data -> _chats.value = rooms.payload
+                        is Resource.Error -> {
+                            println(rooms.message)
+                            println(rooms.status)
+                        }
+                    }
+                }
+
                 is Resource.Error -> {
                     _user.value = null
                     _errorMessage.value = result
