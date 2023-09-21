@@ -234,7 +234,7 @@ fun AuthButton(
         onClick = action,
         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
     ) {
-        Text(text, color = MaterialTheme.colorScheme.onPrimary)
+        Text(text, color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

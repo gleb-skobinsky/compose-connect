@@ -1,6 +1,7 @@
 package data
 
 import androidx.compose.runtime.Stable
+import data.repositories.MessagesRepository
 import data.repositories.RoomRepository
 import data.repositories.UserRepository
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ class MainViewModel : ViewModelPlatformImpl() {
         _plusRoomDialogOpen.value = false
     }
 
-    private val _user: MutableStateFlow<User?> = MutableStateFlow(null)
+    private val _user: MutableStateFlow<User> = MutableStateFlow(User.Empty)
     val user = _user.asStateFlow()
 
     private val _loginScreenMode = MutableStateFlow(LoginScreenState.LOGIN)
@@ -49,7 +50,7 @@ class MainViewModel : ViewModelPlatformImpl() {
     private val _chats: MutableStateFlow<Map<String, ConversationUiState>> = MutableStateFlow(emptyMap())
     val chats = _chats.asStateFlow()
 
-    private val _conversationUiState: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val _conversationUiState: MutableStateFlow<ConversationUiState> = MutableStateFlow(ConversationUiState.Empty)
     val conversationUiState = _conversationUiState.asStateFlow()
 
     private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
@@ -63,11 +64,25 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun setCurrentConversation(id: String) {
         _screenState.value = AppScreenState.CHAT
-        _conversationUiState.value = id
+        _conversationUiState.value = chats.value.getValue(id)
         vmScope.launch(Dispatchers.Default) {
             websocketHandler.dropOtherConnections(id)
             websocketHandler.connectRoom(id) { message ->
-                chats.value.getValue(id).addMessage(message)
+                _conversationUiState.value.addMessage(message)
+            }
+        }
+        vmScope.launch {
+            when (val messages = MessagesRepository.getInitialMessagesForRoom(id, user.value)) {
+                is Resource.Data -> {
+                    _chats.update {
+                        val oldRoom: ConversationUiState = it.getValue(id)
+                        val newRoom = oldRoom.copy(initialMessages = messages.payload.toConvState())
+                        _conversationUiState.value = newRoom
+                        it + mapOf(newRoom.id to newRoom)
+                    }
+                }
+
+                is Resource.Error -> Unit
             }
         }
     }
@@ -87,9 +102,7 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun sendMessage(message: Message) {
         vmScope.launch {
-            conversationUiState.value?.let {
-                websocketHandler.sendMessage(it, message)
-            }
+            websocketHandler.sendMessage(conversationUiState.value.id, message)
         }
     }
 
@@ -108,7 +121,7 @@ class MainViewModel : ViewModelPlatformImpl() {
                 }
 
                 is Resource.Error -> {
-                    _user.value = null
+                    _user.value = User.Empty
                     _errorMessage.value = result
                 }
             }
@@ -117,10 +130,8 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun logoutUser() {
         vmScope.launch {
-            user.value?.let { user ->
-                _user.value = null
-                UserRepository.logout(user)
-            }
+            UserRepository.logout(user.value)
+            _user.value = User.Empty
         }
     }
 
@@ -137,26 +148,32 @@ class MainViewModel : ViewModelPlatformImpl() {
     }
 
     fun createRoom(roomName: String) {
-        user.value?.let { actingUser ->
-            vmScope.launch {
-                when (val room = RoomRepository.createRoom(ChatRoomCreationDto(uuid(), roomName, listOf(actingUser.email)), actingUser)) {
-                    is Resource.Data<ChatRoomCreationDto> -> {
-                        val new = mapOf(
-                            room.payload.id to room.payload.toConvState()
-                        )
-                        _chats.update { it + new }
-                    }
-
-                    is Resource.Error<ChatRoomCreationDto> -> Unit
+        vmScope.launch {
+            when (val room = RoomRepository.createRoom(
+                room = ChatRoomCreationDto(
+                    id = uuid(),
+                    name = roomName,
+                    users = listOf(user.value.email)
+                ),
+                currentUser = user.value
+            )
+            ) {
+                is Resource.Data<ChatRoomCreationDto> -> {
+                    val new = mapOf(
+                        room.payload.id to room.payload.toConvState()
+                    )
+                    _chats.update { it + new }
                 }
-                closeRoomDialog()
+
+                is Resource.Error<ChatRoomCreationDto> -> Unit
             }
+            closeRoomDialog()
         }
     }
 
     operator fun get(chatRoomId: String?): ConversationUiState =
         chatRoomId?.let {
-            chats.value[it]
+            _chats.value[it]
         } ?: ConversationUiState.Empty
 }
 

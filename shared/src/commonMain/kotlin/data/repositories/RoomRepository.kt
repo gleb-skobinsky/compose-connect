@@ -17,7 +17,7 @@ object RoomRepository {
             headers.append("Authorization", currentUser.getBearer())
         }
         return try {
-            val newRoom = Json.decodeFromString(ChatRoomCreationDto.serializer(), response.bodyAsText())
+            val newRoom = Json.decodeFromString<ChatRoomCreationDto>(response.bodyAsText())
             Resource.Data(newRoom)
         } catch (e: Exception) {
             println("Error")

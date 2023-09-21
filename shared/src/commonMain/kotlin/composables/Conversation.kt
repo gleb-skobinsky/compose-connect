@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import platform.statusBarsPaddingMpp
 import platform.userInputModifier
 import transport.getTimeNow
+import util.uuid
 
 @Composable
 fun Conversation(
@@ -88,8 +89,7 @@ private fun ConversationContent(
     val user by viewModel.user.collectAsState()
     RoomCreationDialog(viewModel)
     Box(modifier = Modifier.fillMaxSize()) {
-        val messagesState = viewModel[selectedRoom]
-        Messages(messagesState, user, scrollState)
+        Messages(selectedRoom, user, scrollState)
         Column(
             Modifier
                 .align(Alignment.BottomCenter)
@@ -98,15 +98,14 @@ private fun ConversationContent(
             UserInput(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
-                    viewModel.user.value?.let { user ->
-                        val message = Message(
-                            roomId = messagesState.id,
-                            author = user.email,
-                            content = content,
-                            timestamp = timeNow
-                        )
-                        viewModel.sendMessage(message)
-                    }
+                    val message = Message(
+                        id = uuid(),
+                        roomId = selectedRoom.id,
+                        author = viewModel.user.value.email,
+                        content = content,
+                        timestamp = timeNow
+                    )
+                    viewModel.sendMessage(message)
                 },
                 resetScroll = {
                     scope.launch {
@@ -119,8 +118,8 @@ private fun ConversationContent(
             )
         }
         ChannelNameBar(
-            channelName = messagesState.channelName,
-            channelMembers = messagesState.channelMembers,
+            channelName = selectedRoom.channelName,
+            channelMembers = selectedRoom.channelMembers,
             onNavIconPressed = onNavIconPressed,
             scrollBehavior = scrollBehavior,
             // Use statusBarsPadding() to move the app bar content below the status bar

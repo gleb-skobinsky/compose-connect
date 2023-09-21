@@ -4,11 +4,11 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.toMutableStateList
 
 @Stable
-class ConversationUiState(
+data class ConversationUiState(
     val id: String,
     val channelName: String,
     val channelMembers: Int,
-    initialMessages: List<Message>,
+    val initialMessages: List<Message>,
 ) {
     private val _messages: MutableList<Message> = initialMessages.toMutableStateList()
     val messages: List<Message> = _messages

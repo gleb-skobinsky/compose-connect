@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import composables.AuthScreen
 import composables.Conversation
 import data.MainViewModel
+import data.User
 import themes.ApplicationTheme
 
 private const val durationMillis = 1000
@@ -35,7 +36,7 @@ fun ThemeWrapper(
         ApplicationTheme(theme) {
             Column {
                 AnimatedContent(
-                    targetState = user != null,
+                    targetState = user != User.Empty,
                     transitionSpec = {
                         if (targetState != initialState && targetState) {
                             slideInVertically(tween(durationMillis)) { it } togetherWith slideOutVertically(tween(durationMillis)) { -it }

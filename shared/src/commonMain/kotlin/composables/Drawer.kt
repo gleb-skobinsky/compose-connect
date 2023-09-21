@@ -48,7 +48,7 @@ fun AppDrawer(
             chats.entries.forEach { (id, chat) ->
                 ChatItem(
                     text = chat.channelName,
-                    selected = viewModel[selectedChat].id == chat.id
+                    selected = selectedChat.id == chat.id
                 ) {
                     onChatClicked(id)
                 }
@@ -68,15 +68,13 @@ fun AppDrawer(
                 .padding(24.dp)
                 .align(Alignment.BottomCenter)
         ) {
-            currentUser?.let {
-                Text(
-                    text = "Logged in as ${it.firstName} ${it.lastName}",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(Modifier.width(12.dp))
-                LogoutButton(viewModel, Modifier.weight(1f))
-            }
+            Text(
+                text = "Logged in as ${currentUser.firstName} ${currentUser.lastName}",
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(Modifier.width(12.dp))
+            LogoutButton(viewModel, Modifier.weight(1f))
         }
     }
 }
