@@ -5,6 +5,7 @@ import androidx.compose.runtime.toMutableStateList
 
 @Stable
 class ConversationUiState(
+    val id: String,
     val channelName: String,
     val channelMembers: Int,
     initialMessages: List<Message>,
@@ -17,7 +18,12 @@ class ConversationUiState(
     }
 
     companion object {
-        val Empty = ConversationUiState("", 0, emptyList())
+        val Empty = ConversationUiState(
+            id = "",
+            channelName = "",
+            channelMembers = 0,
+            initialMessages = emptyList()
+        )
     }
 }
 

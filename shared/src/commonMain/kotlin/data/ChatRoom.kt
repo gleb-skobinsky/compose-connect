@@ -12,6 +12,7 @@ data class ChatRoomCreationDto(
     val users: List<String>, // list of emails
 ) {
     fun toConvState() = ConversationUiState(
+        id = id,
         channelName = name,
         channelMembers = users.size,
         initialMessages = emptyList()
@@ -33,6 +34,7 @@ data class ChatRoomFromDb(
     val usersCount: Int,
 ) {
     fun toConvState() = ConversationUiState(
+        id = id,
         channelName = name,
         channelMembers = usersCount,
         initialMessages = emptyList()

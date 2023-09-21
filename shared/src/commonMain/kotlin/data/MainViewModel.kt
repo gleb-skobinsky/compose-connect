@@ -19,14 +19,6 @@ import viewmodel.ViewModelPlatformImpl
 class MainViewModel : ViewModelPlatformImpl() {
     private val websocketHandler = WsHandler()
 
-    init {
-        vmScope.launch(Dispatchers.Default) {
-            websocketHandler.connectRoom("chat/composers/") { message ->
-                _conversationUiState.value.addMessage(message)
-            }
-        }
-    }
-
     private val _plusRoomDialogOpen = MutableStateFlow(false)
     val plusRoomDialogOpen = _plusRoomDialogOpen.asStateFlow()
 
@@ -72,6 +64,11 @@ class MainViewModel : ViewModelPlatformImpl() {
     fun setCurrentConversation(title: String) {
         _screenState.value = AppScreenState.CHAT
         _conversationUiState.value = chats.value.getValue(title)
+        vmScope.launch(Dispatchers.Default) {
+            websocketHandler.connectRoom("chat/composers/") { message ->
+                _conversationUiState.value.addMessage(message)
+            }
+        }
     }
 
     fun setCurrentAccount(userId: String) {

@@ -36,7 +36,7 @@ fun AppDrawer(
     onChatClicked: (String) -> Unit,
     viewModel: MainViewModel,
 ) {
-    val selectedChatTitle by viewModel.conversationUiState.collectAsState()
+    val selectedChat by viewModel.conversationUiState.collectAsState()
     val currentUser by viewModel.user.collectAsState()
     val chats by viewModel.chats.collectAsState()
     Box {
@@ -46,7 +46,7 @@ fun AppDrawer(
             DividerItem()
             DrawerItemHeader("Chats")
             chats.entries.forEach { (id, chat) ->
-                ChatItem(chat.channelName, selectedChatTitle.channelName == chat.channelName) {
+                ChatItem(chat.channelName, selectedChat.id == chat.id) {
                     onChatClicked(id)
                 }
             }
