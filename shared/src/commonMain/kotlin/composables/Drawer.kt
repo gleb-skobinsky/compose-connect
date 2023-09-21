@@ -46,7 +46,10 @@ fun AppDrawer(
             DividerItem()
             DrawerItemHeader("Chats")
             chats.entries.forEach { (id, chat) ->
-                ChatItem(chat.channelName, selectedChat.id == chat.id) {
+                ChatItem(
+                    text = chat.channelName,
+                    selected = viewModel[selectedChat].id == chat.id
+                ) {
                     onChatClicked(id)
                 }
             }

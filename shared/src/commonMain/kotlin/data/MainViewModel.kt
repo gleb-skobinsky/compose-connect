@@ -49,8 +49,8 @@ class MainViewModel : ViewModelPlatformImpl() {
     private val _chats: MutableStateFlow<Map<String, ConversationUiState>> = MutableStateFlow(emptyMap())
     val chats = _chats.asStateFlow()
 
-    private val _conversationUiState: MutableStateFlow<ConversationUiState> = MutableStateFlow(ConversationUiState.Empty)
-    val conversationUiState: StateFlow<ConversationUiState> = _conversationUiState
+    private val _conversationUiState: MutableStateFlow<String?> = MutableStateFlow(null)
+    val conversationUiState = _conversationUiState.asStateFlow()
 
     private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
     val selectedUserProfile: StateFlow<ProfileScreenState?> = _selectedUserProfile
@@ -61,12 +61,13 @@ class MainViewModel : ViewModelPlatformImpl() {
     private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val drawerShouldBeOpened: StateFlow<Boolean> = _drawerShouldBeOpened
 
-    fun setCurrentConversation(title: String) {
+    fun setCurrentConversation(id: String) {
         _screenState.value = AppScreenState.CHAT
-        _conversationUiState.value = chats.value.getValue(title)
+        _conversationUiState.value = id
         vmScope.launch(Dispatchers.Default) {
-            websocketHandler.connectRoom("chat/composers/") { message ->
-                _conversationUiState.value.addMessage(message)
+            websocketHandler.dropOtherConnections(id)
+            websocketHandler.connectRoom(id) { message ->
+                chats.value.getValue(id).addMessage(message)
             }
         }
     }
@@ -86,7 +87,9 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun sendMessage(message: Message) {
         vmScope.launch {
-            websocketHandler.sendMessage(message)
+            conversationUiState.value?.let {
+                websocketHandler.sendMessage(it, message)
+            }
         }
     }
 
@@ -138,7 +141,9 @@ class MainViewModel : ViewModelPlatformImpl() {
             vmScope.launch {
                 when (val room = RoomRepository.createRoom(ChatRoomCreationDto(uuid(), roomName, listOf(actingUser.email)), actingUser)) {
                     is Resource.Data<ChatRoomCreationDto> -> {
-                        val new = mapOf(room.payload.id to room.payload.toConvState())
+                        val new = mapOf(
+                            room.payload.id to room.payload.toConvState()
+                        )
                         _chats.update { it + new }
                     }
 
@@ -148,6 +153,11 @@ class MainViewModel : ViewModelPlatformImpl() {
             }
         }
     }
+
+    operator fun get(chatRoomId: String?): ConversationUiState =
+        chatRoomId?.let {
+            chats.value[it]
+        } ?: ConversationUiState.Empty
 }
 
 @Serializable

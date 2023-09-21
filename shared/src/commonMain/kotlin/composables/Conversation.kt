@@ -42,8 +42,8 @@ fun Conversation(
     AppScaffold(
         scaffoldState = scaffoldState,
         viewModel = viewModel,
-        onChatClicked = { title ->
-            viewModel.setCurrentConversation(title)
+        onChatClicked = { id ->
+            viewModel.setCurrentConversation(id)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
@@ -84,10 +84,11 @@ private fun ConversationContent(
     onNavIconPressed: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val messagesState by viewModel.conversationUiState.collectAsState()
+    val selectedRoom by viewModel.conversationUiState.collectAsState()
     val user by viewModel.user.collectAsState()
     RoomCreationDialog(viewModel)
     Box(modifier = Modifier.fillMaxSize()) {
+        val messagesState = viewModel[selectedRoom]
         Messages(messagesState, user, scrollState)
         Column(
             Modifier
@@ -98,7 +99,12 @@ private fun ConversationContent(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
                     viewModel.user.value?.let { user ->
-                        val message = Message(author = user.email, content = content, timestamp = timeNow)
+                        val message = Message(
+                            roomId = messagesState.id,
+                            author = user.email,
+                            content = content,
+                            timestamp = timeNow
+                        )
                         viewModel.sendMessage(message)
                     }
                 },
@@ -121,4 +127,5 @@ private fun ConversationContent(
             modifier = Modifier.statusBarsPaddingMpp(),
         )
     }
+
 }

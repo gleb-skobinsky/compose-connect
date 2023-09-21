@@ -11,9 +11,11 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 interface WebSocketHandlerPlatform {
-    suspend fun connectRoom(path: String, onMessageReceive: (Message) -> Unit)
+    suspend fun connectRoom(id: String, onMessageReceive: (Message) -> Unit)
 
-    suspend fun sendMessage(message: Message)
+    suspend fun sendMessage(roomId: String, message: Message)
+
+    suspend fun dropOtherConnections(exceptId: String)
 }
 
 expect class WsHandler() : WebSocketHandlerPlatform
@@ -25,20 +27,20 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         }
     }
 
-    private lateinit var ktorWebSocketSession: DefaultClientWebSocketSession
+    private val activeSessions = mutableMapOf<String, DefaultClientWebSocketSession>()
 
-    override suspend fun connectRoom(path: String, onMessageReceive: (Message) -> Unit) {
+    override suspend fun connectRoom(id: String, onMessageReceive: (Message) -> Unit) {
         try {
             client.webSocket(
                 method = HttpMethod.Get,
                 host = LocalRoute.current,
                 port = 8000,
-                path = path,
+                path = "chat/$id/",
                 request = {
                     header("origin", LocalRoute.currentUrl)
                 }
             ) {
-                ktorWebSocketSession = this
+                activeSessions[id] = this
                 for (frame in incoming) {
                     frame as? Frame.Text ?: continue
                     val receivedText = frame.readText()
@@ -51,9 +53,21 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
         }
     }
 
-    override suspend fun sendMessage(message: Message) {
-        if (this::ktorWebSocketSession.isInitialized) {
-            ktorWebSocketSession.sendSerialized(message)
+    override suspend fun sendMessage(roomId: String, message: Message) {
+        activeSessions[roomId]?.sendSerialized(message)
+    }
+
+    override suspend fun dropOtherConnections(exceptId: String) {
+        activeSessions.forEach { (id, session) ->
+            if (id != exceptId) {
+                session.close(
+                    CloseReason(
+                        code = CloseReason.Codes.NORMAL,
+                        message = "Client is disconnecting all sessions"
+                    )
+                )
+            }
         }
+        activeSessions.clear()
     }
 }
