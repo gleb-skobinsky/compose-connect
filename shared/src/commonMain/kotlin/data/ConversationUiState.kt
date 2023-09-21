@@ -1,7 +1,9 @@
 package data
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.toMutableStateList
 
+@Stable
 class ConversationUiState(
     val channelName: String,
     val channelMembers: Int,

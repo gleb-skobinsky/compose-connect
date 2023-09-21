@@ -7,6 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.websocket.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 interface WebSocketHandlerPlatform {
@@ -41,7 +42,7 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
                 for (frame in incoming) {
                     frame as? Frame.Text ?: continue
                     val receivedText = frame.readText()
-                    onMessageReceive(Json.decodeFromString(Message.serializer(), receivedText))
+                    onMessageReceive(Json.decodeFromString<Message>(receivedText))
                 }
             }
         } catch (e: Exception) {

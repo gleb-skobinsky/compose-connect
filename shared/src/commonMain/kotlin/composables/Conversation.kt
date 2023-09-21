@@ -85,9 +85,10 @@ private fun ConversationContent(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val messagesState by viewModel.conversationUiState.collectAsState()
+    val user by viewModel.user.collectAsState()
     RoomCreationDialog(viewModel)
     Box(modifier = Modifier.fillMaxSize()) {
-        Messages(messagesState, scrollState)
+        Messages(messagesState, user, scrollState)
         Column(
             Modifier
                 .align(Alignment.BottomCenter)
@@ -97,7 +98,7 @@ private fun ConversationContent(
                 onMessageSent = { content ->
                     val timeNow = getTimeNow()
                     viewModel.user.value?.let { user ->
-                        val message = Message(user.email, content, timeNow)
+                        val message = Message(author = user.email, content = content, timestamp = timeNow)
                         viewModel.sendMessage(message)
                     }
                 },

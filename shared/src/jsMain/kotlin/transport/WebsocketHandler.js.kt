@@ -1,6 +1,8 @@
 package transport
 
 import data.Message
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.w3c.dom.WebSocket
 
@@ -14,7 +16,7 @@ actual class WsHandler : WebSocketHandlerPlatform {
             try {
                 console.log(event.data)
                 event.data?.let {
-                    onMessageReceive(Json.decodeFromString(Message.serializer(), event.data as String))
+                    onMessageReceive(Json.decodeFromString<Message>(event.data as String))
                 }
                 console.log(event.data)
             } catch (e: Exception) {
@@ -24,6 +26,6 @@ actual class WsHandler : WebSocketHandlerPlatform {
     }
 
     override suspend fun sendMessage(message: Message) {
-        ws.send(Json.encodeToString(Message.serializer(), message))
+        ws.send(Json.encodeToString<Message>(message))
     }
 }

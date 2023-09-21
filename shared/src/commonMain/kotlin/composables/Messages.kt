@@ -24,28 +24,31 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import data.ConversationUiState
 import data.Message
+import data.User
 import messagesParser.SymbolAnnotationType
 import messagesParser.messageFormatter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import resourceBindings.drawable_ali
+import resourceBindings.drawable_someone_else
 
 @Composable
 fun Messages(
     conversationUiState: ConversationUiState,
+    user: User?,
     scrollState: LazyListState,
 ) {
     val messages = conversationUiState.messages
-    val mainBackground = MaterialTheme.colorScheme.background
     LazyColumn(
         reverseLayout = true,
         contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 150.dp),
         modifier = Modifier
             .padding(top = 50.dp)
             .fillMaxSize()
-            .background(mainBackground),
+            .background(MaterialTheme.colorScheme.background),
         state = scrollState
     ) {
-        items(count = messages.size, { messages[it].hashCode() } ) { index ->
+        items(count = messages.size, { messages[it].hashCode() }) { index ->
             val msg: Message = messages[index]
             val prevAuthor = messages.getOrNull(index - 1)?.author
             val nextAuthor = messages.getOrNull(index + 1)?.author
@@ -55,7 +58,7 @@ fun Messages(
             MessageWidget(
                 onAuthorClick = { name -> println(name) },
                 msg = msg,
-                isUserMe = msg.author == "me",
+                isUserMe = msg.author == user?.email,
                 isFirstMessageByAuthor = isFirstMessageByAuthor,
                 isLastMessageByAuthor = isLastMessageByAuthor,
             )
@@ -80,10 +83,7 @@ fun MessageWidget(
 
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
-
         if (isLastMessageByAuthor) {
-            // Avatar
-            val authorImage = painterResource(msg.authorImage)
             Image(
                 modifier = Modifier
                     .clickable(onClick = { onAuthorClick(msg.author) })
@@ -92,7 +92,7 @@ fun MessageWidget(
                     .border(1.5.dp, borderColor, CircleShape)
                     .clip(CircleShape)
                     .align(Alignment.Top),
-                painter = authorImage,
+                painter = painterResource(if (isUserMe) drawable_ali else drawable_someone_else),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
