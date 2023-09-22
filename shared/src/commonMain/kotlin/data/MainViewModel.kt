@@ -193,7 +193,10 @@ class MainViewModel : ViewModelPlatformImpl() {
                     _searchedUsers.value = searched.payload.users
                 }
 
-                is Resource.Error -> Unit
+                is Resource.Error -> {
+                    println(searched.message)
+                    println(searched.status)
+                }
             }
         }
     }
