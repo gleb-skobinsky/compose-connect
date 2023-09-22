@@ -31,19 +31,21 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
 
     override suspend fun connectRoom(id: String, onMessageReceive: (Message) -> Unit) {
         try {
-            client.webSocket(
-                method = HttpMethod.Get,
-                host = LocalRoute.current,
-                path = "chat/$id/",
-                request = {
-                    header("origin", LocalRoute.currentUrl)
-                }
-            ) {
-                activeSessions[id] = this
-                for (frame in incoming) {
-                    frame as? Frame.Text ?: continue
-                    val receivedText = frame.readText()
-                    onMessageReceive(Json.decodeFromString<Message>(receivedText))
+            if (id !in activeSessions.keys) {
+                client.webSocket(
+                    method = HttpMethod.Get,
+                    host = LocalRoute.current,
+                    path = "chat/$id/",
+                    request = {
+                        header("origin", LocalRoute.currentUrl)
+                    }
+                ) {
+                    activeSessions[id] = this
+                    for (frame in incoming) {
+                        frame as? Frame.Text ?: continue
+                        val receivedText = frame.readText()
+                        onMessageReceive(Json.decodeFromString<Message>(receivedText))
+                    }
                 }
             }
         } catch (e: Exception) {

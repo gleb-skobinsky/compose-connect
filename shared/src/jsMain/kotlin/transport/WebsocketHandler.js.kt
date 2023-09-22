@@ -10,20 +10,22 @@ actual class WsHandler : WebSocketHandlerPlatform {
 
     private val ws = mutableMapOf<String, WebSocket>()
     override suspend fun connectRoom(id: String, onMessageReceive: (Message) -> Unit) {
-        val connection = WebSocket("${LocalRoute.currentWsUrl}/chat/$id/")
-        connection.onopen = {}
-        connection.onmessage = { event ->
-            try {
-                console.log(event.data)
-                event.data?.let {
-                    onMessageReceive(Json.decodeFromString<Message>(event.data as String))
+        if (id !in ws.keys) {
+            val connection = WebSocket("${LocalRoute.currentWsUrl}/chat/$id/")
+            connection.onopen = {}
+            connection.onmessage = { event ->
+                try {
+                    console.log(event.data)
+                    event.data?.let {
+                        onMessageReceive(Json.decodeFromString<Message>(event.data as String))
+                    }
+                    console.log(event.data)
+                } catch (e: Exception) {
+                    console.log("Error: ${e.message}")
                 }
-                console.log(event.data)
-            } catch (e: Exception) {
-                console.log("Error: ${e.message}")
             }
+            ws[id] = connection
         }
-        ws[id] = connection
     }
 
     override suspend fun sendMessage(roomId: String, message: Message) {
