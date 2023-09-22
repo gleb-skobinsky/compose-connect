@@ -54,6 +54,11 @@ fun RoomCreationDialog(viewModel: MainViewModel) {
                 RoomCreationLabel("Select chat participants by emails:")
                 RoomCreationField(searchedUser) {
                     searchedUser = it
+                    if (searchedUser.isNotBlank()) {
+                        viewModel.searchUsers(searchedUser)
+                    } else {
+                        viewModel.clearSearch()
+                    }
                 }
                 RoomFormSpacer()
                 LazyColumn(modifier = Modifier.defaultMinSize(500.dp, 200.dp)) {

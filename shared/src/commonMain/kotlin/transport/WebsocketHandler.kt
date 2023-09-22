@@ -34,7 +34,6 @@ open class JvmIosWebsocketHandler : WebSocketHandlerPlatform {
             client.webSocket(
                 method = HttpMethod.Get,
                 host = LocalRoute.current,
-                port = 8000,
                 path = "chat/$id/",
                 request = {
                     header("origin", LocalRoute.currentUrl)
