@@ -146,6 +146,7 @@ class MainViewModel : ViewModelPlatformImpl() {
         vmScope.launch {
             UserRepository.logout(user.value)
             _user.value = User.Empty
+            resetAllStates()
         }
     }
 
@@ -205,6 +206,17 @@ class MainViewModel : ViewModelPlatformImpl() {
         chatRoomId?.let {
             _chats.value[it]
         } ?: ConversationUiState.Empty
+
+    private fun resetAllStates() {
+        _loginScreenMode.value = ViewModelDefaults<LoginScreenState>()
+        _errorMessage.value = ViewModelDefaults<Resource.Error<*>?>()
+        _screenState.value = ViewModelDefaults<AppScreenState>()
+        _chats.value = ViewModelDefaults<Map<String, ConversationUiState>>()
+        _conversationUiState.value = ViewModelDefaults<ConversationUiState>()
+        _selectedUserProfile.value = ViewModelDefaults<ProfileScreenState?>()
+        _searchedUsers.value = ViewModelDefaults<List<User>>()
+        _selectedUsers.value = ViewModelDefaults<Set<String>>()
+    }
 }
 
 @Serializable

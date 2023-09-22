@@ -21,13 +21,13 @@ data class PlatformHosts(
 }
 
 object LocalRoute {
-    val development = PlatformHosts(
+    private val development = PlatformHosts(
         desktop = "127.0.0.1",
         js = "127.0.0.1",
         android = "10.0.2.2",
         ios = "127.0.0.1"
     )
-    val production = PlatformHosts(
+    private val production = PlatformHosts(
         desktop = "chirrio.mooo.com",
         js = "chirrio.mooo.com",
         android = "chirrio.mooo.com",
@@ -51,7 +51,7 @@ object LocalRoute {
         RuntimeMode.PRODUCTION -> "wss://"
     }
 
-    val currentUrl = "$protocol$current:8000"
+    val currentUrl = "$protocol$current"
 
     val currentWsUrl = wsProtocol + current
 }

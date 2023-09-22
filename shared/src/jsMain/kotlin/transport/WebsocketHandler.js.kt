@@ -10,7 +10,7 @@ actual class WsHandler : WebSocketHandlerPlatform {
 
     private val ws = mutableMapOf<String, WebSocket>()
     override suspend fun connectRoom(id: String, onMessageReceive: (Message) -> Unit) {
-        val connection = WebSocket("${LocalRoute.currentWsUrl}:8000/chat/$id/")
+        val connection = WebSocket("${LocalRoute.currentWsUrl}/chat/$id/")
         connection.onopen = {}
         connection.onmessage = { event ->
             try {

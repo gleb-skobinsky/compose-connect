@@ -3,6 +3,7 @@ package composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -15,9 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -128,7 +130,7 @@ fun BoxScope.SignupScreen(viewModel: MainViewModel) {
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
-            SecondaryLoginText("Log in", Modifier.clickable { viewModel.setLoginMode(LoginScreenState.LOGIN) })
+            ClickableSecondaryLoginText("Log in") { viewModel.setLoginMode(LoginScreenState.LOGIN) }
         }
     }
 }
@@ -161,7 +163,7 @@ fun BoxScope.LoginScreen(viewModel: MainViewModel) {
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
-            SecondaryLoginText("Register", Modifier.clickable { viewModel.setLoginMode(LoginScreenState.REGISTER) })
+            ClickableSecondaryLoginText("Register") { viewModel.setLoginMode(LoginScreenState.REGISTER) }
         }
     }
 }
@@ -191,7 +193,7 @@ fun LoginTextField(
                     Icon(
                         imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         contentDescription = "Show password",
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .pointerHoverIcon(PointerIcon.Hand)
                             .clickable { passwordVisible = !passwordVisible }
@@ -204,10 +206,28 @@ fun LoginTextField(
         modifier = Modifier
             .padding(bottom = 24.dp)
             .width(300.dp)
-            .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(12.dp))
-            .padding(6.dp)
+            .height(32.dp)
+            .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+            .padding(8.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant)
     )
 }
+
+@Composable
+fun ClickableSecondaryLoginText(
+    text: String,
+    modifier: Modifier = Modifier,
+    onCLick: () -> Unit,
+) = SecondaryLoginText(
+    text = text,
+    modifier = modifier
+        .clickable {
+            onCLick()
+        }
+        .pointerHoverIcon(PointerIcon.Hand)
+)
+
 
 @Composable
 fun SecondaryLoginText(

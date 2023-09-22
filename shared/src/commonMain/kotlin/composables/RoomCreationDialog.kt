@@ -47,43 +47,14 @@ fun RoomCreationDialog(viewModel: MainViewModel) {
                 }
                 RoomFormSpacer()
                 RoomCreationLabel("Enter room name:")
-                BasicTextField(
-                    value = roomName,
-                    onValueChange = {
-                        roomName = it
-                    },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                        .width(300.dp)
-                        .height(42.dp)
-                        .padding(12.dp),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                    maxLines = 1,
-                    singleLine = true,
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant)
-                )
+                RoomCreationField(roomName) {
+                    roomName = it
+                }
                 RoomFormSpacer()
                 RoomCreationLabel("Select chat participants by emails:")
-                BasicTextField(
-                    value = searchedUser,
-                    onValueChange = {
-                        searchedUser = it
-                        if (searchedUser.isNotBlank()) {
-                            viewModel.searchUsers(searchedUser)
-                        } else {
-                            viewModel.clearSearch()
-                        }
-                    },
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                        .width(300.dp)
-                        .height(42.dp)
-                        .padding(12.dp),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                    maxLines = 1,
-                    singleLine = true,
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant)
-                )
+                RoomCreationField(searchedUser) {
+                    searchedUser = it
+                }
                 RoomFormSpacer()
                 LazyColumn(modifier = Modifier.defaultMinSize(500.dp, 200.dp)) {
                     items(count = searchedUsers.size) { index ->
@@ -116,6 +87,23 @@ fun RoomCreationDialog(viewModel: MainViewModel) {
             }
         }
     }
+}
+
+@Composable
+private fun RoomCreationField(roomName: String, onValueChange: (String) -> Unit) {
+    BasicTextField(
+        value = roomName,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+            .width(300.dp)
+            .height(42.dp)
+            .padding(12.dp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
+        maxLines = 1,
+        singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
+    )
 }
 
 @Composable
