@@ -19,3 +19,4 @@ shared/shared.podspec
 /server/venv/
 /server/compose_connect_backend/db.sqlite3
 /server/compose_connect/db.sqlite3
+*.cache
