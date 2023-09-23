@@ -137,8 +137,8 @@ fun BoxScope.SignupScreen(viewModel: MainViewModel) {
 
 @Composable
 fun BoxScope.LoginScreen(viewModel: MainViewModel) {
-    var email by remember { mutableStateOf("glebgytnik@gmail.com") }
-    var password by remember { mutableStateOf("LiuRuis5968!") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     Column(
         modifier = Modifier.align(Alignment.Center),
