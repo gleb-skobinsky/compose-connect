@@ -11,7 +11,7 @@ import transport.chirrioClient
 
 object RoomRepository {
     suspend fun createRoom(room: ChatRoomCreationDto, currentUser: User): Resource<ChatRoomCreationDto> {
-        val response = chirrioClient.post("${LocalRoute.currentUrl}/new-room/") {
+        val response = chirrioClient.post("${LocalRoute.currentUrl}/rooms/create/") {
             contentType(ContentType.Application.Json)
             setBody(room)
             headers.append("Authorization", currentUser.getBearer())
@@ -27,9 +27,8 @@ object RoomRepository {
     }
 
     suspend fun getRoomsByUser(user: User): Resource<Map<String, ConversationUiState>> {
-        val roomsResponse = chirrioClient.post("${LocalRoute.currentUrl}/rooms-by-user/") {
+        val roomsResponse = chirrioClient.get("${LocalRoute.currentUrl}/rooms/${user.email}") {
             contentType(ContentType.Application.Json)
-            setBody(user)
             headers.append("Authorization", user.getBearer())
         }
         return try {

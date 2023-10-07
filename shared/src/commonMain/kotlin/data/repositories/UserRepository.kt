@@ -15,16 +15,15 @@ object UserRepository {
         password: String,
     ): Resource<User> {
         try {
-            val response = chirrioClient.post("${LocalRoute.currentUrl}/login/") {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/users/login/") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginForm(email, password))
             }
             return if (response.status.value in 200..299) {
                 val credentials = Json.decodeFromString<CredentialsResponse>(response.bodyAsText())
                 val user = User(email = email, accessToken = credentials.access, refreshToken = credentials.refresh)
-                val userResponse = chirrioClient.post("${LocalRoute.currentUrl}/user/") {
+                val userResponse = chirrioClient.get("${LocalRoute.currentUrl}/users/$email/") {
                     contentType(ContentType.Application.Json)
-                    setBody(user)
                     headers.append("Authorization", user.getBearer())
                 }
                 val filledUser = Json.decodeFromString<GetUserResponse>(userResponse.bodyAsText())
@@ -46,7 +45,7 @@ object UserRepository {
 
     suspend fun logout(user: User): Resource<User?> {
         try {
-            val response = chirrioClient.post("${LocalRoute.currentUrl}/logout/") {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/users/logout/") {
                 contentType(ContentType.Application.Json)
                 setBody(LogoutRequest(user.refreshToken))
                 headers.append("Authorization", user.getBearer())
@@ -69,7 +68,7 @@ object UserRepository {
 
     suspend fun signupUser(request: SignupRequest): Resource<User> {
         try {
-            val response = chirrioClient.post("${LocalRoute.currentUrl}/signup/") {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/users/signup/") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -92,7 +91,7 @@ object UserRepository {
 
     suspend fun search(request: SearchUser, user: User): Resource<SearchUserResponse> {
         try {
-            val response = chirrioClient.post("${LocalRoute.currentUrl}/user-search/") {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/users/search/") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
                 headers.append("Authorization", user.getBearer())

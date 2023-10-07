@@ -13,7 +13,7 @@ import transport.chirrioClient
 
 object MessagesRepository {
     suspend fun getMessagesForRoom(roomId: String, currentUser: User): Resource<InitialMessages> {
-        val response = chirrioClient.get("${LocalRoute.currentUrl}/messages-by-room/$roomId/") {
+        val response = chirrioClient.get("${LocalRoute.currentUrl}/messages/$roomId/") {
             contentType(ContentType.Application.Json)
             headers.append("Authorization", currentUser.getBearer())
         }

@@ -41,12 +41,8 @@ data class ChatRoomFromDb(
     )
 }
 
-@Stable
-@Serializable
-data class UserRooms(
-    val rooms: List<ChatRoomFromDb> = emptyList(),
-) {
-    fun toConvState() = rooms.associate {
-        it.id to it.toConvState()
-    }
+typealias UserRooms = List<ChatRoomFromDb>
+
+fun UserRooms.toConvState() = associate {
+    it.id to it.toConvState()
 }
