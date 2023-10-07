@@ -89,11 +89,10 @@ object UserRepository {
         }
     }
 
-    suspend fun search(request: SearchUser, user: User): Resource<SearchUserResponse> {
+    suspend fun search(searched: String, user: User): Resource<SearchUserResponse> {
         try {
-            val response = chirrioClient.post("${LocalRoute.currentUrl}/users/search/") {
+            val response = chirrioClient.get("${LocalRoute.currentUrl}/users/search/$searched/") {
                 contentType(ContentType.Application.Json)
-                setBody(request)
                 headers.append("Authorization", user.getBearer())
             }
             return if (response.status.value in 200..299) {

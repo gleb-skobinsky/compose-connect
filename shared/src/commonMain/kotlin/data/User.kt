@@ -61,7 +61,4 @@ data class SearchUser(
     val email: String,
 )
 
-@Serializable
-data class SearchUserResponse(
-    val users: List<User>,
-)
+typealias SearchUserResponse = List<User>

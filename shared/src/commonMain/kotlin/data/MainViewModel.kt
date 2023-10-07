@@ -188,9 +188,9 @@ class MainViewModel : ViewModelPlatformImpl() {
 
     fun searchUsers(email: String) {
         vmScope.launch {
-            when (val searched = UserRepository.search(SearchUser(email), _user.value)) {
+            when (val searched = UserRepository.search(email, _user.value)) {
                 is Resource.Data -> {
-                    _searchedUsers.value = searched.payload.users
+                    _searchedUsers.value = searched.payload
                 }
 
                 is Resource.Error -> {
