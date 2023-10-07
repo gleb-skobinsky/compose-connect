@@ -1,7 +1,6 @@
 package data
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -28,15 +27,13 @@ data class MessageDto(
     @SerialName("user_id")
     val user: User,
     val text: String,
+    @SerialName("created_at")
     val timestamp: String,
 )
 
-@Stable
-@Serializable
-data class InitialMessages(
-    val messages: List<MessageDto>,
-) {
-    fun toConvState() = messages.map {
-        Message(roomId = it.chatRoom, author = it.user, content = it.text, timestamp = it.timestamp)
-    }
+typealias InitialMessages = List<MessageDto>
+
+fun InitialMessages.toConvState() = map {
+    Message(roomId = it.chatRoom, author = it.user, content = it.text, timestamp = it.timestamp)
 }
+

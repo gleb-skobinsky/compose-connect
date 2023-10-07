@@ -86,7 +86,7 @@ class MainViewModel : ViewModelPlatformImpl() {
             }
         }
         vmScope.launch {
-            when (val messages = MessagesRepository.getInitialMessagesForRoom(id, user.value)) {
+            when (val messages = MessagesRepository.getMessagesForRoom(id, user.value)) {
                 is Resource.Data -> {
                     _chats.update {
                         val oldRoom: ConversationUiState = it.getValue(id)
