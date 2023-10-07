@@ -15,20 +15,20 @@ object UserRepository {
         password: String,
     ): Resource<User> {
         try {
-            val response = chirrioClient.post("${LocalRoute.currentUrl}/token/") {
+            val response = chirrioClient.post("${LocalRoute.currentUrl}/login/") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginForm(email, password))
             }
             return if (response.status.value in 200..299) {
                 val credentials = Json.decodeFromString<CredentialsResponse>(response.bodyAsText())
-                var user = User(email = email, accessToken = credentials.access, refreshToken = credentials.refresh)
+                val user = User(email = email, accessToken = credentials.access, refreshToken = credentials.refresh)
                 val userResponse = chirrioClient.post("${LocalRoute.currentUrl}/user/") {
                     contentType(ContentType.Application.Json)
                     setBody(user)
                     headers.append("Authorization", user.getBearer())
                 }
-                user = Json.decodeFromString<User>(userResponse.bodyAsText())
-                Resource.Data(user)
+                val filledUser = Json.decodeFromString<GetUserResponse>(userResponse.bodyAsText())
+                Resource.Data(user.copy(firstName = filledUser.firstName, lastName = filledUser.lastName))
             } else {
                 Resource.Error(
                     message = "Error during login. Check your email and password.",

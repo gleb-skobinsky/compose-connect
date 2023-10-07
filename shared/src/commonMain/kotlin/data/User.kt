@@ -27,6 +27,15 @@ data class User(
 }
 
 @Serializable
+data class GetUserResponse(
+    val email: String,
+    @SerialName("first_name")
+    val firstName: String = "",
+    @SerialName("last_name")
+    val lastName: String = "",
+)
+
+@Serializable
 data class CredentialsResponse(
     val refresh: String = "",
     val access: String = "",
