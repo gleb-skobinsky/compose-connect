@@ -56,9 +56,4 @@ data class SignupRequest(
     val password: String,
 )
 
-@Serializable
-data class SearchUser(
-    val email: String,
-)
-
 typealias SearchUserResponse = List<User>
