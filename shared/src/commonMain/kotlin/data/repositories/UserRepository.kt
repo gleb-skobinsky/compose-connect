@@ -6,8 +6,8 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import transport.LocalRoute
-import transport.chirrioClient
+import data.transport.LocalRoute
+import data.transport.chirrioClient
 
 object UserRepository {
     suspend fun login(

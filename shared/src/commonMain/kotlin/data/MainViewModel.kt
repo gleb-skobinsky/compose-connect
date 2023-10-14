@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import themes.ThemeMode
-import transport.WsHandler
-import util.uuid
-import viewmodel.ViewModelPlatformImpl
+import presentation.themes.ThemeMode
+import data.transport.WsHandler
+import common.util.uuid
+import common.viewmodel.ViewModelPlatformImpl
 
 @Stable
 class MainViewModel : ViewModelPlatformImpl() {
