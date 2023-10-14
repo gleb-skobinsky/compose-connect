@@ -20,7 +20,7 @@ object RoomRepository {
             val newRoom = Json.decodeFromString<ChatRoomCreationDto>(response.bodyAsText())
             Resource.Data(newRoom)
         } catch (e: Exception) {
-            println("Error")
+            println("Error: ${response.status}")
             println(e.message)
             Resource.Error("Error creating room", response.status)
         }

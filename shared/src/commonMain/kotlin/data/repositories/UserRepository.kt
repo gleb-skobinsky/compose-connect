@@ -27,7 +27,8 @@ object UserRepository {
                     headers.append("Authorization", user.getBearer())
                 }
                 val filledUser = Json.decodeFromString<GetUserResponse>(userResponse.bodyAsText())
-                Resource.Data(user.copy(firstName = filledUser.firstName, lastName = filledUser.lastName))
+                val finalUser = user.copy(firstName = filledUser.firstName, lastName = filledUser.lastName)
+                Resource.Data(finalUser)
             } else {
                 Resource.Error(
                     message = "Error during login. Check your email and password.",

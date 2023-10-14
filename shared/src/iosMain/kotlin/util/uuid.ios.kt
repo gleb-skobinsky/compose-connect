@@ -1,5 +1,7 @@
 package util
 
+import platform.Foundation.NSUUID
+
 actual fun uuid(): String {
-    TODO("Not yet implemented")
+    return NSUUID().UUIDString().lowercase()
 }
