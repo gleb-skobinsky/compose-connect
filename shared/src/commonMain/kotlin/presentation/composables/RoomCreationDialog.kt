@@ -18,10 +18,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import data.MainViewModel
+import presentation.drawer.DrawerViewModel
 
 @Composable
-fun RoomCreationDialog(viewModel: MainViewModel) {
+fun RoomCreationDialog(viewModel: DrawerViewModel) {
     val dialogOpen by viewModel.plusRoomDialogOpen.collectAsState()
     val searchedUsers by viewModel.searchedUsers.collectAsState()
     val selectedUsers by viewModel.selectedUsers.collectAsState()

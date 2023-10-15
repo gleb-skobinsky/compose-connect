@@ -1,6 +1,4 @@
-package data
-
-import io.ktor.http.*
+package common
 
 sealed class Resource<T> {
     class Data<T>(
@@ -8,7 +6,8 @@ sealed class Resource<T> {
     ) : Resource<T>()
 
     class Error<T>(
-        val message: String = "",
-        val status: HttpStatusCode
+        val message: String = ""
     ) : Resource<T>()
+
+    class Loading<T> : Resource<T>()
 }

@@ -1,6 +1,6 @@
 package data.transport
 
-import data.Message
+import domain.model.Message
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

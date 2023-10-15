@@ -1,6 +1,6 @@
 package data.transport
 
-import data.Message
+import domain.model.Message
 import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*

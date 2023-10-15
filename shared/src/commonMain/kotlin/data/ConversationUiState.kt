@@ -2,6 +2,7 @@ package data
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.toMutableStateList
+import domain.model.Message
 
 @Stable
 data class ConversationUiState(

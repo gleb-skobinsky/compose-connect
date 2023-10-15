@@ -20,12 +20,13 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import data.MainViewModel
+import presentation.drawer.DrawerViewModel
+import presentation.login_screen.components.ShowOrHideSnackbar
 
 @Composable
 fun AppScaffold(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    viewModel: MainViewModel,
+    viewModel: DrawerViewModel,
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     content: @Composable (PaddingValues) -> Unit,

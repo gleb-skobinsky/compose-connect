@@ -23,10 +23,11 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import data.MainViewModel
 import data.exampleAccountsState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import presentation.drawer.DrawerViewModel
+import presentation.login_screen.components.AuthButton
 import presentation.platform.pointerCursor
 import presentation.resourceBindings.drawable_jetchat_icon_mpp
 
@@ -34,9 +35,9 @@ import presentation.resourceBindings.drawable_jetchat_icon_mpp
 fun AppDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
-    viewModel: MainViewModel,
+    viewModel: DrawerViewModel,
 ) {
-    val selectedChat by viewModel.conversationUiState.collectAsState()
+    val selectedChat by viewModel.currentConversation.collectAsState()
     val currentUser by viewModel.user.collectAsState()
     val chats by viewModel.chats.collectAsState()
     Box {
@@ -80,7 +81,7 @@ fun AppDrawer(
 }
 
 @Composable
-private fun RoomCreationButton(viewModel: MainViewModel) {
+private fun RoomCreationButton(viewModel: DrawerViewModel) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.Center
@@ -107,7 +108,7 @@ private fun RoomCreationButton(viewModel: MainViewModel) {
 }
 
 @Composable
-private fun LogoutButton(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+private fun LogoutButton(viewModel: DrawerViewModel, modifier: Modifier = Modifier) {
     AuthButton(true, "Log out", modifier) {
         viewModel.logoutUser()
     }

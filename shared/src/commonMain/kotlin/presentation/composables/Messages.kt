@@ -23,8 +23,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import data.ConversationUiState
-import data.Message
-import data.User
+import domain.model.Message
+import domain.model.User
 import presentation.messagesParser.SymbolAnnotationType
 import presentation.messagesParser.messageFormatter
 import org.jetbrains.compose.resources.ExperimentalResourceApi

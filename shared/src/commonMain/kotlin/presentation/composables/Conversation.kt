@@ -12,46 +12,50 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import data.AppScreenState
-import data.MainViewModel
-import data.Message
+import common.util.uuid
+import data.ConversationUiState
+import data.transport.getTimeNow
+import domain.model.AppScreenState
+import domain.model.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import presentation.conversation.ConversationViewModel
+import presentation.drawer.DrawerViewModel
 import presentation.platform.statusBarsPaddingMpp
 import presentation.platform.userInputModifier
-import data.transport.getTimeNow
-import common.util.uuid
 
 @Composable
 fun MainBody(
-    viewModel: MainViewModel,
+    drawerViewModel: DrawerViewModel,
+    conversationViewModel: ConversationViewModel
 ) {
     val scrollState = rememberLazyListState()
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-    val drawerOpen by viewModel.drawerShouldBeOpened.collectAsState()
-    val screenState by viewModel.screenState.collectAsState()
-    val currentUser by viewModel.selectedUserProfile.collectAsState()
+    val drawerOpen by drawerViewModel.drawerShouldBeOpened.collectAsState()
+    val screenState by drawerViewModel.screenState.collectAsState()
+    val currentUser by drawerViewModel.selectedUserProfile.collectAsState()
     if (drawerOpen) {
         // Open drawer and reset state in VM.
         LaunchedEffect(Unit) {
             scaffoldState.drawerState.open()
-            viewModel.resetOpenDrawerAction()
+            drawerViewModel.resetOpenDrawerAction()
         }
     }
 
-    RoomCreationDialog(viewModel)
+    RoomCreationDialog(drawerViewModel)
     AppScaffold(
         scaffoldState = scaffoldState,
-        viewModel = viewModel,
+        viewModel = drawerViewModel,
         onChatClicked = { id ->
-            viewModel.setCurrentConversation(id)
+            drawerViewModel.setCurrentConversation(id)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
         onProfileClicked = { userId ->
-            viewModel.setCurrentAccount(userId)
+            drawerViewModel.setCurrentAccount(userId)
+            drawerViewModel.setCurrentConversation(ConversationUiState.Empty)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
@@ -59,7 +63,7 @@ fun MainBody(
     ) {
         when (screenState) {
             AppScreenState.CHAT -> ConversationContent(
-                viewModel = viewModel,
+                viewModel = conversationViewModel,
                 scrollState = scrollState,
                 scope = coroutineScope
             ) {
@@ -80,13 +84,13 @@ fun MainBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConversationContent(
-    viewModel: MainViewModel,
+    viewModel: ConversationViewModel,
     scrollState: LazyListState,
     scope: CoroutineScope,
     onNavIconPressed: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val selectedRoom by viewModel.conversationUiState.collectAsState()
+    val selectedRoom by viewModel.currentConversation.collectAsState()
     val user by viewModel.user.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Messages(selectedRoom, user, scrollState)

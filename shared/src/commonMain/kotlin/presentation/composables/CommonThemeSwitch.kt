@@ -15,11 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import data.MainViewModel
+import presentation.SharedViewModel
 import presentation.themes.toTheme
 
 @Composable
-fun ThemeSwitch(viewModel: MainViewModel) {
+fun ThemeSwitch(viewModel: SharedViewModel) {
     Box(
         Modifier
             .defaultMinSize(300.dp, 48.dp)
@@ -33,7 +33,7 @@ fun ThemeSwitch(viewModel: MainViewModel) {
                 .clip(CircleShape)
         ) {
 
-            val checkedState by viewModel.themeMode.collectAsState()
+            val checkedState by viewModel.theme.collectAsState()
             val iconColor = MaterialTheme.colorScheme.onSecondary
             val commonModifier = Modifier.align(Alignment.CenterVertically)
             Icon(
