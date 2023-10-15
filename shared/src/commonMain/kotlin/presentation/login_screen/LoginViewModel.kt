@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import presentation.SharedViewModel
-import presentation.SharedViewModelImpl
+import presentation.SharedAppData
+import presentation.SharedAppDataImpl
 
 class LoginViewModel(
-    shared: SharedViewModelImpl
-): ViewModelPlatformImpl(), SharedViewModel by shared {
+    shared: SharedAppDataImpl
+): ViewModelPlatformImpl(), SharedAppData by shared {
 
     private val _loginScreenMode = MutableStateFlow(LoginScreenState.LOGIN)
     val loginScreenMode = _loginScreenMode.asStateFlow()

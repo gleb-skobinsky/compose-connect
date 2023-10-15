@@ -1,6 +1,7 @@
 package data.repository
 
 import common.util.uuid
+import data.remote.dto.ChatRoomDto
 import data.remote.dto.CreateRoomDto
 import data.remote.dto.GetRoomsDto
 import data.transport.LocalRoute
@@ -13,10 +14,17 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 object RoomRepositoryImpl: RoomRepository {
+    override suspend fun getRoom(id: String, user: User): ChatRoomDto {
+        val response = chirrioClient.get("${LocalRoute.currentUrl}/rooms/get/${id}") {
+            contentType(ContentType.Application.Json)
+            headers.append("Authorization", user.getBearer())
+        }
+        return Json.decodeFromString(response.bodyAsText())
+    }
+
     override suspend fun getRooms(user: User): GetRoomsDto {
         val response = chirrioClient.get("${LocalRoute.currentUrl}/rooms/${user.email}") {
             contentType(ContentType.Application.Json)

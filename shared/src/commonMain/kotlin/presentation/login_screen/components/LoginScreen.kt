@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import di.provideViewModel
 import domain.model.LoginScreenState
-import presentation.SharedViewModel
+import presentation.SharedAppData
 import presentation.drawer.components.ThemeSwitch
 import presentation.login_screen.LoginViewModel
 
@@ -90,7 +90,7 @@ fun AuthScreen(
 }
 
 @Composable
-fun ShowOrHideSnackbar(viewModel: SharedViewModel, scaffoldState: ScaffoldState) {
+fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
     val error by viewModel.errorMessage.collectAsState()
     LaunchedEffect(error) {
         error?.let {

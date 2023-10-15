@@ -26,11 +26,11 @@ import androidx.compose.ui.unit.dp
 import data.exampleAccountsState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import presentation.drawer.DrawerViewModel
-import presentation.login_screen.components.AuthButton
 import presentation.common.platform.pointerCursor
 import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
 import presentation.conversation.components.JetchatIcon
+import presentation.drawer.DrawerViewModel
+import presentation.login_screen.components.AuthButton
 
 @Composable
 fun AppDrawer(
@@ -38,7 +38,7 @@ fun AppDrawer(
     onChatClicked: (String) -> Unit,
     viewModel: DrawerViewModel,
 ) {
-    val selectedChat by viewModel.currentConversation.collectAsState()
+    val selectedChat by viewModel.chatId.collectAsState()
     val currentUser by viewModel.user.collectAsState()
     val chats by viewModel.chats.collectAsState()
     Box {
@@ -49,8 +49,8 @@ fun AppDrawer(
             DrawerItemHeader("Chats")
             chats.entries.forEach { (id, chat) ->
                 ChatItem(
-                    text = chat.channelName,
-                    selected = selectedChat.id == chat.id
+                    text = chat,
+                    selected = selectedChat == id
                 ) {
                     onChatClicked(id)
                 }

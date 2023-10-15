@@ -7,7 +7,6 @@ import data.exampleAccountsState
 import data.repository.RoomRepositoryImpl
 import data.repository.UserRepositoryImpl
 import domain.model.AppScreenState
-import domain.model.ConversationUiState
 import domain.model.User
 import domain.use_case.rooms.createRoomUseCase
 import domain.use_case.rooms.getRooms
@@ -19,12 +18,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import presentation.SharedViewModel
-import presentation.SharedViewModelImpl
+import presentation.SharedAppData
+import presentation.SharedAppDataImpl
 
 class DrawerViewModel(
-    shared: SharedViewModelImpl
-) : ViewModelPlatformImpl(), SharedViewModel by shared {
+    shared: SharedAppDataImpl
+) : ViewModelPlatformImpl(), SharedAppData by shared {
 
     private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
     val selectedUserProfile: StateFlow<ProfileScreenState?> = _selectedUserProfile.asStateFlow()
@@ -40,7 +39,7 @@ class DrawerViewModel(
         _plusRoomDialogOpen.value = false
     }
 
-    private val _chats: MutableStateFlow<Map<String, ConversationUiState>> = MutableStateFlow(emptyMap())
+    private val _chats: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     val chats = _chats.asStateFlow()
 
     private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -71,18 +70,14 @@ class DrawerViewModel(
 
     fun createRoom(roomName: String) {
         val result = createRoomUseCase(RoomRepositoryImpl, roomName, selectedUsers.value, user.value)
-        result.onEach {conversation ->
+        result.onEach { conversation ->
             when (conversation) {
                 is Resource.Data -> _chats.update { it + conversation.payload }
                 is Resource.Loading -> Unit
                 is Resource.Error -> setErrorMessage(conversation.message)
             }
-        }
-    }
-
-    fun setCurrentConversation(id: String) {
-        setScreenState(AppScreenState.CHAT)
-        setCurrentConversation(chats.value.getValue(id))
+        }.launchIn(vmScope)
+        closeRoomDialog()
     }
 
     fun searchUsers(email: String) {

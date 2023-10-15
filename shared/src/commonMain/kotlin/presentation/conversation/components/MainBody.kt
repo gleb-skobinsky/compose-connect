@@ -16,7 +16,6 @@ import common.util.uuid
 import data.transport.getTimeNow
 import di.provideViewModel
 import domain.model.AppScreenState
-import domain.model.ConversationUiState
 import domain.model.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,7 +29,7 @@ import presentation.profile.components.ProfileScreen
 
 @Composable
 fun MainBody(
-    drawerViewModel: DrawerViewModel = provideViewModel(),
+    drawerViewModel: DrawerViewModel = provideViewModel()
 ) {
     val scrollState = rememberLazyListState()
     val scaffoldState = rememberScaffoldState()
@@ -51,14 +50,13 @@ fun MainBody(
         scaffoldState = scaffoldState,
         viewModel = drawerViewModel,
         onChatClicked = { id ->
-            drawerViewModel.setCurrentConversation(id)
+            drawerViewModel.setChatId(id)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
         },
         onProfileClicked = { userId ->
             drawerViewModel.setCurrentAccount(userId)
-            drawerViewModel.setCurrentConversation(ConversationUiState.Empty)
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
@@ -74,9 +72,11 @@ fun MainBody(
                 }
             }
 
-            AppScreenState.ACCOUNT -> ProfileScreen(currentUser!!) {
-                coroutineScope.launch {
-                    scaffoldState.drawerState.open()
+            AppScreenState.ACCOUNT -> currentUser?.let {
+                ProfileScreen(it) {
+                    coroutineScope.launch {
+                        scaffoldState.drawerState.open()
+                    }
                 }
             }
         }

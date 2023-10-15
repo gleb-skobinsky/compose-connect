@@ -1,16 +1,13 @@
 package presentation
 
-import common.viewmodel.ViewModelPlatformImpl
-import domain.model.ConversationUiState
 import domain.model.AppScreenState
-import domain.model.Message
 import domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import presentation.common.themes.ThemeMode
 
-interface SharedViewModel {
+interface SharedAppData {
 
     val user: StateFlow<User>
 
@@ -24,18 +21,16 @@ interface SharedViewModel {
 
     fun setScreenState(screen: AppScreenState)
 
-    val currentConversation: StateFlow<ConversationUiState>
-
-    fun setCurrentConversation(conversation: ConversationUiState)
-
-    fun addMessage(msg: Message)
-
     val theme: StateFlow<ThemeMode>
 
     fun switchTheme(theme: ThemeMode)
+
+    val chatId: StateFlow<String>
+
+    fun setChatId(id: String)
 }
 
-class SharedViewModelImpl : SharedViewModel, ViewModelPlatformImpl() {
+class SharedAppDataImpl : SharedAppData {
     private val _user: MutableStateFlow<User> = MutableStateFlow(User.Empty)
     override val user = _user.asStateFlow()
     override fun setUser(user: User) {
@@ -56,21 +51,18 @@ class SharedViewModelImpl : SharedViewModel, ViewModelPlatformImpl() {
         _screenState.value = screen
     }
 
-    private val _currentConversation = MutableStateFlow(ConversationUiState.Empty)
-    override val currentConversation = _currentConversation.asStateFlow()
-
-    override fun setCurrentConversation(conversation: ConversationUiState) {
-        _currentConversation.value = conversation
-    }
-
-    override fun addMessage(msg: Message) {
-        _currentConversation.value.addMessage(msg)
-    }
-
     private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.DARK)
     override val theme: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
     override fun switchTheme(theme: ThemeMode) {
         _themeMode.value = theme
+    }
+
+    private val _chatId = MutableStateFlow("")
+    override val chatId: StateFlow<String> = _chatId.asStateFlow()
+
+    override fun setChatId(id: String) {
+        _screenState.value = AppScreenState.CHAT
+        _chatId.value = id
     }
 }

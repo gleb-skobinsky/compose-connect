@@ -16,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import di.provideViewModel
 import domain.model.User
-import presentation.SharedViewModelImpl
+import presentation.SharedAppDataImpl
 import presentation.common.themes.ApplicationTheme
 import presentation.login_screen.components.AuthScreen
 
@@ -24,8 +24,8 @@ private const val DURATION_MILLIS = 1000
 
 
 @Composable
-fun ThemeWrapper(
-    sharedViewModel: SharedViewModelImpl = provideViewModel()
+fun ChatApplication(
+    sharedViewModel: SharedAppDataImpl = provideViewModel()
 ) {
     Column(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)

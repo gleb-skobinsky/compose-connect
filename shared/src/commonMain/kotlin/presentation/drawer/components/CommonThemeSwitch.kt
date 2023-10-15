@@ -15,11 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import presentation.SharedViewModel
+import presentation.SharedAppData
 import presentation.common.themes.toTheme
 
 @Composable
-fun ThemeSwitch(viewModel: SharedViewModel) {
+fun ThemeSwitch(viewModel: SharedAppData) {
     Box(
         Modifier
             .defaultMinSize(300.dp, 48.dp)
