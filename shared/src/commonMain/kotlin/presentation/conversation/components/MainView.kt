@@ -15,19 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import di.provideViewModel
-import di.startKoinApp
 import domain.model.User
 import presentation.SharedViewModelImpl
 import presentation.common.themes.ApplicationTheme
 import presentation.login_screen.components.AuthScreen
 
 private const val DURATION_MILLIS = 1000
-
-@Composable
-fun ChatApplication() {
-    startKoinApp()
-    ThemeWrapper()
-}
 
 
 @Composable

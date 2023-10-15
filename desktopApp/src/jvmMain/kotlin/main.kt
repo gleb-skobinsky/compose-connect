@@ -12,9 +12,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import presentation.conversation.components.ChatApplication
+import di.startKoinApp
+import presentation.conversation.components.ThemeWrapper
 
 fun main() {
+    startKoinApp()
     application {
         val state = rememberWindowState(WindowPlacement.Maximized)
         Window(
@@ -23,7 +25,7 @@ fun main() {
             state = state,
         ) {
             SetAppIcon()
-            ChatApplication()
+            ThemeWrapper()
         }
     }
 }

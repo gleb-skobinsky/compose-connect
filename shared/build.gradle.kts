@@ -3,11 +3,11 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
-    kotlin("plugin.serialization") version "1.8.20"
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 kotlin {
-    android()
+    androidTarget()
 
     jvm("desktop")
 
@@ -32,7 +32,7 @@ kotlin {
         }
 //        extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
-    val ktorVersion = "2.3.0"
+    val ktorVersion = "2.3.3"
     val koinVersion = "3.5.0"
     sourceSets {
         val commonMain by getting {
@@ -46,15 +46,15 @@ kotlin {
                 implementation(compose.material3)
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
                 implementation("io.insert-koin:koin-core:$koinVersion")
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.7.2")
+                implementation("androidx.activity:activity-compose:1.8.0")
                 implementation("androidx.appcompat:appcompat:1.6.1")
                 implementation("androidx.core:core-ktx:1.12.0")
                 implementation("com.google.accompanist:accompanist-insets:0.21.0-beta")

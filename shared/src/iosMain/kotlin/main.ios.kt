@@ -1,4 +1,9 @@
 import androidx.compose.ui.window.ComposeUIViewController
-import presentation.conversation.components.ChatApplication
+import di.startKoinApp
+import platform.UIKit.UIViewController
+import presentation.conversation.components.ThemeWrapper
 
-fun MainViewController() = ComposeUIViewController { ChatApplication() }
+fun MainViewController(): UIViewController {
+    startKoinApp()
+    return ComposeUIViewController { ThemeWrapper() }
+}

@@ -7,11 +7,13 @@ plugins {
 
 kotlin {
     jvm()
+    val koinVersion = "3.5.0"
     sourceSets {
         val jvmMain by getting  {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":shared"))
+                implementation("io.insert-koin:koin-core:$koinVersion")
             }
         }
     }
