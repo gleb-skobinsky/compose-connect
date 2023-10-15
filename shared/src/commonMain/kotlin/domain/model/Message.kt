@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import common.util.uuid
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import presentation.resourceBindings.drawable_default_user
+import presentation.common.resourceBindings.drawable_default_user
 
 @Immutable
 @Serializable

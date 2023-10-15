@@ -1,13 +1,13 @@
 package presentation
 
-import data.ConversationUiState
+import domain.model.ConversationUiState
 import domain.model.AppScreenState
 import domain.model.Message
 import domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import presentation.themes.ThemeMode
+import presentation.common.themes.ThemeMode
 
 interface SharedViewModel {
 

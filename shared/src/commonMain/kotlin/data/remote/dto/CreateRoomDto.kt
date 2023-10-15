@@ -1,7 +1,7 @@
 package data.remote.dto
 
 import androidx.compose.runtime.Stable
-import data.ConversationUiState
+import domain.model.ConversationUiState
 import kotlinx.serialization.Serializable
 
 @Stable

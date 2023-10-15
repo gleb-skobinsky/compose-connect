@@ -1,7 +1,7 @@
 package data
 
-import presentation.resourceBindings.drawable_ali
-import presentation.resourceBindings.drawable_someone_else
+import presentation.common.resourceBindings.drawable_ali
+import presentation.common.resourceBindings.drawable_someone_else
 
 
 /**

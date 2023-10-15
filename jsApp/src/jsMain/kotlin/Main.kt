@@ -1,5 +1,5 @@
 import org.jetbrains.skiko.wasm.onWasmReady
-import presentation.composables.ChatApplication
+import presentation.conversation.components.ChatApplication
 
 
 fun main() {

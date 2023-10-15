@@ -1,4 +1,4 @@
 import androidx.compose.ui.window.ComposeUIViewController
-import presentation.composables.ChatApplication
+import presentation.conversation.components.ChatApplication
 
 fun MainViewController() = ComposeUIViewController { ChatApplication() }

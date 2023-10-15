@@ -1,6 +1,6 @@
 package com.myapplication
 
-import presentation.composables.ThemeWrapper
+import presentation.conversation.components.ThemeWrapper
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels

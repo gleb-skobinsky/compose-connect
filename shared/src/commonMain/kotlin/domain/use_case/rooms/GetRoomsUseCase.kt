@@ -1,7 +1,7 @@
 package domain.use_case.rooms
 
 import common.Resource
-import data.ConversationUiState
+import domain.model.ConversationUiState
 import data.remote.dto.toConvState
 import domain.model.User
 import domain.repository.RoomRepository

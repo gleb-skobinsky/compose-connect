@@ -2,7 +2,7 @@ package presentation.drawer
 
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
-import data.ConversationUiState
+import domain.model.ConversationUiState
 import data.ProfileScreenState
 import data.exampleAccountsState
 import data.repository.RoomRepositoryImpl

@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import domain.model.LoginScreenState
 import presentation.SharedViewModel
-import presentation.composables.ThemeSwitch
+import presentation.drawer.components.ThemeSwitch
 import presentation.login_screen.LoginViewModel
 
 @Composable

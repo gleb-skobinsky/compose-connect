@@ -3,7 +3,7 @@ package presentation.conversation
 import common.Resource
 import common.viewmodel.IODispatcher
 import common.viewmodel.ViewModelPlatformImpl
-import data.ConversationUiState
+import domain.model.ConversationUiState
 import data.repository.MessageRepositoryImpl
 import data.transport.WsHandler
 import domain.model.Message
