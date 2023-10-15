@@ -1,8 +1,8 @@
 package di
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import common.viewmodel.ViewModelPlatformImpl
+import org.koin.compose.koinInject
 
 @Composable
-actual inline fun <reified T: ViewModelPlatformImpl> provideViewModel() = viewModel<T>()
+actual inline fun <reified T : ViewModelPlatformImpl> provideViewModel(): T = koinInject()

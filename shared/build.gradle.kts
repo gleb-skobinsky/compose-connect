@@ -3,7 +3,7 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.10"
 }
 
 kotlin {
@@ -54,8 +54,6 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.8.0")
-                implementation("androidx.appcompat:appcompat:1.6.1")
                 implementation("androidx.core:core-ktx:1.12.0")
                 implementation("com.google.accompanist:accompanist-insets:0.21.0-beta")
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
@@ -63,6 +61,7 @@ kotlin {
                 implementation("io.insert-koin:koin-android-compat:$koinVersion")
                 implementation("io.insert-koin:koin-androidx-workmanager:$koinVersion")
                 implementation("io.insert-koin:koin-androidx-navigation:$koinVersion")
+                implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
                 implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
             }
         }

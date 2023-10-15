@@ -28,9 +28,10 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
-                implementation(compose.html.core)
-                implementation(compose.runtime)
                 implementation(project(":shared"))
+                implementation("io.insert-koin:koin-core:3.5.0")
+                implementation(compose.runtime)
+                implementation(compose.ui)
             }
         }
         val jsTest by getting {

@@ -1,6 +1,6 @@
 import di.startKoinApp
-import org.jetbrains.skiko.wasm.onWasmReady
 import presentation.conversation.components.ThemeWrapper
+import org.jetbrains.skiko.wasm.onWasmReady
 
 
 fun main() {

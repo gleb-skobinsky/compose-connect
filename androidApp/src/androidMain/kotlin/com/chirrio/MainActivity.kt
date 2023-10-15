@@ -1,20 +1,17 @@
-package com.myapplication
+package com.chirrio
 
-import presentation.conversation.components.ThemeWrapper
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import presentation.SharedViewModel
+import presentation.conversation.components.ThemeWrapper
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ThemeWrapper(viewModel)
+            ThemeWrapper()
         }
     }
 }
