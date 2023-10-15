@@ -13,24 +13,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import common.util.uuid
-import domain.model.ConversationUiState
 import data.transport.getTimeNow
+import di.provideViewModel
 import domain.model.AppScreenState
+import domain.model.ConversationUiState
 import domain.model.Message
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import presentation.conversation.ConversationViewModel
-import presentation.drawer.DrawerViewModel
 import presentation.common.platform.statusBarsPaddingMpp
 import presentation.common.platform.userInputModifier
-import presentation.profile.components.ProfileScreen
+import presentation.conversation.ConversationViewModel
+import presentation.drawer.DrawerViewModel
 import presentation.drawer.components.AppScaffold
 import presentation.drawer.components.RoomCreationDialog
+import presentation.profile.components.ProfileScreen
 
 @Composable
 fun MainBody(
-    drawerViewModel: DrawerViewModel,
-    conversationViewModel: ConversationViewModel
+    drawerViewModel: DrawerViewModel = provideViewModel(),
 ) {
     val scrollState = rememberLazyListState()
     val scaffoldState = rememberScaffoldState()
@@ -66,7 +66,6 @@ fun MainBody(
     ) {
         when (screenState) {
             AppScreenState.CHAT -> ConversationContent(
-                viewModel = conversationViewModel,
                 scrollState = scrollState,
                 scope = coroutineScope
             ) {
@@ -87,7 +86,7 @@ fun MainBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConversationContent(
-    viewModel: ConversationViewModel,
+    viewModel: ConversationViewModel = provideViewModel(),
     scrollState: LazyListState,
     scope: CoroutineScope,
     onNavIconPressed: () -> Unit,

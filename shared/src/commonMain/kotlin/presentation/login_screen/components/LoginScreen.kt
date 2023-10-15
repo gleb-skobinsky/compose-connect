@@ -46,13 +46,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import di.provideViewModel
 import domain.model.LoginScreenState
 import presentation.SharedViewModel
 import presentation.drawer.components.ThemeSwitch
 import presentation.login_screen.LoginViewModel
 
 @Composable
-fun AuthScreen(viewModel: LoginViewModel) {
+fun AuthScreen(
+    viewModel: LoginViewModel = provideViewModel()
+) {
     val screenMode by viewModel.loginScreenMode.collectAsState()
     val scaffoldState = rememberScaffoldState()
     ShowOrHideSnackbar(viewModel, scaffoldState)

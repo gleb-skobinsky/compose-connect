@@ -13,39 +13,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import di.provideViewModel
+import di.startKoinApp
 import domain.model.User
 import presentation.SharedViewModelImpl
 import presentation.common.themes.ApplicationTheme
-import presentation.conversation.ConversationViewModel
-import presentation.drawer.DrawerViewModel
-import presentation.login_screen.LoginViewModel
 import presentation.login_screen.components.AuthScreen
 
 private const val DURATION_MILLIS = 1000
 
 @Composable
 fun ChatApplication() {
-    val shared = remember { SharedViewModelImpl() }
-    val login = remember { LoginViewModel(shared) }
-    val drawer = remember { DrawerViewModel(shared) }
-    val conversation = remember { ConversationViewModel(shared) }
-    ThemeWrapper(login, drawer, conversation)
+    startKoinApp()
+    ThemeWrapper()
 }
 
 
 @Composable
 fun ThemeWrapper(
-    loginViewModel: LoginViewModel,
-    drawerViewModel: DrawerViewModel,
-    conversationViewModel: ConversationViewModel
+    sharedViewModel: SharedViewModelImpl = provideViewModel()
 ) {
     Column(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
-        val theme by loginViewModel.theme.collectAsState()
-        val user by loginViewModel.user.collectAsState()
+        val theme by sharedViewModel.theme.collectAsState()
+        val user by sharedViewModel.user.collectAsState()
         ApplicationTheme(theme) {
             Column {
                 AnimatedContent(
@@ -64,7 +57,7 @@ fun ThemeWrapper(
                         )
                     }
                 ) { loggedIn ->
-                    if (loggedIn) MainBody(drawerViewModel, conversationViewModel) else AuthScreen(loginViewModel)
+                    if (loggedIn) MainBody() else AuthScreen()
                 }
             }
         }

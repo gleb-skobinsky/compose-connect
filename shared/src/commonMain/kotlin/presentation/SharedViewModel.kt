@@ -1,5 +1,6 @@
 package presentation
 
+import common.viewmodel.ViewModelPlatformImpl
 import domain.model.ConversationUiState
 import domain.model.AppScreenState
 import domain.model.Message
@@ -34,7 +35,7 @@ interface SharedViewModel {
     fun switchTheme(theme: ThemeMode)
 }
 
-class SharedViewModelImpl : SharedViewModel {
+class SharedViewModelImpl : SharedViewModel, ViewModelPlatformImpl() {
     private val _user: MutableStateFlow<User> = MutableStateFlow(User.Empty)
     override val user = _user.asStateFlow()
     override fun setUser(user: User) {

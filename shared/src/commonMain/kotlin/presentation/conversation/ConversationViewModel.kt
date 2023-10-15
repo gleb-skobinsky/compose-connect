@@ -3,9 +3,9 @@ package presentation.conversation
 import common.Resource
 import common.viewmodel.IODispatcher
 import common.viewmodel.ViewModelPlatformImpl
-import domain.model.ConversationUiState
 import data.repository.MessageRepositoryImpl
 import data.transport.WsHandler
+import domain.model.ConversationUiState
 import domain.model.Message
 import domain.use_case.messages.getMessagesUseCase
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -13,9 +13,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import presentation.SharedViewModel
+import presentation.SharedViewModelImpl
 
 class ConversationViewModel(
-    shared: SharedViewModel
+    shared: SharedViewModelImpl
 ): ViewModelPlatformImpl(), SharedViewModel by shared {
     private val websocketHandler = WsHandler()
 

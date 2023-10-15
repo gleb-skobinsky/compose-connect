@@ -2,12 +2,12 @@ package presentation.drawer
 
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
-import domain.model.ConversationUiState
 import data.ProfileScreenState
 import data.exampleAccountsState
 import data.repository.RoomRepositoryImpl
 import data.repository.UserRepositoryImpl
 import domain.model.AppScreenState
+import domain.model.ConversationUiState
 import domain.model.User
 import domain.use_case.rooms.createRoomUseCase
 import domain.use_case.rooms.getRooms
@@ -20,9 +20,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import presentation.SharedViewModel
+import presentation.SharedViewModelImpl
 
 class DrawerViewModel(
-    shared: SharedViewModel
+    shared: SharedViewModelImpl
 ) : ViewModelPlatformImpl(), SharedViewModel by shared {
 
     private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
