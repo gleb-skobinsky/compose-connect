@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -16,6 +17,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.platform.pointerCursor
@@ -26,10 +28,11 @@ import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
 fun JetchatAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    onNavIconPressed: () -> Unit = { },
+    onNavIconPressed: suspend () -> Unit = { },
     title: @Composable () -> Unit,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
+    val scope = rememberCoroutineScope()
     val backgroundColor = MaterialTheme.colorScheme.background
     val foregroundColors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = Color.Transparent,
@@ -47,7 +50,11 @@ fun JetchatAppBar(
                     contentDescription = "Open navigation drawer",
                     modifier = Modifier
                         .size(64.dp)
-                        .clickable(onClick = onNavIconPressed)
+                        .clickable(
+                            onClick = {
+                                scope.launch { onNavIconPressed() }
+                            }
+                        )
                         .pointerCursor()
                         .padding(16.dp)
                 )

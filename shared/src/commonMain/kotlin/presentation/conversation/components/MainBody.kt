@@ -31,7 +31,6 @@ import presentation.profile.components.ProfileScreen
 fun MainBody(
     drawerViewModel: DrawerViewModel = provideViewModel()
 ) {
-    val scrollState = rememberLazyListState()
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val drawerOpen by drawerViewModel.drawerShouldBeOpened.collectAsState()
@@ -63,20 +62,13 @@ fun MainBody(
         }
     ) {
         when (screenState) {
-            AppScreenState.CHAT -> ConversationContent(
-                scrollState = scrollState,
-                scope = coroutineScope
-            ) {
-                coroutineScope.launch {
-                    scaffoldState.drawerState.open()
-                }
+            AppScreenState.CHAT -> ConversationContent {
+                scaffoldState.drawerState.open()
             }
 
             AppScreenState.ACCOUNT -> currentUser?.let {
                 ProfileScreen(it) {
-                    coroutineScope.launch {
-                        scaffoldState.drawerState.open()
-                    }
+                    scaffoldState.drawerState.open()
                 }
             }
         }
@@ -87,10 +79,10 @@ fun MainBody(
 @Composable
 private fun ConversationContent(
     viewModel: ConversationViewModel = provideViewModel(),
-    scrollState: LazyListState,
-    scope: CoroutineScope,
-    onNavIconPressed: () -> Unit,
+    onNavIconPressed: suspend () -> Unit,
 ) {
+    val scrollState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val selectedRoom by viewModel.currentConversation.collectAsState()
     val user by viewModel.user.collectAsState()

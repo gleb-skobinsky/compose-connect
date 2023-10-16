@@ -21,7 +21,7 @@ fun ChannelNameBar(
     channelMembers: Int,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    onNavIconPressed: () -> Unit = { },
+    onNavIconPressed: suspend () -> Unit = { },
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {

@@ -34,6 +34,9 @@ kotlin {
     }
     val ktorVersion = "2.3.3"
     val koinVersion = "3.5.0"
+    val decomposeVersion = extra["decompose.version"] as String
+    val decomposeRouterVersion = extra["decomposerouter.version"] as String
+    val essentyVersion = extra["essenty.version"] as String
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -50,6 +53,12 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
                 implementation("io.insert-koin:koin-core:$koinVersion")
+                implementation("io.github.xxfast:decompose-router:$decomposeRouterVersion")
+
+                // You will need to also bring in decompose and essenty
+                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+                // implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
+                implementation("com.arkivanov.essenty:parcelable:$essentyVersion")
             }
         }
         val androidMain by getting {
@@ -63,6 +72,7 @@ kotlin {
                 implementation("io.insert-koin:koin-androidx-navigation:$koinVersion")
                 implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
                 implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+                implementation("androidx.navigation:navigation-compose:2.7.4")
             }
         }
         val iosX64Main by getting

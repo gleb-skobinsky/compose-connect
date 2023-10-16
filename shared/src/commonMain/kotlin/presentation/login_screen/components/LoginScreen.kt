@@ -3,8 +3,6 @@ package presentation.login_screen.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -77,15 +75,12 @@ fun AuthScreen(
             }
         }
     ) {
-        Box(
-            Modifier.fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
+
             when (screenMode) {
                 LoginScreenState.LOGIN -> LoginScreen(viewModel)
                 LoginScreenState.REGISTER -> SignupScreen(viewModel)
             }
-        }
+
     }
 }
 
@@ -104,7 +99,7 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
 }
 
 @Composable
-fun BoxScope.SignupScreen(viewModel: LoginViewModel) {
+fun SignupScreen(viewModel: LoginViewModel = provideViewModel()) {
     var email by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -117,7 +112,7 @@ fun BoxScope.SignupScreen(viewModel: LoginViewModel) {
             confirmPassword.isNotBlank() &&
             password == confirmPassword
     Column(
-        modifier = Modifier.align(Alignment.Center),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LoginHeaderText("Register")
@@ -162,12 +157,12 @@ fun BoxScope.SignupScreen(viewModel: LoginViewModel) {
 }
 
 @Composable
-fun BoxScope.LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel = provideViewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     Column(
-        modifier = Modifier.align(Alignment.Center),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LoginHeaderText("Please log in to start messaging")

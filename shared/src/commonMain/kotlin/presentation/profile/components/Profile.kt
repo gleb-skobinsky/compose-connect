@@ -28,8 +28,7 @@ import presentation.conversation.components.baselineHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(userData: ProfileScreenState, onNavIconPressed: () -> Unit = { }) {
-
+fun ProfileScreen(userData: ProfileScreenState, onNavIconPressed: suspend () -> Unit = {}) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
         FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
