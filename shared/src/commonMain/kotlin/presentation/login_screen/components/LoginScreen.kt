@@ -113,7 +113,8 @@ fun SignupScreen(viewModel: LoginViewModel = provideViewModel()) {
             password == confirmPassword
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         LoginHeaderText("Register")
         LoginTextField(
@@ -163,7 +164,8 @@ fun LoginScreen(viewModel: LoginViewModel = provideViewModel()) {
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         LoginHeaderText("Please log in to start messaging")
         LoginTextField(
