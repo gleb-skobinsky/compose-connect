@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import di.provideViewModel
 import domain.model.LoginScreenState
+import navigation.Screens
 import presentation.SharedAppData
 import presentation.drawer.components.ThemeSwitch
 import presentation.login_screen.LoginViewModel
@@ -158,7 +159,10 @@ fun SignupScreen(viewModel: LoginViewModel = provideViewModel()) {
 }
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = provideViewModel()) {
+fun LoginScreen(
+    viewModel: LoginViewModel = provideViewModel(),
+    onNavigate: (Screens) -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
@@ -183,10 +187,14 @@ fun LoginScreen(viewModel: LoginViewModel = provideViewModel()) {
             text = "Log in"
         ) {
             viewModel.loginUser(email, password)
+
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
-            ClickableSecondaryLoginText("Register") { viewModel.setLoginMode(LoginScreenState.REGISTER) }
+            ClickableSecondaryLoginText("Register") {
+                viewModel.setLoginMode(LoginScreenState.REGISTER)
+                onNavigate(Screens.Login())
+            }
         }
     }
 }
