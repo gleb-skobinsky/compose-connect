@@ -24,10 +24,6 @@ interface SharedAppData {
     val theme: StateFlow<ThemeMode>
 
     fun switchTheme(theme: ThemeMode)
-
-    val chatId: StateFlow<String>
-
-    fun setChatId(id: String)
 }
 
 class SharedAppDataImpl : SharedAppData {
@@ -56,13 +52,5 @@ class SharedAppDataImpl : SharedAppData {
 
     override fun switchTheme(theme: ThemeMode) {
         _themeMode.value = theme
-    }
-
-    private val _chatId = MutableStateFlow("")
-    override val chatId: StateFlow<String> = _chatId.asStateFlow()
-
-    override fun setChatId(id: String) {
-        _screenState.value = AppScreenState.CHAT
-        _chatId.value = id
     }
 }

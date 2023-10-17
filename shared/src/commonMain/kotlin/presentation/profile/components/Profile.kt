@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import data.ProfileScreenState
+import data.exampleAccountsState
 import di.provideViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -33,7 +34,8 @@ import presentation.drawer.DrawerViewModel
 fun ProfileScreen(
     drawerViewModel: DrawerViewModel = provideViewModel()
 ) {
-    val selectedUser by drawerViewModel.selectedUserProfile.collectAsState()
+    val selectedUserId by drawerViewModel.userId.collectAsState()
+    val selectedUser = exampleAccountsState[selectedUserId]
     selectedUser?.let { userData ->
         var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
         if (functionalityNotAvailablePopupShown) {

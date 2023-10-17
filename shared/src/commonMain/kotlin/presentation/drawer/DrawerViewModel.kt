@@ -2,11 +2,8 @@ package presentation.drawer
 
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
-import data.ProfileScreenState
-import data.exampleAccountsState
 import data.repository.RoomRepositoryImpl
 import data.repository.UserRepositoryImpl
-import domain.model.AppScreenState
 import domain.model.User
 import domain.use_case.rooms.createRoomUseCase
 import domain.use_case.rooms.getRooms
@@ -25,8 +22,19 @@ class DrawerViewModel(
     shared: SharedAppDataImpl
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
 
-    private val _selectedUserProfile: MutableStateFlow<ProfileScreenState?> = MutableStateFlow(null)
-    val selectedUserProfile: StateFlow<ProfileScreenState?> = _selectedUserProfile.asStateFlow()
+    private val _chatId = MutableStateFlow("")
+    val chatId = _chatId.asStateFlow()
+
+    fun setChatId(id: String) {
+        _chatId.value = id
+    }
+
+    private val _userId = MutableStateFlow("")
+    val userId = _userId.asStateFlow()
+
+    fun setUserId(id: String) {
+        _userId.value = id
+    }
 
     private val _plusRoomDialogOpen = MutableStateFlow(false)
     val plusRoomDialogOpen = _plusRoomDialogOpen.asStateFlow()
@@ -59,17 +67,13 @@ class DrawerViewModel(
         _selectedUsers.update { it - email }
     }
 
-    fun setCurrentAccount(userId: String) {
-        setScreenState(AppScreenState.ACCOUNT)
-        _selectedUserProfile.value = exampleAccountsState.getValue(userId)
-    }
-
     fun resetOpenDrawerAction() {
         _drawerShouldBeOpened.value = false
     }
 
     fun createRoom(roomName: String) {
-        val result = createRoomUseCase(RoomRepositoryImpl, roomName, selectedUsers.value, user.value)
+        val result =
+            createRoomUseCase(RoomRepositoryImpl, roomName, selectedUsers.value, user.value)
         result.onEach { conversation ->
             when (conversation) {
                 is Resource.Data -> _chats.update { it + conversation.payload }
@@ -111,7 +115,7 @@ class DrawerViewModel(
         user.onEach {
             if (it != User.Empty) {
                 val result = getRooms(RoomRepositoryImpl, it)
-                result.onEach {  rooms ->
+                result.onEach { rooms ->
                     when (rooms) {
                         is Resource.Data -> _chats.value = rooms.payload
                         is Resource.Error -> setErrorMessage(rooms.message)

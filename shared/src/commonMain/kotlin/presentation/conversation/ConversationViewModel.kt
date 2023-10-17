@@ -19,7 +19,8 @@ import presentation.SharedAppData
 import presentation.SharedAppDataImpl
 
 class ConversationViewModel(
-    shared: SharedAppDataImpl
+    shared: SharedAppDataImpl,
+    chatId: String = "",
 ): ViewModelPlatformImpl(), SharedAppData by shared {
     private val websocketHandler = WsHandler()
 
@@ -33,7 +34,7 @@ class ConversationViewModel(
     }
 
     init {
-        chatId.onEach { id ->
+        chatId.let { id ->
             if (id.isNotEmpty()) {
                 vmScope.launch(IODispatcher) {
                     websocketHandler.dropOtherConnections(id)
@@ -50,6 +51,6 @@ class ConversationViewModel(
                     }
                 }.launchIn(vmScope)
             }
-        }.launchIn(vmScope)
+        }
     }
 }

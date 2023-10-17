@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
@@ -39,12 +40,14 @@ import presentation.login_screen.components.AuthButton
 fun AppDrawer(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
+    onLogoutClicked: () -> Unit,
     viewModel: DrawerViewModel,
 ) {
     val scope = rememberCoroutineScope()
-    val selectedChat by viewModel.chatId.collectAsState()
     val currentUser by viewModel.user.collectAsState()
     val chats by viewModel.chats.collectAsState()
+    val selectedChat by viewModel.chatId.collectAsState()
+    val selectedUser by viewModel.userId.collectAsState()
     Box {
         Column {
             Spacer(Modifier.height(3.dp))
@@ -67,7 +70,7 @@ fun AppDrawer(
             DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
             DrawerItemHeader("Recent Profiles")
             exampleAccountsState.entries.forEach { (profileId, profile) ->
-                ProfileItem(profile.name, profile.photo) {
+                ProfileItem(profile.name, profile.photo, profileId == selectedUser) {
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
@@ -89,7 +92,7 @@ fun AppDrawer(
                 modifier = Modifier.weight(1f)
             )
             Spacer(Modifier.width(12.dp))
-            LogoutButton(viewModel, Modifier.weight(1f))
+            LogoutButton(viewModel, Modifier.weight(1f), additionalAction = onLogoutClicked)
         }
     }
 }
@@ -122,9 +125,14 @@ private fun RoomCreationButton(viewModel: DrawerViewModel) {
 }
 
 @Composable
-private fun LogoutButton(viewModel: DrawerViewModel, modifier: Modifier = Modifier) {
+private fun LogoutButton(
+    viewModel: DrawerViewModel,
+    modifier: Modifier = Modifier,
+    additionalAction: () -> Unit
+) {
     AuthButton(true, "Log out", modifier) {
         viewModel.logoutUser()
+        additionalAction()
     }
 }
 
@@ -202,13 +210,19 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-private fun ProfileItem(text: String, profilePic: String?, onProfileClicked: () -> Unit) {
+private fun ProfileItem(
+    text: String,
+    profilePic: String?,
+    selected: Boolean = false,
+    onProfileClicked: () -> Unit
+) {
     Row(
         modifier = Modifier
             .height(56.dp)
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .clip(CircleShape)
+            .background(if (selected) MaterialTheme.colorScheme.tertiary else Color.Transparent)
             .pointerCursor()
             .clickable(onClick = onProfileClicked),
         verticalAlignment = Alignment.CenterVertically

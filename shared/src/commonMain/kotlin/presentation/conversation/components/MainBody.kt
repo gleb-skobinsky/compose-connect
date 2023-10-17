@@ -58,7 +58,6 @@ fun ChirrioScaffold(
     val scaffoldState = LocalScaffold.current
     val drawerOpen by viewModel.drawerShouldBeOpened.collectAsState()
     if (drawerOpen) {
-        // Open drawer and reset state in VM.
         LaunchedEffect(Unit) {
             scaffoldState.drawerState.open()
             viewModel.resetOpenDrawerAction()
@@ -69,12 +68,13 @@ fun ChirrioScaffold(
         AppScaffold(
             scaffoldState = scaffoldState,
             onChatClicked = { id ->
-                viewModel.setChatId(id)
                 onNavigate(Screens.Chat(id = id))
             },
             onProfileClicked = { userId ->
-                viewModel.setCurrentAccount(userId)
                 onNavigate(Screens.Profile(id = userId))
+            },
+            onLogoutClicked = {
+                onNavigate(Screens.Login())
             },
             content = content
         )

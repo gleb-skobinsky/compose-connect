@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import di.provideViewModel
 import domain.model.User
 import presentation.SharedAppDataImpl
-import presentation.common.themes.ApplicationTheme
+import presentation.common.themes.ChirrioAppTheme
 import presentation.login_screen.components.AuthScreen
 
 private const val DURATION_MILLIS = 1000
@@ -30,9 +30,8 @@ fun ChatApplication(
     Column(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
-        val theme by sharedViewModel.theme.collectAsState()
         val user by sharedViewModel.user.collectAsState()
-        ApplicationTheme(theme) {
+        ChirrioAppTheme {
             Column {
                 AnimatedContent(
                     targetState = user != User.Empty,

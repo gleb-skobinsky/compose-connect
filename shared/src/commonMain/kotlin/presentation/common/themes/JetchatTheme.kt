@@ -1,14 +1,17 @@
 package presentation.common.themes
 
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import di.provideViewModel
+import presentation.SharedAppDataImpl
 import presentation.common.typography.JetchatTypography
 
 private object JetChatTheme {
@@ -77,10 +80,11 @@ private object JetChatTheme {
 }
 
 @Composable
-fun ApplicationTheme(
-    theme: ThemeMode = isSystemInDarkTheme().toTheme(),
+fun ChirrioAppTheme(
+    sharedViewModel: SharedAppDataImpl = provideViewModel(),
     content: @Composable () -> Unit,
 ) {
+    val theme by sharedViewModel.theme.collectAsState()
     MaterialTheme(
         colorScheme = JetChatTheme[theme],
         typography = JetchatTypography

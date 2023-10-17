@@ -13,7 +13,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import di.startKoinApp
-import presentation.conversation.components.ChatApplication
+import navigation.SharedNavigatedApp
 
 fun main() {
     startKoinApp()
@@ -25,7 +25,7 @@ fun main() {
             state = state,
         ) {
             SetAppIcon()
-            ChatApplication()
+            SharedNavigatedApp()
         }
     }
 }
