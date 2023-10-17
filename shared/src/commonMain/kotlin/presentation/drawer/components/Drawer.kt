@@ -26,7 +26,6 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import data.exampleAccountsState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -129,7 +128,7 @@ private fun RoomCreationButton(viewModel: DrawerViewModel) {
 private fun LogoutButton(
     viewModel: DrawerViewModel,
     modifier: Modifier = Modifier,
-    additionalAction: () -> Unit
+    additionalAction: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val scaffold = LocalScaffold.current
@@ -220,7 +219,7 @@ private fun ProfileItem(
     text: String,
     profilePic: String?,
     selected: Boolean = false,
-    onProfileClicked: () -> Unit
+    onProfileClicked: () -> Unit,
 ) {
     Row(
         modifier = Modifier
