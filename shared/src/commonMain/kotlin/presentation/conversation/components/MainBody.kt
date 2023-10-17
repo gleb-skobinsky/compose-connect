@@ -71,9 +71,7 @@ fun ConversationContent(
 ) {
     val selectedRoom by viewModel.currentConversation.collectAsState()
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        selectedRoom?.let { chat ->
-            ChatRoom(chat, viewModel)
-        }
+        ChatRoom(selectedRoom, viewModel)
     }
 }
 
@@ -93,14 +91,16 @@ fun EmptyStartScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BoxScope.ChatRoom(
-    chat: ConversationUiState,
+    chat: ConversationUiState?,
     viewModel: ConversationViewModel,
 ) {
     val user by viewModel.user.collectAsState()
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    Messages(chat, user, scrollState)
+    chat?.let {
+        Messages(it, user, scrollState)
+    }
     Column(
         Modifier.Companion
             .align(Alignment.BottomCenter)
@@ -112,7 +112,7 @@ fun BoxScope.ChatRoom(
                     val timeNow = getTimeNow()
                     val message = Message(
                         id = uuid(),
-                        roomId = chat.id,
+                        roomId = chat?.id ?: "",
                         author = currentUser,
                         content = content,
                         timestamp = timeNow
@@ -131,8 +131,8 @@ fun BoxScope.ChatRoom(
         )
     }
     ChannelNameBar(
-        channelName = chat.channelName,
-        channelMembers = chat.channelMembers,
+        channelName = chat?.channelName ?: "",
+        channelMembers = chat?.channelMembers ?: 0,
         scrollBehavior = scrollBehavior,
         // Use statusBarsPadding() to move the app bar content below the status bar
         modifier = Modifier.statusBarsPaddingMpp(),
