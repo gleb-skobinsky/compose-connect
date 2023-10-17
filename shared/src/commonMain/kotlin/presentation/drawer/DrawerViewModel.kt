@@ -9,17 +9,12 @@ import domain.use_case.rooms.createRoomUseCase
 import domain.use_case.rooms.getRooms
 import domain.use_case.users.logoutUseCase
 import domain.use_case.users.searchUsersUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import presentation.SharedAppData
 import presentation.SharedAppDataImpl
 
 class DrawerViewModel(
-    shared: SharedAppDataImpl
+    shared: SharedAppDataImpl,
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
 
     private val _chatId = MutableStateFlow("")
@@ -72,27 +67,31 @@ class DrawerViewModel(
     }
 
     fun createRoom(roomName: String) {
-        val result =
-            createRoomUseCase(RoomRepositoryImpl, roomName, selectedUsers.value, user.value)
-        result.onEach { conversation ->
-            when (conversation) {
-                is Resource.Data -> _chats.update { it + conversation.payload }
-                is Resource.Loading -> Unit
-                is Resource.Error -> setErrorMessage(conversation.message)
-            }
-        }.launchIn(vmScope)
-        closeRoomDialog()
+        user.value?.let { currentUser ->
+            val result =
+                createRoomUseCase(RoomRepositoryImpl, roomName, selectedUsers.value, currentUser)
+            result.onEach { conversation ->
+                when (conversation) {
+                    is Resource.Data -> _chats.update { it + conversation.payload }
+                    is Resource.Loading -> Unit
+                    is Resource.Error -> setErrorMessage(conversation.message)
+                }
+            }.launchIn(vmScope)
+            closeRoomDialog()
+        }
     }
 
     fun searchUsers(email: String) {
-        val result = searchUsersUseCase(UserRepositoryImpl, email, user.value)
-        result.onEach {
-            when (it) {
-                is Resource.Data -> _searchedUsers.value = it.payload
-                is Resource.Error -> setErrorMessage(it.message)
-                is Resource.Loading -> Unit
-            }
-        }.launchIn(vmScope)
+        user.value?.let { currentUser ->
+            val result = searchUsersUseCase(UserRepositoryImpl, email, currentUser)
+            result.onEach {
+                when (it) {
+                    is Resource.Data -> _searchedUsers.value = it.payload
+                    is Resource.Error -> setErrorMessage(it.message)
+                    is Resource.Loading -> Unit
+                }
+            }.launchIn(vmScope)
+        }
     }
 
     fun clearSearch() {
@@ -100,30 +99,29 @@ class DrawerViewModel(
     }
 
     fun logoutUser() {
-        val result = logoutUseCase(UserRepositoryImpl, user.value)
-        result.onEach {
-            if (it == null) {
-                setUser(User.Empty)
-            } else {
-                setUser(User.Empty)
-                setErrorMessage(it)
-            }
-        }.launchIn(vmScope)
+        user.value?.let { currentUser ->
+            val result = logoutUseCase(UserRepositoryImpl, currentUser)
+            result.onEach {
+                if (it == null) {
+                    setUser(null)
+                } else {
+                    setUser(null)
+                    setErrorMessage(it)
+                }
+            }.launchIn(vmScope)
+        }
     }
 
     init {
-        user.onEach {
-            if (it != User.Empty) {
-                val result = getRooms(RoomRepositoryImpl, it)
-                result.onEach { rooms ->
-                    when (rooms) {
-                        is Resource.Data -> _chats.value = rooms.payload
-                        is Resource.Error -> setErrorMessage(rooms.message)
-                        is Resource.Loading -> Unit
-                    }
-                }.launchIn(vmScope)
-
-            }
+        user.filterNotNull().onEach {
+            val result = getRooms(RoomRepositoryImpl, it)
+            result.onEach { rooms ->
+                when (rooms) {
+                    is Resource.Data -> _chats.value = rooms.payload
+                    is Resource.Error -> setErrorMessage(rooms.message)
+                    is Resource.Loading -> Unit
+                }
+            }.launchIn(vmScope)
         }.launchIn(vmScope)
     }
 }

@@ -87,7 +87,7 @@ fun AppDrawer(
                 .align(Alignment.BottomCenter)
         ) {
             Text(
-                text = "Logged in as ${currentUser.firstName} ${currentUser.lastName}",
+                text = "Logged in as ${currentUser?.firstName ?: ""} ${currentUser?.lastName ?: ""}",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )

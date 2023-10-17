@@ -8,9 +8,9 @@ import presentation.common.themes.ThemeMode
 
 interface SharedAppData {
 
-    val user: StateFlow<User>
+    val user: StateFlow<User?>
 
-    fun setUser(user: User)
+    fun setUser(user: User?)
 
     val errorMessage: StateFlow<String?>
 
@@ -22,9 +22,9 @@ interface SharedAppData {
 }
 
 class SharedAppDataImpl : SharedAppData {
-    private val _user: MutableStateFlow<User> = MutableStateFlow(User.Empty)
+    private val _user: MutableStateFlow<User?> = MutableStateFlow(null)
     override val user = _user.asStateFlow()
-    override fun setUser(user: User) {
+    override fun setUser(user: User?) {
         _user.value = user
     }
 

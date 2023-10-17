@@ -3,7 +3,6 @@ package presentation.login_screen
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
 import data.repository.UserRepositoryImpl
-import domain.model.User
 import domain.use_case.users.loginUseCase
 import domain.use_case.users.signupUseCase
 import kotlinx.coroutines.flow.launchIn
@@ -24,7 +23,7 @@ class LoginViewModel(
                 }
 
                 is Resource.Error -> {
-                    setUser(User.Empty)
+                    setUser(null)
                     setErrorMessage(resource.message)
                 }
 

@@ -20,10 +20,6 @@ data class User(
     fun getBearer() = "Bearer $accessToken"
 
     val fullName = "$firstName $lastName"
-
-    companion object {
-        val Empty = User(email = "")
-    }
 }
 
 

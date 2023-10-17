@@ -84,15 +84,17 @@ fun ConversationContent(
         ) {
             UserInput(
                 onMessageSent = { content ->
-                    val timeNow = getTimeNow()
-                    val message = Message(
-                        id = uuid(),
-                        roomId = selectedRoom.id,
-                        author = viewModel.user.value,
-                        content = content,
-                        timestamp = timeNow
-                    )
-                    viewModel.sendMessage(message)
+                    viewModel.user.value?.let { currentUser ->
+                        val timeNow = getTimeNow()
+                        val message = Message(
+                            id = uuid(),
+                            roomId = selectedRoom.id,
+                            author = currentUser,
+                            content = content,
+                            timestamp = timeNow
+                        )
+                        viewModel.sendMessage(message)
+                    }
                 },
                 resetScroll = {
                     scope.launch {

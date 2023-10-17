@@ -9,11 +9,7 @@ import data.transport.WsHandler
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.use_case.rooms.getRoomUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import presentation.SharedAppData
 import presentation.SharedAppDataImpl
@@ -21,7 +17,7 @@ import presentation.SharedAppDataImpl
 class ConversationViewModel(
     shared: SharedAppDataImpl,
     chatId: String = "",
-): ViewModelPlatformImpl(), SharedAppData by shared {
+) : ViewModelPlatformImpl(), SharedAppData by shared {
     private val websocketHandler = WsHandler()
 
     private val _currentConversation = MutableStateFlow(ConversationUiState.Empty)
@@ -34,15 +30,15 @@ class ConversationViewModel(
     }
 
     init {
-        chatId.let { id ->
-            if (id.isNotEmpty()) {
+        if (chatId.isNotEmpty()) {
+            user.value?.let { currentUser ->
                 vmScope.launch(IODispatcher) {
-                    websocketHandler.dropOtherConnections(id)
-                    websocketHandler.connectRoom(id) { message ->
+                    websocketHandler.dropOtherConnections(chatId)
+                    websocketHandler.connectRoom(chatId) { message ->
                         currentConversation.value.addMessage(message)
                     }
                 }
-                val chat = getRoomUseCase(RoomRepositoryImpl, MessageRepositoryImpl, id, user.value)
+                val chat = getRoomUseCase(RoomRepositoryImpl, MessageRepositoryImpl, chatId, currentUser)
                 chat.onEach {
                     when (it) {
                         is Resource.Data -> _currentConversation.value = it.payload
