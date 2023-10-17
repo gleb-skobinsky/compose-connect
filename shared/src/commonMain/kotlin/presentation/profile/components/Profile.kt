@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.FunctionalityNotAvailablePopup
 import presentation.common.platform.statusBarsPaddingMpp
-import presentation.conversation.components.JetchatAppBar
+import presentation.conversation.components.ChirrioAppBar
 import presentation.conversation.components.baselineHeight
 import presentation.drawer.DrawerViewModel
 
@@ -50,7 +50,7 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
-            JetchatAppBar(
+            ChirrioAppBar(
                 // Use statusBarsPadding() to move the app bar content below the status bar
                 modifier = Modifier.statusBarsPaddingMpp(),
                 scrollBehavior = scrollBehavior,

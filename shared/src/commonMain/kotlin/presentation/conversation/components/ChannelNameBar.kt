@@ -26,7 +26,7 @@ fun ChannelNameBar(
     if (functionalityNotAvailablePopupShown) {
         FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
     }
-    JetchatAppBar(
+    ChirrioAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         title = {

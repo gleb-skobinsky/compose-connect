@@ -1,7 +1,6 @@
 package presentation.login_screen.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
@@ -18,9 +17,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import di.provideViewModel
+import kotlinx.coroutines.delay
 import navigation.NavigationCallback
 import navigation.Screens
 import presentation.SharedAppData
@@ -52,6 +54,7 @@ fun SignupScreen(
     viewModel: LoginViewModel = provideViewModel(),
     onNavigate: NavigationCallback = {},
 ) {
+    val scrollState = rememberScrollState()
     var email by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -64,10 +67,14 @@ fun SignupScreen(
             confirmPassword.isNotBlank() &&
             password == confirmPassword
     Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        AuthSpacer()
         LoginHeaderText("Register")
         LoginTextField(
             label = "Email:",
@@ -108,23 +115,36 @@ fun SignupScreen(
                 onNavigate(Screens.Login())
             }
         }
+        AuthSpacer()
     }
 }
+
+@Composable
+fun AuthSpacer() = Spacer(Modifier.height(42.dp))
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
     onNavigate: NavigationCallback = {},
 ) {
+    val scrollState = rememberScrollState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        LoginHeaderText("Please log in to start messaging")
+        AuthSpacer()
+        Row(Modifier.fillMaxWidth()) {
+            Spacer(Modifier.weight(1f))
+            LoginHeaderText("Please log in to start messaging", Modifier.weight(6f))
+            Spacer(Modifier.weight(1f))
+        }
         LoginTextField(
             label = "Email:",
             value = email,
@@ -133,7 +153,7 @@ fun LoginScreen(
         LoginTextField(
             label = "Password:",
             value = password,
-            isPassword = true
+            isPassword = true,
         ) { password = it }
         AuthButton(
             enabled = loginButtonEnabled,
@@ -148,6 +168,7 @@ fun LoginScreen(
                 onNavigate(Screens.Signup())
             }
         }
+        AuthSpacer()
     }
 }
 
@@ -188,8 +209,7 @@ fun LoginTextField(
         },
         modifier = Modifier
             .padding(bottom = 24.dp)
-            .width(300.dp)
-            .height(32.dp)
+            .size(300.dp, 32.dp)
             .background(MaterialTheme.colorScheme.tertiary, CircleShape)
             .padding(8.dp),
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
@@ -247,10 +267,11 @@ fun AuthButton(
 @Composable
 fun LoginHeaderText(
     text: String,
+    modifier: Modifier = Modifier,
 ) = Text(
     text = text,
     fontSize = 56.sp,
     color = MaterialTheme.colorScheme.primary,
     textAlign = TextAlign.Center,
-    modifier = Modifier.padding(bottom = 32.dp)
+    modifier = modifier.padding(bottom = 32.dp)
 )

@@ -31,7 +31,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.platform.pointerCursor
 import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
-import presentation.conversation.components.JetchatIcon
+import presentation.conversation.components.ChirrioIcon
 import presentation.conversation.components.LocalScaffold
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.AuthButton
@@ -140,7 +140,7 @@ private fun LogoutButton(
 @Composable
 private fun DrawerHeader() {
     Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        JetchatIcon(
+        ChirrioIcon(
             contentDescription = "Open navigation drawer",
             modifier = Modifier
                 .size(64.dp)

@@ -25,14 +25,14 @@ import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JetchatAppBar(
+fun ChirrioAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     title: @Composable () -> Unit,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val backgroundColor = MaterialTheme.colorScheme.background
+    val backgroundColor = MaterialTheme.colorScheme.onBackground
     val foregroundColors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = Color.Transparent,
         scrolledContainerColor = Color.Transparent
@@ -46,7 +46,7 @@ fun JetchatAppBar(
             colors = foregroundColors,
             navigationIcon = {
                 val scaffoldState = LocalScaffold.current
-                JetchatIcon(
+                ChirrioIcon(
                     contentDescription = "Open navigation drawer",
                     modifier = Modifier
                         .size(64.dp)
@@ -65,7 +65,7 @@ fun JetchatAppBar(
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun JetchatIcon(
+fun ChirrioIcon(
     contentDescription: String?,
     modifier: Modifier = Modifier
 ) {

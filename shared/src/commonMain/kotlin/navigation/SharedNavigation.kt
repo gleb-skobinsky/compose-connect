@@ -25,6 +25,8 @@ import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
 import presentation.profile.components.ProfileScreen
 
+const val NAVIGATION_TIMEOUT = 300
+
 @Composable
 fun SharedNavigatedApp() {
     ChirrioAppTheme {
@@ -33,7 +35,7 @@ fun SharedNavigatedApp() {
             targetState = screen,
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             transitionSpec = {
-                slideInHorizontally(tween(300)) { -it } togetherWith slideOutHorizontally(tween(300) { -it })
+                slideInHorizontally(tween(NAVIGATION_TIMEOUT)) { -it } togetherWith slideOutHorizontally(tween(NAVIGATION_TIMEOUT) { -it })
             }
         ) { currentScreen ->
             when (currentScreen) {
