@@ -2,37 +2,20 @@ package presentation.login_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -49,40 +32,7 @@ import domain.model.LoginScreenState
 import navigation.NavigationCallback
 import navigation.Screens
 import presentation.SharedAppData
-import presentation.drawer.components.ThemeSwitch
 import presentation.login_screen.LoginViewModel
-
-@Composable
-fun AuthScreen(
-    viewModel: LoginViewModel = provideViewModel()
-) {
-    val screenMode by viewModel.loginScreenMode.collectAsState()
-    val scaffoldState = rememberScaffoldState()
-    ShowOrHideSnackbar(viewModel, scaffoldState)
-    Scaffold(
-        scaffoldState = scaffoldState,
-        floatingActionButton = {
-            Surface(
-                modifier = Modifier
-                    .requiredSize(120.dp, 48.dp)
-                    .pointerHoverIcon(PointerIcon.Hand)
-                    .clickable {
-                        viewModel.switchTheme(!viewModel.theme.value)
-                    },
-                shape = RoundedCornerShape(50),
-                elevation = 18.dp,
-                color = MaterialTheme.colorScheme.secondary
-            ) {
-                ThemeSwitch(viewModel)
-            }
-        }
-    ) {
-        when (screenMode) {
-            LoginScreenState.LOGIN -> LoginScreen(viewModel)
-            LoginScreenState.REGISTER -> SignupScreen(viewModel)
-        }
-    }
-}
 
 @Composable
 fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
@@ -101,7 +51,7 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
 @Composable
 fun SignupScreen(
     viewModel: LoginViewModel = provideViewModel(),
-    onNavigate: NavigationCallback = {}
+    onNavigate: NavigationCallback = {},
 ) {
     var email by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
@@ -166,7 +116,7 @@ fun SignupScreen(
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
-    onNavigate: NavigationCallback = {}
+    onNavigate: NavigationCallback = {},
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

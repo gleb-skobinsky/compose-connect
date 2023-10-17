@@ -29,7 +29,8 @@ fun NavigatedApp() {
             val drawer: DrawerViewModel = provideViewModel()
             drawer.setChatId(chatId)
             val viewModel: ConversationViewModel = viewModel(
-                factory = ConversationVMFactory(chatId, provideViewModel())
+                factory = ConversationVMFactory(chatId, provideViewModel()),
+
             )
             ChirrioScaffold(
                 viewModel = drawer,

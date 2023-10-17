@@ -1,5 +1,5 @@
 import di.startKoinApp
-import presentation.conversation.components.ChatApplication
+import navigation.SharedNavigatedApp
 import org.jetbrains.skiko.wasm.onWasmReady
 
 
@@ -7,7 +7,7 @@ fun main() {
     startKoinApp()
     onWasmReady {
         BrowserViewportWindow("ComposeConnect") {
-            ChatApplication()
+            SharedNavigatedApp()
         }
     }
 }
