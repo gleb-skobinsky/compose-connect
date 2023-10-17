@@ -73,22 +73,21 @@ fun ConversationContent(
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         selectedRoom?.let { chat ->
             ChatRoom(chat, viewModel)
-        } ?: run {
-            EmptyStartScreen()
         }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BoxScope.EmptyStartScreen() {
-    ChirrioAppBar(title = {})
-    Text(
-        text = "Select a chat to start messaging",
-        modifier = Modifier.align(Alignment.Center).border(2.dp, MaterialTheme.colorScheme.tertiary, CircleShape).padding(8.dp),
-        color = MaterialTheme.colorScheme.primary
-    )
+fun EmptyStartScreen() {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        ChirrioAppBar(title = {})
+        Text(
+            text = "Select a chat to start messaging",
+            modifier = Modifier.align(Alignment.Center).border(2.dp, MaterialTheme.colorScheme.tertiary, CircleShape).padding(8.dp),
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

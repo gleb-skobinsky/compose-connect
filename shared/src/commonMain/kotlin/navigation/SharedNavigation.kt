@@ -7,11 +7,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import di.provideViewModel
 import presentation.SharedAppDataImpl
@@ -19,6 +15,7 @@ import presentation.common.themes.ChirrioAppTheme
 import presentation.conversation.ConversationViewModel
 import presentation.conversation.components.ChirrioScaffold
 import presentation.conversation.components.ConversationContent
+import presentation.conversation.components.EmptyStartScreen
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.LoginViewModel
 import presentation.login_screen.components.LoginScreen
@@ -35,7 +32,7 @@ fun SharedNavigatedApp() {
             targetState = screen,
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             transitionSpec = {
-                slideInHorizontally(tween(NAVIGATION_TIMEOUT)) { -it } togetherWith slideOutHorizontally(tween(NAVIGATION_TIMEOUT) { -it })
+                slideInHorizontally(tween(NAVIGATION_TIMEOUT)) { it } togetherWith slideOutHorizontally(tween(NAVIGATION_TIMEOUT) { it })
             }
         ) { currentScreen ->
             when (currentScreen) {
@@ -80,7 +77,7 @@ fun SharedNavigatedApp() {
                     ChirrioScaffold(
                         onNavigate = { screen = it }
                     ) {
-                        ConversationContent()
+                        EmptyStartScreen()
                     }
                 }
             }

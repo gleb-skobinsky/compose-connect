@@ -13,6 +13,7 @@ import presentation.common.themes.ChirrioAppTheme
 import presentation.conversation.ConversationViewModel
 import presentation.conversation.components.ChirrioScaffold
 import presentation.conversation.components.ConversationContent
+import presentation.conversation.components.EmptyStartScreen
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
@@ -78,7 +79,7 @@ fun NavigatedApp() {
                 ChirrioScaffold(onNavigate = { screen ->
                     controller.navigate(screen.toRoute())
                 }) {
-                    ConversationContent()
+                    EmptyStartScreen()
                 }
             }
         }
