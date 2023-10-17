@@ -20,12 +20,14 @@ class ConversationViewModel(
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
     private val websocketHandler = WsHandler()
 
-    private val _currentConversation = MutableStateFlow(ConversationUiState.Empty)
-    val currentConversation: StateFlow<ConversationUiState> = _currentConversation.asStateFlow()
+    private val _currentConversation = MutableStateFlow<ConversationUiState?>(null)
+    val currentConversation: StateFlow<ConversationUiState?> = _currentConversation.asStateFlow()
 
     fun sendMessage(message: Message) {
-        vmScope.launch {
-            websocketHandler.sendMessage(currentConversation.value.id, message)
+        currentConversation.value?.let {
+            vmScope.launch {
+                websocketHandler.sendMessage(it.id, message)
+            }
         }
     }
 
@@ -35,7 +37,7 @@ class ConversationViewModel(
                 vmScope.launch(IODispatcher) {
                     websocketHandler.dropOtherConnections(chatId)
                     websocketHandler.connectRoom(chatId) { message ->
-                        currentConversation.value.addMessage(message)
+                        currentConversation.value?.addMessage(message)
                     }
                 }
                 val chat = getRoomUseCase(RoomRepositoryImpl, MessageRepositoryImpl, chatId, currentUser)

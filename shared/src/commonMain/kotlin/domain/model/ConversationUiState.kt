@@ -16,14 +16,5 @@ data class ConversationUiState(
     fun addMessage(msg: Message) {
         _messages.add(0, msg) // Add to the beginning of the list
     }
-
-    companion object {
-        val Empty = ConversationUiState(
-            id = "",
-            channelName = "",
-            channelMembers = 0,
-            initialMessages = emptyList()
-        )
-    }
 }
 

@@ -142,7 +142,7 @@ fun LoginScreen(
         AuthSpacer()
         Row(Modifier.fillMaxWidth()) {
             Spacer(Modifier.weight(1f))
-            LoginHeaderText("Please log in to start messaging", Modifier.weight(6f))
+            LoginHeaderText("Please log in", Modifier.weight(6f))
             Spacer(Modifier.weight(1f))
         }
         LoginTextField(
