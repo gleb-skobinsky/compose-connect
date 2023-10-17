@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +25,7 @@ import presentation.login_screen.components.ShowOrHideSnackbar
 
 @Composable
 fun AppScaffold(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    scaffoldState: ScaffoldState,
     viewModel: DrawerViewModel = provideViewModel(),
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,

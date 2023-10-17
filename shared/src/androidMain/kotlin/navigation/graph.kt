@@ -1,9 +1,11 @@
 package navigation
 
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +20,7 @@ import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
 import presentation.profile.components.ProfileScreen
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun NavigatedApp() {
@@ -26,18 +29,9 @@ fun NavigatedApp() {
         NavHost(
             navController = controller,
             startDestination = "login",
-            enterTransition = {
-                slideInHorizontally(tween(NAVIGATION_TIMEOUT)) { it }
-            },
-            exitTransition = {
-                slideOutHorizontally(tween(NAVIGATION_TIMEOUT)) { -it }
-            },
-            popEnterTransition = {
-                slideInHorizontally(tween(NAVIGATION_TIMEOUT)) { -it }
-            },
-            popExitTransition = {
-                slideOutHorizontally(tween(NAVIGATION_TIMEOUT)) { it }
-            }
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
+            exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
         ) {
             composable("login") {
                 LoginScreen { controller.navigate(it.toRoute()) }

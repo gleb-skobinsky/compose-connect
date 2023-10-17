@@ -26,6 +26,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import data.exampleAccountsState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -130,7 +131,12 @@ private fun LogoutButton(
     modifier: Modifier = Modifier,
     additionalAction: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val scaffold = LocalScaffold.current
     AuthButton(true, "Log out", modifier) {
+        scope.launch {
+            scaffold.drawerState.close()
+        }
         viewModel.logoutUser()
         additionalAction()
     }

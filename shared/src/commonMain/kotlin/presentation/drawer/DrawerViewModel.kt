@@ -45,9 +45,6 @@ class DrawerViewModel(
     private val _chats: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     val chats = _chats.asStateFlow()
 
-    private val _drawerShouldBeOpened: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val drawerShouldBeOpened: StateFlow<Boolean> = _drawerShouldBeOpened.asStateFlow()
-
     private val _searchedUsers = MutableStateFlow(emptyList<User>())
     val searchedUsers = _searchedUsers.asStateFlow()
 
@@ -60,10 +57,6 @@ class DrawerViewModel(
 
     fun unselectUser(email: String) {
         _selectedUsers.update { it - email }
-    }
-
-    fun resetOpenDrawerAction() {
-        _drawerShouldBeOpened.value = false
     }
 
     fun createRoom(roomName: String) {

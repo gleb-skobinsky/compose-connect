@@ -39,13 +39,6 @@ fun ChirrioScaffold(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val scaffoldState = LocalScaffold.current
-    val drawerOpen by viewModel.drawerShouldBeOpened.collectAsState()
-    if (drawerOpen) {
-        LaunchedEffect(Unit) {
-            scaffoldState.drawerState.open()
-            viewModel.resetOpenDrawerAction()
-        }
-    }
     CompositionLocalProvider(LocalScaffold provides scaffoldState) {
         RoomCreationDialog(viewModel)
         AppScaffold(

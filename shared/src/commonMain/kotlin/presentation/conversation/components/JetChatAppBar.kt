@@ -52,7 +52,9 @@ fun ChirrioAppBar(
                         .size(64.dp)
                         .clickable(
                             onClick = {
-                                scope.launch { scaffoldState.drawerState.open() }
+                                scope.launch {
+                                    scaffoldState.drawerState.open()
+                                }
                             }
                         )
                         .pointerCursor()

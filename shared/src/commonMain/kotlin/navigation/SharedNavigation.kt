@@ -2,8 +2,8 @@ package navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +22,7 @@ import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
 import presentation.profile.components.ProfileScreen
 
-const val NAVIGATION_TIMEOUT = 300
+const val NAVIGATION_TIMEOUT = 700
 
 @Composable
 fun SharedNavigatedApp() {
@@ -32,7 +32,7 @@ fun SharedNavigatedApp() {
             targetState = screen,
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             transitionSpec = {
-                slideInHorizontally(tween(NAVIGATION_TIMEOUT)) { it } togetherWith slideOutHorizontally(tween(NAVIGATION_TIMEOUT) { it })
+                fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(tween(NAVIGATION_TIMEOUT))
             }
         ) { currentScreen ->
             when (currentScreen) {
