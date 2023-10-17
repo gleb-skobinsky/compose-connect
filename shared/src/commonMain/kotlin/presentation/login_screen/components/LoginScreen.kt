@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import di.provideViewModel
-import domain.model.LoginScreenState
 import navigation.NavigationCallback
 import navigation.Screens
 import presentation.SharedAppData
@@ -106,7 +105,6 @@ fun SignupScreen(
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Log in") {
-                viewModel.setLoginMode(LoginScreenState.LOGIN)
                 onNavigate(Screens.Login())
             }
         }
@@ -147,7 +145,6 @@ fun LoginScreen(
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Register") {
-                viewModel.setLoginMode(LoginScreenState.REGISTER)
                 onNavigate(Screens.Signup())
             }
         }

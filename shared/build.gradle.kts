@@ -53,12 +53,6 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
                 implementation("io.insert-koin:koin-core:$koinVersion")
-                implementation("io.github.xxfast:decompose-router:$decomposeRouterVersion")
-
-                // You will need to also bring in decompose and essenty
-                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-                // implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
-                implementation("com.arkivanov.essenty:parcelable:$essentyVersion")
             }
         }
         val androidMain by getting {

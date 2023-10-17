@@ -1,6 +1,5 @@
 package presentation
 
-import domain.model.AppScreenState
 import domain.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,10 +15,6 @@ interface SharedAppData {
     val errorMessage: StateFlow<String?>
 
     fun setErrorMessage(message: String?)
-
-    val screenState: StateFlow<AppScreenState>
-
-    fun setScreenState(screen: AppScreenState)
 
     val theme: StateFlow<ThemeMode>
 
@@ -37,14 +32,6 @@ class SharedAppDataImpl : SharedAppData {
     override val errorMessage = _errorMessage.asStateFlow()
     override fun setErrorMessage(message: String?) {
         _errorMessage.value = message
-    }
-
-    private val _screenState = MutableStateFlow(AppScreenState.CHAT)
-
-    override val screenState = _screenState.asStateFlow()
-
-    override fun setScreenState(screen: AppScreenState) {
-        _screenState.value = screen
     }
 
     private val _themeMode: MutableStateFlow<ThemeMode> = MutableStateFlow(ThemeMode.DARK)

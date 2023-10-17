@@ -18,7 +18,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import common.util.uuid
 import data.transport.getTimeNow
 import di.provideViewModel
-import domain.model.AppScreenState
 import domain.model.Message
 import kotlinx.coroutines.launch
 import navigation.NavigationCallback
@@ -29,21 +28,6 @@ import presentation.conversation.ConversationViewModel
 import presentation.drawer.DrawerViewModel
 import presentation.drawer.components.AppScaffold
 import presentation.drawer.components.RoomCreationDialog
-import presentation.profile.components.ProfileScreen
-
-@Composable
-fun MainBody(
-    drawerViewModel: DrawerViewModel = provideViewModel()
-) {
-    val screenState by drawerViewModel.screenState.collectAsState()
-
-    ChirrioScaffold {
-        when (screenState) {
-            AppScreenState.CHAT -> ConversationContent()
-            AppScreenState.ACCOUNT -> ProfileScreen()
-        }
-    }
-}
 
 val LocalScaffold = compositionLocalOf {
     ScaffoldState(DrawerState(DrawerValue.Closed), SnackbarHostState())
