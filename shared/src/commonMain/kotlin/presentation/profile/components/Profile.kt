@@ -19,68 +19,74 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import data.ProfileScreenState
+import di.provideViewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.FunctionalityNotAvailablePopup
 import presentation.common.platform.statusBarsPaddingMpp
 import presentation.conversation.components.JetchatAppBar
 import presentation.conversation.components.baselineHeight
+import presentation.drawer.DrawerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(userData: ProfileScreenState, onNavIconPressed: suspend () -> Unit = {}) {
-    var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
-    if (functionalityNotAvailablePopupShown) {
-        FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
-    }
+fun ProfileScreen(
+    drawerViewModel: DrawerViewModel = provideViewModel()
+) {
+    val selectedUser by drawerViewModel.selectedUserProfile.collectAsState()
+    selectedUser?.let { userData ->
+        var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
+        if (functionalityNotAvailablePopupShown) {
+            FunctionalityNotAvailablePopup { functionalityNotAvailablePopupShown = false }
+        }
 
-    val scrollState = rememberScrollState()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+        val scrollState = rememberScrollState()
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) {
-        JetchatAppBar(
-            // Use statusBarsPadding() to move the app bar content below the status bar
-            modifier = Modifier.statusBarsPaddingMpp(),
-            scrollBehavior = scrollBehavior,
-            onNavIconPressed = onNavIconPressed,
-            title = { },
-            actions = {
-                // More icon
-                Icon(
-                    imageVector = Icons.Outlined.MoreVert,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .clickable(onClick = { functionalityNotAvailablePopupShown = true })
-                        .padding(horizontal = 12.dp, vertical = 16.dp)
-                        .height(24.dp),
-                    contentDescription = "More options"
-                )
-            }
-        )
-        BoxWithConstraints(modifier = Modifier.weight(1f)) {
-            Surface {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .verticalScroll(scrollState),
-                ) {
-                    ProfileHeader(
-                        scrollState,
-                        userData,
-                        this@BoxWithConstraints.maxHeight
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+        ) {
+            JetchatAppBar(
+                // Use statusBarsPadding() to move the app bar content below the status bar
+                modifier = Modifier.statusBarsPaddingMpp(),
+                scrollBehavior = scrollBehavior,
+                title = { },
+                actions = {
+                    // More icon
+                    Icon(
+                        imageVector = Icons.Outlined.MoreVert,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .clickable(onClick = { functionalityNotAvailablePopupShown = true })
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .height(24.dp),
+                        contentDescription = "More options"
                     )
-                    UserInfoFields(userData, this@BoxWithConstraints.maxHeight)
                 }
+            )
+            BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                Surface {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .verticalScroll(scrollState),
+                    ) {
+                        ProfileHeader(
+                            scrollState,
+                            userData,
+                            this@BoxWithConstraints.maxHeight
+                        )
+                        UserInfoFields(userData, this@BoxWithConstraints.maxHeight)
+                    }
+                }
+                ProfileFab(
+                    userIsMe = userData.isMe(),
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                ) { functionalityNotAvailablePopupShown = true }
             }
-            ProfileFab(
-                userIsMe = userData.isMe(),
-                modifier = Modifier.align(Alignment.BottomEnd)
-            ) { functionalityNotAvailablePopupShown = true }
         }
     }
 }

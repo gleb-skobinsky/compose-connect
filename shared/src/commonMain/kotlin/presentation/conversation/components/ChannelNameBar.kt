@@ -21,7 +21,6 @@ fun ChannelNameBar(
     channelMembers: Int,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    onNavIconPressed: suspend () -> Unit = { },
 ) {
     var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
     if (functionalityNotAvailablePopupShown) {
@@ -30,7 +29,6 @@ fun ChannelNameBar(
     JetchatAppBar(
         modifier = modifier,
         scrollBehavior = scrollBehavior,
-        onNavIconPressed = onNavIconPressed,
         title = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 // Channel name

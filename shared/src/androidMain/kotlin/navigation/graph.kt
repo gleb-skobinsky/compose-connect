@@ -4,27 +4,30 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import presentation.conversation.components.ChirrioScaffold
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
 
 @Composable
 fun NavigatedApp() {
     val controller = rememberNavController()
-    NavHost(controller, "login") {
-        composable("login") {
-            LoginScreen { controller.navigate(it.toRoute()) }
-        }
-        composable("signup") {
-            SignupScreen()
-        }
-        composable("chat/{chatId}") {
+    ChirrioScaffold {
+        NavHost(controller, "login") {
+            composable("login") {
+                LoginScreen { controller.navigate(it.toRoute()) }
+            }
+            composable("signup") {
+                SignupScreen()
+            }
+            composable("chat/{chatId}") {
 
-        }
-        composable("profile/{profileId}") {
+            }
+            composable("profile/{profileId}") {
 
-        }
-        composable("main") {
+            }
+            composable("main") {
 
+            }
         }
     }
 }

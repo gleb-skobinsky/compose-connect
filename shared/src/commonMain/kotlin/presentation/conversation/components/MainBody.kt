@@ -2,10 +2,13 @@ package presentation.conversation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.DrawerState
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
@@ -17,7 +20,6 @@ import data.transport.getTimeNow
 import di.provideViewModel
 import domain.model.AppScreenState
 import domain.model.Message
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import presentation.common.platform.statusBarsPaddingMpp
 import presentation.common.platform.userInputModifier
@@ -31,47 +33,46 @@ import presentation.profile.components.ProfileScreen
 fun MainBody(
     drawerViewModel: DrawerViewModel = provideViewModel()
 ) {
-    val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
-    val drawerOpen by drawerViewModel.drawerShouldBeOpened.collectAsState()
     val screenState by drawerViewModel.screenState.collectAsState()
-    val currentUser by drawerViewModel.selectedUserProfile.collectAsState()
+
+    ChirrioScaffold {
+        when (screenState) {
+            AppScreenState.CHAT -> ConversationContent()
+            AppScreenState.ACCOUNT -> ProfileScreen()
+        }
+    }
+}
+
+val LocalScaffold = compositionLocalOf {
+    ScaffoldState(DrawerState(DrawerValue.Closed), SnackbarHostState())
+}
+
+@Composable
+fun ChirrioScaffold(
+    viewModel: DrawerViewModel = provideViewModel(),
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val scaffoldState = LocalScaffold.current
+    val drawerOpen by viewModel.drawerShouldBeOpened.collectAsState()
     if (drawerOpen) {
         // Open drawer and reset state in VM.
         LaunchedEffect(Unit) {
             scaffoldState.drawerState.open()
-            drawerViewModel.resetOpenDrawerAction()
+            viewModel.resetOpenDrawerAction()
         }
     }
-
-    RoomCreationDialog(drawerViewModel)
-    AppScaffold(
-        scaffoldState = scaffoldState,
-        viewModel = drawerViewModel,
-        onChatClicked = { id ->
-            drawerViewModel.setChatId(id)
-            coroutineScope.launch {
-                scaffoldState.drawerState.close()
-            }
-        },
-        onProfileClicked = { userId ->
-            drawerViewModel.setCurrentAccount(userId)
-            coroutineScope.launch {
-                scaffoldState.drawerState.close()
-            }
-        }
-    ) {
-        when (screenState) {
-            AppScreenState.CHAT -> ConversationContent {
-                scaffoldState.drawerState.open()
-            }
-
-            AppScreenState.ACCOUNT -> currentUser?.let {
-                ProfileScreen(it) {
-                    scaffoldState.drawerState.open()
-                }
-            }
-        }
+    CompositionLocalProvider(LocalScaffold provides scaffoldState) {
+        RoomCreationDialog(viewModel)
+        AppScaffold(
+            scaffoldState = scaffoldState,
+            onChatClicked = { id ->
+                viewModel.setChatId(id)
+            },
+            onProfileClicked = { userId ->
+                viewModel.setCurrentAccount(userId)
+            },
+            content = content
+        )
     }
 }
 
@@ -79,7 +80,6 @@ fun MainBody(
 @Composable
 private fun ConversationContent(
     viewModel: ConversationViewModel = provideViewModel(),
-    onNavIconPressed: suspend () -> Unit,
 ) {
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -118,7 +118,6 @@ private fun ConversationContent(
         ChannelNameBar(
             channelName = selectedRoom.channelName,
             channelMembers = selectedRoom.channelMembers,
-            onNavIconPressed = onNavIconPressed,
             scrollBehavior = scrollBehavior,
             // Use statusBarsPadding() to move the app bar content below the status bar
             modifier = Modifier.statusBarsPaddingMpp(),

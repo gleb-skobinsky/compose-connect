@@ -28,7 +28,6 @@ import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
 fun JetchatAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    onNavIconPressed: suspend () -> Unit = { },
     title: @Composable () -> Unit,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
@@ -46,13 +45,14 @@ fun JetchatAppBar(
             scrollBehavior = scrollBehavior,
             colors = foregroundColors,
             navigationIcon = {
+                val scaffoldState = LocalScaffold.current
                 JetchatIcon(
                     contentDescription = "Open navigation drawer",
                     modifier = Modifier
                         .size(64.dp)
                         .clickable(
                             onClick = {
-                                scope.launch { onNavIconPressed() }
+                                scope.launch { scaffoldState.drawerState.open() }
                             }
                         )
                         .pointerCursor()

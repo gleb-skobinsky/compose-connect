@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,11 +25,13 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import data.exampleAccountsState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.platform.pointerCursor
 import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
 import presentation.conversation.components.JetchatIcon
+import presentation.conversation.components.LocalScaffold
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.AuthButton
 
@@ -38,6 +41,7 @@ fun AppDrawer(
     onChatClicked: (String) -> Unit,
     viewModel: DrawerViewModel,
 ) {
+    val scope = rememberCoroutineScope()
     val selectedChat by viewModel.chatId.collectAsState()
     val currentUser by viewModel.user.collectAsState()
     val chats by viewModel.chats.collectAsState()
@@ -47,11 +51,15 @@ fun AppDrawer(
             DrawerHeader()
             DividerItem()
             DrawerItemHeader("Chats")
+            val scaffoldState = LocalScaffold.current
             chats.entries.forEach { (id, chat) ->
                 ChatItem(
                     text = chat,
                     selected = selectedChat == id
                 ) {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
                     onChatClicked(id)
                 }
             }
@@ -59,7 +67,12 @@ fun AppDrawer(
             DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
             DrawerItemHeader("Recent Profiles")
             exampleAccountsState.entries.forEach { (profileId, profile) ->
-                ProfileItem(profile.name, profile.photo) { onProfileClicked(profileId) }
+                ProfileItem(profile.name, profile.photo) {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                    onProfileClicked(profileId)
+                }
             }
             ThemeSwitch(viewModel)
         }
