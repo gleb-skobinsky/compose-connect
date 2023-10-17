@@ -14,12 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import common.util.uuid
-import data.transport.getTimeNow
+import data.remote.dto.MessageDto
 import di.provideViewModel
 import domain.model.ConversationUiState
-import domain.model.Message
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import navigation.NavigationCallback
 import navigation.Screens
 import presentation.common.platform.statusBarsPaddingMpp
@@ -109,13 +108,11 @@ fun BoxScope.ChatRoom(
         UserInput(
             onMessageSent = { content ->
                 viewModel.user.value?.let { currentUser ->
-                    val timeNow = getTimeNow()
-                    val message = Message(
-                        id = uuid(),
-                        roomId = chat?.id ?: "",
-                        author = currentUser,
-                        content = content,
-                        timestamp = timeNow
+                    val message = MessageDto(
+                        chatRoom = chat?.id ?: "",
+                        user = currentUser,
+                        text = content,
+                        timestamp = Clock.System.now()
                     )
                     viewModel.sendMessage(message)
                 }

@@ -34,9 +34,6 @@ kotlin {
     }
     val ktorVersion = "2.3.3"
     val koinVersion = "3.5.0"
-    val decomposeVersion = extra["decompose.version"] as String
-    val decomposeRouterVersion = extra["decomposerouter.version"] as String
-    val essentyVersion = extra["essenty.version"] as String
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -53,6 +50,7 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
                 implementation("io.insert-koin:koin-core:$koinVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
             }
         }
         val androidMain by getting {

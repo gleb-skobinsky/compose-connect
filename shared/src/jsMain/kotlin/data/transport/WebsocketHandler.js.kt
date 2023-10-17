@@ -1,7 +1,6 @@
 package data.transport
 
-import domain.model.Message
-import kotlinx.serialization.decodeFromString
+import data.remote.dto.MessageDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.w3c.dom.WebSocket
@@ -9,7 +8,7 @@ import org.w3c.dom.WebSocket
 actual class WsHandler : WebSocketHandlerPlatform {
 
     private val ws = mutableMapOf<String, WebSocket>()
-    override suspend fun connectRoom(id: String, onMessageReceive: (Message) -> Unit) {
+    override suspend fun connectRoom(id: String, onMessageReceive: (MessageDto) -> Unit) {
         if (id !in ws.keys) {
             val connection = WebSocket("${LocalRoute.currentWsUrl}/chat/$id/")
             connection.onopen = {}
@@ -17,7 +16,7 @@ actual class WsHandler : WebSocketHandlerPlatform {
                 try {
                     console.log(event.data)
                     event.data?.let {
-                        onMessageReceive(Json.decodeFromString<Message>(event.data as String))
+                        onMessageReceive(Json.decodeFromString(event.data as String))
                     }
                     console.log(event.data)
                 } catch (e: Exception) {
@@ -28,8 +27,8 @@ actual class WsHandler : WebSocketHandlerPlatform {
         }
     }
 
-    override suspend fun sendMessage(roomId: String, message: Message) {
-        ws[roomId]?.send(Json.encodeToString<Message>(message))
+    override suspend fun sendMessage(roomId: String, message: MessageDto) {
+        ws[roomId]?.send(Json.encodeToString(message))
     }
 
     override suspend fun dropOtherConnections(exceptId: String) {

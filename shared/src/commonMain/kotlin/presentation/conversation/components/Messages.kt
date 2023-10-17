@@ -22,13 +22,14 @@ import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import common.util.interpret
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.model.User
-import presentation.common.messagesParser.SymbolAnnotationType
-import presentation.common.messagesParser.messageFormatter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import presentation.common.messagesParser.SymbolAnnotationType
+import presentation.common.messagesParser.messageFormatter
 import presentation.common.resourceBindings.drawable_ali
 import presentation.common.resourceBindings.drawable_someone_else
 
@@ -151,7 +152,7 @@ private fun AuthorNameTimestamp(msg: Message, isUserMe: Boolean) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = msg.timestamp,
+            text = msg.timestamp.time.interpret(),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.alignBy(LastBaseline),
             color = textColor
