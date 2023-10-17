@@ -22,7 +22,7 @@ data class PlatformHosts(
 
 object LocalRoute {
     private val development = PlatformHosts(
-        desktop = "127.0.0.1:8000",
+        desktop = "127.0.0.1",
         js = "127.0.0.1",
         android = "10.0.2.2",
         ios = "127.0.0.1"

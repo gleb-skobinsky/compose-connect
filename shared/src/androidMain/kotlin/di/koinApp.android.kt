@@ -12,7 +12,7 @@ actual fun startKoinApp() = startKoin {
     modules(
         module {
             single { SharedAppDataImpl() }
-            viewModel { DrawerViewModel(get()) }
+            single { DrawerViewModel(get()) }
             viewModel { ConversationViewModel(get()) }
             viewModel { LoginViewModel(get()) }
         }

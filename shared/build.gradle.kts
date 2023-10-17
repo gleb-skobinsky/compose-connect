@@ -51,6 +51,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation(kotlin("test"))
             }
         }
         val androidMain by getting {
