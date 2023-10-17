@@ -14,11 +14,13 @@ sealed class Screens(open val name: String) {
         override fun toRoute() = "$name/$id"
     }
 
-    data class Profile(override val name: String, val id: String) : Screens(name) {
+    data class Profile(override val name: String = "profile", val id: String) : Screens(name) {
         override fun toRoute(): String = "$name/$id"
     }
 
-    data class Main(override val name: String) : Screens(name) {
+    data class Main(override val name: String = "main") : Screens(name) {
         override fun toRoute(): String = name
     }
 }
+
+typealias NavigationCallback = (Screens) -> Unit

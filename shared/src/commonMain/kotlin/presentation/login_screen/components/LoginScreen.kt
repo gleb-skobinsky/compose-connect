@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import di.provideViewModel
 import domain.model.LoginScreenState
+import navigation.NavigationCallback
 import navigation.Screens
 import presentation.SharedAppData
 import presentation.drawer.components.ThemeSwitch
@@ -76,12 +77,10 @@ fun AuthScreen(
             }
         }
     ) {
-
-            when (screenMode) {
-                LoginScreenState.LOGIN -> LoginScreen(viewModel)
-                LoginScreenState.REGISTER -> SignupScreen(viewModel)
-            }
-
+        when (screenMode) {
+            LoginScreenState.LOGIN -> LoginScreen(viewModel)
+            LoginScreenState.REGISTER -> SignupScreen(viewModel)
+        }
     }
 }
 
@@ -100,7 +99,10 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
 }
 
 @Composable
-fun SignupScreen(viewModel: LoginViewModel = provideViewModel()) {
+fun SignupScreen(
+    viewModel: LoginViewModel = provideViewModel(),
+    onNavigate: NavigationCallback = {}
+) {
     var email by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -153,7 +155,10 @@ fun SignupScreen(viewModel: LoginViewModel = provideViewModel()) {
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
-            ClickableSecondaryLoginText("Log in") { viewModel.setLoginMode(LoginScreenState.LOGIN) }
+            ClickableSecondaryLoginText("Log in") {
+                viewModel.setLoginMode(LoginScreenState.LOGIN)
+                onNavigate(Screens.Login())
+            }
         }
     }
 }
@@ -161,7 +166,7 @@ fun SignupScreen(viewModel: LoginViewModel = provideViewModel()) {
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
-    onNavigate: (Screens) -> Unit = {}
+    onNavigate: NavigationCallback = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -187,13 +192,13 @@ fun LoginScreen(
             text = "Log in"
         ) {
             viewModel.loginUser(email, password)
-
+            onNavigate(Screens.Main())
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Register") {
                 viewModel.setLoginMode(LoginScreenState.REGISTER)
-                onNavigate(Screens.Login())
+                onNavigate(Screens.Signup())
             }
         }
     }
@@ -285,7 +290,10 @@ fun AuthButton(
         onClick = action,
         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
     ) {
-        Text(text, color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text,
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

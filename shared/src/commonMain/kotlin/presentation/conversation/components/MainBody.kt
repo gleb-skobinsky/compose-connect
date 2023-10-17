@@ -21,6 +21,8 @@ import di.provideViewModel
 import domain.model.AppScreenState
 import domain.model.Message
 import kotlinx.coroutines.launch
+import navigation.NavigationCallback
+import navigation.Screens
 import presentation.common.platform.statusBarsPaddingMpp
 import presentation.common.platform.userInputModifier
 import presentation.conversation.ConversationViewModel
@@ -50,7 +52,8 @@ val LocalScaffold = compositionLocalOf {
 @Composable
 fun ChirrioScaffold(
     viewModel: DrawerViewModel = provideViewModel(),
-    content: @Composable (PaddingValues) -> Unit
+    onNavigate: NavigationCallback = {},
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     val scaffoldState = LocalScaffold.current
     val drawerOpen by viewModel.drawerShouldBeOpened.collectAsState()
@@ -67,9 +70,11 @@ fun ChirrioScaffold(
             scaffoldState = scaffoldState,
             onChatClicked = { id ->
                 viewModel.setChatId(id)
+                onNavigate(Screens.Chat(id = id))
             },
             onProfileClicked = { userId ->
                 viewModel.setCurrentAccount(userId)
+                onNavigate(Screens.Profile(id = userId))
             },
             content = content
         )
@@ -78,7 +83,7 @@ fun ChirrioScaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ConversationContent(
+fun ConversationContent(
     viewModel: ConversationViewModel = provideViewModel(),
 ) {
     val scrollState = rememberLazyListState()
@@ -123,5 +128,4 @@ private fun ConversationContent(
             modifier = Modifier.statusBarsPaddingMpp(),
         )
     }
-
 }

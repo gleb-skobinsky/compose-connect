@@ -3,7 +3,7 @@ package com.chirrio
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import presentation.conversation.components.ChatApplication
+import navigation.NavigatedApp
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatApplication()
+            NavigatedApp()
         }
     }
 }
