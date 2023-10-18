@@ -2,7 +2,7 @@ package presentation.login_screen
 
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
-import data.repository.UserRepositoryImpl
+import data.repository.RemoteUserRepository
 import domain.use_case.users.loginUseCase
 import domain.use_case.users.signupUseCase
 import kotlinx.coroutines.flow.launchIn
@@ -15,7 +15,7 @@ class LoginViewModel(
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
 
     fun loginUser(email: String, password: String) {
-        val result = loginUseCase(UserRepositoryImpl, email, password)
+        val result = loginUseCase(RemoteUserRepository, email, password)
         result.onEach { resource ->
             when (resource) {
                 is Resource.Data -> {
@@ -33,7 +33,7 @@ class LoginViewModel(
     }
 
     fun signupUser(email: String, firstName: String, lastName: String, password: String) {
-        val result = signupUseCase(UserRepositoryImpl, email, firstName, lastName, password)
+        val result = signupUseCase(RemoteUserRepository, email, firstName, lastName, password)
         result.onEach {
             when (it) {
                 is Resource.Data -> setUser(it.payload)

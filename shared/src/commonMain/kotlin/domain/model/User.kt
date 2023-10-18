@@ -13,9 +13,9 @@ data class User(
     @SerialName("last_name")
     val lastName: String = "",
     @SerialName("access_token")
-    val accessToken: String = "",
+    var accessToken: String = "",
     @SerialName("refresh_token")
-    val refreshToken: String = "",
+    var refreshToken: String = "",
 ) {
     fun getBearer() = "Bearer $accessToken"
 

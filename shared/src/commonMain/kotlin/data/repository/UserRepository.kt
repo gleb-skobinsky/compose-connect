@@ -4,6 +4,8 @@ import data.remote.dto.CredentialsDto
 import data.remote.dto.GetUserDto
 import data.remote.dto.LoginDto
 import data.remote.dto.LogoutDto
+import data.remote.dto.RefreshTokenDto
+import data.remote.dto.RefreshTokenResponse
 import data.remote.dto.SearchUserDto
 import data.remote.dto.SignupDto
 import data.transport.LocalRoute
@@ -16,14 +18,22 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-object UserRepositoryImpl: UserRepository {
+object RemoteUserRepository: UserRepository {
     override suspend fun login(email: String, password: String): CredentialsDto {
         val response = chirrioClient.post("${LocalRoute.currentUrl}/users/login/") {
             contentType(ContentType.Application.Json)
             setBody(LoginDto(email, password))
+        }
+        return Json.decodeFromString(response.bodyAsText())
+    }
+
+    override suspend fun refreshToken(user: User): RefreshTokenResponse {
+        val response = chirrioClient.post("${LocalRoute.currentUrl}/users/refresh-token/") {
+            contentType(ContentType.Application.Json)
+            setBody(RefreshTokenDto(refresh = user.refreshToken))
+            headers.append("Authorization", user.getBearer())
         }
         return Json.decodeFromString(response.bodyAsText())
     }

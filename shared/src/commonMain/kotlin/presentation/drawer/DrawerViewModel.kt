@@ -3,7 +3,7 @@ package presentation.drawer
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
 import data.repository.RoomRepositoryImpl
-import data.repository.UserRepositoryImpl
+import data.repository.RemoteUserRepository
 import domain.model.User
 import domain.use_case.rooms.createRoomUseCase
 import domain.use_case.rooms.getRooms
@@ -76,7 +76,7 @@ class DrawerViewModel(
 
     fun searchUsers(email: String) {
         user.value?.let { currentUser ->
-            val result = searchUsersUseCase(UserRepositoryImpl, email, currentUser)
+            val result = searchUsersUseCase(RemoteUserRepository, email, currentUser)
             result.onEach {
                 when (it) {
                     is Resource.Data -> _searchedUsers.value = it.payload
@@ -93,7 +93,7 @@ class DrawerViewModel(
 
     fun logoutUser() {
         user.value?.let { currentUser ->
-            val result = logoutUseCase(UserRepositoryImpl, currentUser)
+            val result = logoutUseCase(RemoteUserRepository, currentUser)
             result.onEach {
                 if (it == null) {
                     setUser(null)
