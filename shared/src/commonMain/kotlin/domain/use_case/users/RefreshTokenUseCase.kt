@@ -15,6 +15,6 @@ suspend fun refreshTokenUseCase(
     } catch (e: IOException) {
         Resource.Error("Couldn't reach server. Check your internet connection.")
     } catch (e: kotlinx.serialization.SerializationException) {
-        Resource.Error("An unexpected error occurred.")
+        Resource.Error(e.message.toString())
     }
 }

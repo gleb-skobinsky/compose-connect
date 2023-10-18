@@ -2,18 +2,18 @@ package presentation
 
 import common.Resource
 import common.viewmodel.IODispatcher
+import common.viewmodel.ViewModelPlatformImpl
 import data.repository.RemoteUserRepository
 import domain.model.User
 import domain.use_case.users.refreshTokenUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import presentation.common.themes.ThemeMode
 import kotlin.time.Duration.Companion.minutes
 
@@ -32,8 +32,7 @@ interface SharedAppData {
     fun switchTheme(theme: ThemeMode)
 }
 
-class SharedAppDataImpl : SharedAppData {
-    private val credentialsUpdaterScope = CoroutineScope(SupervisorJob() + IODispatcher)
+class SharedAppDataImpl : SharedAppData, ViewModelPlatformImpl() {
 
     private val _user: MutableStateFlow<User?> = MutableStateFlow(null)
     override val user = _user.asStateFlow()
@@ -55,21 +54,28 @@ class SharedAppDataImpl : SharedAppData {
     }
 
     init {
-        user.filterNotNull().onEach {
-            println("Starting refresh updater")
-            delay(8.minutes)
-            println("8 minutes passed")
-            when (val result = refreshTokenUseCase(RemoteUserRepository, it)) {
-                is Resource.Data -> {
-                    val (refresh, access) = result.payload
-                    _user.value?.accessToken = access
-                    _user.value?.refreshToken = refresh
+        user.onEach {
+            if (it != null) {
+                while (true) {
+                    yield()
+                    withContext(IODispatcher) {
+                        delay(8.minutes)
+                        when (val result = refreshTokenUseCase(RemoteUserRepository, it)) {
+                            is Resource.Data -> {
+                                val (refresh, access) = result.payload
+                                _user.value?.accessToken = access
+                                _user.value?.refreshToken = refresh
+                            }
+
+                            is Resource.Error -> {
+                                setErrorMessage("Could not confirm user session. Try to log in again.")
+                            }
+
+                            is Resource.Loading -> Unit
+                        }
+                    }
                 }
-                is Resource.Error -> {
-                    setErrorMessage("Could not confirm user session. Try to log in again.")
-                }
-                is Resource.Loading -> Unit
             }
-        }.launchIn(credentialsUpdaterScope)
+        }.launchIn(vmScope)
     }
 }
