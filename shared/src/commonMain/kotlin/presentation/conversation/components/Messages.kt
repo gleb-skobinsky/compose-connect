@@ -24,11 +24,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import common.util.invoke
 import common.util.toLabel
-import common.util.toLocal
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.model.User
-import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.messagesParser.SymbolAnnotationType
@@ -41,9 +40,9 @@ fun Messages(
     conversationUiState: ConversationUiState?,
     user: User?,
     scrollState: LazyListState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentDate: LocalDate
 ) {
-    val currentDate = Clock.System.now().toLocal().date
     val messages = conversationUiState?.messages
     Box(modifier = modifier) {
         messages?.let {
@@ -65,13 +64,8 @@ fun Messages(
                     val msg = messages[index]
                     val prevMessage = messages.getOrNull(index - 1)
                     val nextMessage = messages.getOrNull(index + 1)
-                    val prevAuthor = prevMessage?.author
-                    val nextAuthor = nextMessage?.author
-                    val nextTime = nextMessage?.timestamp
-                    val isFirstMessageByAuthor = prevAuthor != msg.author
-                    val isLastMessageByAuthor = nextAuthor != msg.author
                     Column {
-                        if (nextTime?.date != msg.timestamp.date) {
+                        if (nextMessage?.timestamp?.date != msg.timestamp.date) {
                             if (msg.timestamp.date == currentDate) {
                                 DayHeader("Today")
                             } else {
@@ -82,8 +76,8 @@ fun Messages(
                             onAuthorClick = { name -> println(name) },
                             msg = msg,
                             isUserMe = msg.author.email == user?.email,
-                            isFirstMessageByAuthor = isFirstMessageByAuthor,
-                            isLastMessageByAuthor = isLastMessageByAuthor,
+                            isFirstMessageByAuthor = prevMessage?.author != msg.author,
+                            isLastMessageByAuthor = nextMessage?.author != msg.author,
                         )
                     }
                 }
