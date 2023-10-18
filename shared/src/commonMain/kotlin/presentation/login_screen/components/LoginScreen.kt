@@ -128,8 +128,8 @@ fun LoginScreen(
     onNavigate: NavigationCallback = {},
 ) {
     val scrollState = rememberScrollState()
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("glebgytnik@gmail.com") }
+    var password by remember { mutableStateOf("LiuRuis5968!") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     Column(
         modifier = Modifier

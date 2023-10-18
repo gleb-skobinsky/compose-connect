@@ -90,14 +90,13 @@ fun BoxScope.ChatRoom(
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    chat?.let {
-        Messages(it, user, scrollState)
-    }
     Column(
-        Modifier.Companion
+        Modifier
+            .fillMaxSize()
             .align(Alignment.BottomCenter)
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
+        Messages(chat, user, scrollState, modifier = Modifier.weight(1f).fillMaxSize())
         UserInput(
             onMessageSent = { content ->
                 viewModel.user.value?.let { currentUser ->
@@ -117,7 +116,7 @@ fun BoxScope.ChatRoom(
             },
             // Use navigationBarsWithImePadding(), to move the input panel above both the
             // navigation bar, and on-screen keyboard (IME)
-            modifier = Modifier.userInputModifier(),
+            modifier = Modifier.userInputModifier().weight(1f),
         )
     }
     ChannelNameBar(

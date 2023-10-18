@@ -61,8 +61,8 @@ fun UserInput(
             // Reset text field and close keyboard
             textState = ""
             // Move scroll to bottom
-            resetScroll()
             dismissKeyboard()
+            resetScroll()
         }
         Column(
             modifier = modifier

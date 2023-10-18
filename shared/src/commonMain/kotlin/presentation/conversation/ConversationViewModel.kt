@@ -28,6 +28,7 @@ class ConversationViewModel(
     val currentConversation: StateFlow<ConversationUiState?> = _currentConversation.asStateFlow()
 
     fun sendMessage(message: MessageDto) {
+        currentConversation.value?.addMessage(message.toMessage())
         currentConversation.value?.let {
             vmScope.launch {
                 websocketHandler.sendMessage(it.id, message)

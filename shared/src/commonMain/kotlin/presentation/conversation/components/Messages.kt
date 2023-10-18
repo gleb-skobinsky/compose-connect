@@ -22,10 +22,13 @@ import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import common.util.interpret
+import common.util.invoke
+import common.util.toLabel
+import common.util.toLocal
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.model.User
+import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.messagesParser.SymbolAnnotationType
@@ -35,35 +38,61 @@ import presentation.common.resourceBindings.drawable_someone_else
 
 @Composable
 fun Messages(
-    conversationUiState: ConversationUiState,
+    conversationUiState: ConversationUiState?,
     user: User?,
     scrollState: LazyListState,
+    modifier: Modifier = Modifier
 ) {
-    val messages = conversationUiState.messages
-    LazyColumn(
-        reverseLayout = true,
-        contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 150.dp),
-        modifier = Modifier
-            .padding(top = 50.dp)
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        state = scrollState
-    ) {
-        items(count = messages.size, { messages[it].id }) { index ->
-            val msg: Message = messages[index]
-            val prevAuthor = messages.getOrNull(index - 1)?.author
-            val nextAuthor = messages.getOrNull(index + 1)?.author
-            val content = messages[index]
-            val isFirstMessageByAuthor = prevAuthor != content.author
-            val isLastMessageByAuthor = nextAuthor != content.author
-            MessageWidget(
-                onAuthorClick = { name -> println(name) },
-                msg = msg,
-                isUserMe = msg.author.email == user?.email,
-                isFirstMessageByAuthor = isFirstMessageByAuthor,
-                isLastMessageByAuthor = isLastMessageByAuthor,
-            )
+    val currentDate = Clock.System.now().toLocal().date
+    val messages = conversationUiState?.messages
+    Box(modifier = modifier) {
+        messages?.let {
+            LazyColumn(
+                reverseLayout = true,
+                contentPadding = PaddingValues(
+                    start = 10.dp,
+                    end = 10.dp,
+                    top = 20.dp,
+                    bottom = 20.dp
+                ),
+                modifier = Modifier
+                    .padding(top = 50.dp)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+                state = scrollState
+            ) {
+                items(count = messages.size, { messages[it].id }) { index ->
+                    val msg = messages[index]
+                    val prevMessage = messages.getOrNull(index - 1)
+                    val nextMessage = messages.getOrNull(index + 1)
+                    val prevAuthor = prevMessage?.author
+                    val nextAuthor = nextMessage?.author
+                    val nextTime = nextMessage?.timestamp
+                    val isFirstMessageByAuthor = prevAuthor != msg.author
+                    val isLastMessageByAuthor = nextAuthor != msg.author
+                    Column {
+                        if (nextTime?.date != msg.timestamp.date) {
+                            if (msg.timestamp.date == currentDate) {
+                                DayHeader("Today")
+                            } else {
+                                DayHeader(msg.timestamp.date.toLabel())
+                            }
+                        }
+                        MessageWidget(
+                            onAuthorClick = { name -> println(name) },
+                            msg = msg,
+                            isUserMe = msg.author.email == user?.email,
+                            isFirstMessageByAuthor = isFirstMessageByAuthor,
+                            isLastMessageByAuthor = isLastMessageByAuthor,
+                        )
+                    }
+                }
+            }
         }
+        JumpToBottom(
+            scrollState = scrollState,
+            enabled = scrollState.firstVisibleItemIndex != 0
+        )
     }
 }
 
@@ -152,7 +181,7 @@ private fun AuthorNameTimestamp(msg: Message, isUserMe: Boolean) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = msg.timestamp.time.interpret(),
+            text = msg.timestamp.time(),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.alignBy(LastBaseline),
             color = textColor
@@ -177,7 +206,7 @@ fun ChatItemBubble(
     Column {
         Surface(
             color = backgroundBubbleColor,
-            shape = ChatBubbleShape
+            shape = chatBubbleShape
         ) {
             ClickableMessage(
                 message = message,
@@ -191,7 +220,7 @@ fun ChatItemBubble(
             Spacer(modifier = Modifier.height(4.dp))
             Surface(
                 color = backgroundBubbleColor,
-                shape = ChatBubbleShape
+                shape = chatBubbleShape
             ) {
                 Image(
                     painter = msgImage,
@@ -204,7 +233,7 @@ fun ChatItemBubble(
     }
 }
 
-private val ChatBubbleShape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
+private val chatBubbleShape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
 
 @Composable
 fun ClickableMessage(
