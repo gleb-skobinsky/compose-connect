@@ -14,6 +14,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +52,7 @@ fun Messages(
     modifier: Modifier = Modifier
 ) {
     val currentDate = Clock.System.now().toLocal().date
-    val messages = conversationUiState?.messages
+    val messages = remember(conversationUiState) { conversationUiState?.messages }
     Box(modifier = modifier) {
         messages?.let {
             LazyColumn(
