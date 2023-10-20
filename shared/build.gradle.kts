@@ -32,7 +32,7 @@ kotlin {
         }
 //        extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
-    val ktorVersion = "2.3.3"
+    val ktorVersion = "2.3.5"
     val koinVersion = "3.5.0"
     sourceSets {
         val commonMain by getting {
@@ -51,6 +51,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation("media.kamel:kamel-image:0.8.1")
                 implementation(kotlin("test"))
             }
         }
