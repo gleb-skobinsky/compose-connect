@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.compose")
 }
 
-group = "com.myapplication"
+group = "com.chirrio"
 version = "1.0-SNAPSHOT"
 
 repositories {
