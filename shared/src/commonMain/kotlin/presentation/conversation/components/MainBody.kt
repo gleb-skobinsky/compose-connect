@@ -14,13 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import common.util.toLocal
 import data.remote.dto.MessageDto
 import di.provideViewModel
 import domain.model.ConversationUiState
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import navigation.NavigationCallback
 import navigation.Screens
 import presentation.common.platform.statusBarsPaddingMpp
@@ -63,10 +61,9 @@ fun ChirrioScaffold(
 fun ConversationContent(
     viewModel: ConversationViewModel = provideViewModel(),
 ) {
-    val currentDate = Clock.System.now().toLocal().date
     val selectedRoom by viewModel.currentConversation.collectAsState()
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        ChatRoom(selectedRoom, viewModel, currentDate)
+        ChatRoom(selectedRoom, viewModel)
     }
 }
 
@@ -87,8 +84,7 @@ fun EmptyStartScreen() {
 @Composable
 fun BoxScope.ChatRoom(
     chat: ConversationUiState?,
-    viewModel: ConversationViewModel,
-    currentDate: LocalDate,
+    viewModel: ConversationViewModel
 ) {
     val user by viewModel.user.collectAsState()
     val scrollState = rememberLazyListState()
@@ -103,8 +99,7 @@ fun BoxScope.ChatRoom(
         Messages(
             conversationUiState = chat,
             user = user,
-            scrollState = scrollState, modifier = Modifier.weight(1f).fillMaxSize(),
-            currentDate = currentDate
+            scrollState = scrollState, modifier = Modifier.weight(1f).fillMaxSize()
         )
         UserInput(
             onMessageSent = { content ->
