@@ -1,6 +1,6 @@
 plugins {
-    kotlin(Plugins.kmp) version Versions.kotlin
-    id(Plugins.compose) version Versions.compose
+    kotlin(Plugins.kmp)
+    id(Plugins.compose)
 }
 
 group = "com.chirrio"
@@ -14,22 +14,14 @@ repositories {
 
 kotlin {
     js(IR) {
-        browser {
-            testTask {
-                testLogging.showStandardStreams = true
-                useKarma {
-                    useChromeHeadless()
-                    useFirefox()
-                }
-            }
-        }
+        browser()
         binaries.executable()
     }
     sourceSets {
         val jsMain by getting {
             dependencies {
                 implementation(project(":shared"))
-                implementation("io.insert-koin:koin-core:3.5.0")
+                implementation(Dependencies.Koin.core)
                 implementation(compose.runtime)
                 implementation(compose.ui)
             }

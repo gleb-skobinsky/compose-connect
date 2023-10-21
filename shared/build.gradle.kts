@@ -32,8 +32,6 @@ kotlin {
         }
 //        extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
-    val ktorVersion = "2.3.5"
-    val koinVersion = "3.5.0"
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -44,15 +42,15 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.material3)
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
-                implementation("io.insert-koin:koin-core:$koinVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-                implementation("media.kamel:kamel-image:0.8.1")
-                implementation("dev.gitlive:firebase-storage:1.10.0")
+                implementation(Dependencies.Ktor.core)
+                implementation(Dependencies.Ktor.websocket)
+                implementation(Dependencies.Serialization.core)
+                implementation(Dependencies.Ktor.json)
+                implementation(Dependencies.Ktor.contentNegotiation)
+                implementation(Dependencies.Koin.core)
+                implementation(Dependencies.datetime)
+                implementation(Dependencies.kamel)
+                implementation(Dependencies.Firebase.storage)
             }
         }
         val commonTest by getting {
@@ -62,16 +60,15 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.core:core-ktx:1.12.0")
-                implementation("com.google.accompanist:accompanist-insets:0.21.0-beta")
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("io.insert-koin:koin-android:$koinVersion")
-                implementation("io.insert-koin:koin-android-compat:$koinVersion")
-                implementation("io.insert-koin:koin-androidx-workmanager:$koinVersion")
-                implementation("io.insert-koin:koin-androidx-navigation:$koinVersion")
-                implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
-                implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
-                implementation("androidx.navigation:navigation-compose:2.7.4")
+                implementation(Dependencies.Android.androidx_core)
+                implementation(Dependencies.Android.accompanist)
+                implementation(Dependencies.Ktor.Client.okhttp)
+                implementation(Dependencies.Koin.android)
+                implementation(Dependencies.Koin.Android.compat)
+                implementation(Dependencies.Koin.Android.workmanager)
+                implementation(Dependencies.Koin.Android.navigation)
+                implementation(Dependencies.Koin.Android.compose)
+                implementation(Dependencies.Android.compose_navigation)
             }
         }
         val iosX64Main by getting
@@ -83,18 +80,18 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-ios:$ktorVersion")
+                implementation(Dependencies.Ktor.Client.ios)
             }
         }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.common)
-                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+                implementation(Dependencies.Ktor.Client.cio)
             }
         }
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation(Dependencies.Ktor.Client.js)
                 implementation(npm("uuid", "9.0.1"))
             }
         }

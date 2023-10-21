@@ -10,9 +10,9 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(project(":shared"))
-                implementation("androidx.activity:activity-compose:1.8.0")
-                implementation("androidx.appcompat:appcompat:1.6.1")
-                implementation("io.insert-koin:koin-core:3.5.0")
+                implementation(Dependencies.Android.compose_activity)
+                implementation(Dependencies.Android.appcompat)
+                implementation(Dependencies.Koin.core)
             }
         }
     }
