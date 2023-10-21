@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose")
+    kotlin(Plugins.kmp) version Versions.kotlin
+    id(Plugins.compose) version Versions.compose
 }
 
 group = "com.chirrio"

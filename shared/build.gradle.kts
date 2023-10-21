@@ -1,9 +1,9 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
-    id("org.jetbrains.compose")
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin(Plugins.kmp)
+    kotlin(Plugins.cocoapods)
+    id(Plugins.android_library)
+    id(Plugins.compose)
+    kotlin(Plugins.serialization) version Versions.kotlin
 }
 
 kotlin {
@@ -52,6 +52,11 @@ kotlin {
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
                 implementation("media.kamel:kamel-image:0.8.1")
+                implementation("dev.gitlive:firebase-storage:1.10.0")
+            }
+        }
+        val commonTest by getting {
+            dependencies {
                 implementation(kotlin("test"))
             }
         }

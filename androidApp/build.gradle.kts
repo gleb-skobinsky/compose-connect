@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.application")
-    id("org.jetbrains.compose")
+    kotlin(Plugins.kmp) version Versions.kotlin
+    id(Plugins.android_application) version Versions.agp
+    id(Plugins.compose) version Versions.compose
 }
 
 kotlin {
