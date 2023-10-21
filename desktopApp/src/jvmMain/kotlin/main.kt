@@ -20,7 +20,7 @@ fun main() {
     application {
         val state = rememberWindowState(WindowPlacement.Maximized)
         Window(
-            title = "ComposeConnect",
+            title = "Chirrio Messenger",
             onCloseRequest = ::exitApplication,
             state = state,
         ) {

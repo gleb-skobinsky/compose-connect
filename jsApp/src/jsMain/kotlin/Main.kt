@@ -6,7 +6,7 @@ import org.jetbrains.skiko.wasm.onWasmReady
 fun main() {
     startKoinApp()
     onWasmReady {
-        BrowserViewportWindow("ComposeConnect") {
+        BrowserViewportWindow("Chirrio Messenger") {
             SharedNavigatedApp()
         }
     }

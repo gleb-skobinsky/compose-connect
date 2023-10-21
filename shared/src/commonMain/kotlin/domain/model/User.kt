@@ -16,6 +16,7 @@ data class User(
     var accessToken: String = "",
     @SerialName("refresh_token")
     var refreshToken: String = "",
+    val image: String = ""
 ) {
     fun getBearer() = "Bearer $accessToken"
 
