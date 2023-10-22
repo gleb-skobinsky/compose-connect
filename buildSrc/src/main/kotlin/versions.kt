@@ -13,4 +13,5 @@ object Versions {
     const val compose_navigation = "2.7.4"
     const val compose_activity = "1.8.0"
     const val appcompat = "1.6.1"
+    const val coroutines = "1.7.3"
 }

@@ -23,6 +23,10 @@ object Dependencies {
         }
     }
 
+    object Coroutines {
+        const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+    }
+
     object Serialization {
         const val core = "org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.serialization}"
     }
