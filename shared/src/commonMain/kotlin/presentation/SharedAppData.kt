@@ -27,6 +27,11 @@ interface SharedAppData {
 
     fun setErrorMessage(message: String?)
 
+    fun withSuccess(block: () -> Unit) {
+        setErrorMessage(null)
+        block()
+    }
+
     val theme: StateFlow<ThemeMode>
 
     fun switchTheme(theme: ThemeMode)
@@ -61,7 +66,7 @@ class SharedAppDataImpl : SharedAppData, ViewModelPlatformImpl() {
                     withContext(IODispatcher) {
                         delay(8.minutes)
                         when (val result = refreshTokenUseCase(RemoteUserRepository, it)) {
-                            is Resource.Data -> {
+                            is Resource.Data -> withSuccess {
                                 val (refresh, access) = result.payload
                                 _user.value?.accessToken = access
                                 _user.value?.refreshToken = refresh

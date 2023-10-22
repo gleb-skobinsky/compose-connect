@@ -20,7 +20,7 @@ class LoginViewModel(
         val result = loginUseCase(RemoteUserRepository, email, password)
         result.onEach { resource ->
             when (resource) {
-                is Resource.Data -> {
+                is Resource.Data -> withSuccess {
                     setUser(resource.payload)
                     onNavigate(Screens.Main())
                 }
@@ -39,7 +39,7 @@ class LoginViewModel(
         val result = signupUseCase(RemoteUserRepository, email, firstName, lastName, password)
         result.onEach {
             when (it) {
-                is Resource.Data -> setUser(it.payload)
+                is Resource.Data -> withSuccess { setUser(it.payload) }
                 is Resource.Error -> setErrorMessage(it.message)
                 is Resource.Loading -> Unit
             }

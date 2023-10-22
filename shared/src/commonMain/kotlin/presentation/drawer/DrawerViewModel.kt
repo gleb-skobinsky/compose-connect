@@ -65,7 +65,7 @@ class DrawerViewModel(
                 createRoomUseCase(RoomRepositoryImpl, roomName, selectedUsers.value, currentUser)
             result.onEach { conversation ->
                 when (conversation) {
-                    is Resource.Data -> _chats.update { it + conversation.payload }
+                    is Resource.Data -> withSuccess { _chats.update { it + conversation.payload } }
                     is Resource.Loading -> Unit
                     is Resource.Error -> setErrorMessage(conversation.message)
                 }
@@ -79,7 +79,7 @@ class DrawerViewModel(
             val result = searchUsersUseCase(RemoteUserRepository, email, currentUser)
             result.onEach {
                 when (it) {
-                    is Resource.Data -> _searchedUsers.value = it.payload
+                    is Resource.Data -> withSuccess { _searchedUsers.value = it.payload }
                     is Resource.Error -> setErrorMessage(it.message)
                     is Resource.Loading -> Unit
                 }
@@ -110,7 +110,7 @@ class DrawerViewModel(
             val result = getRooms(RoomRepositoryImpl, it)
             result.onEach { rooms ->
                 when (rooms) {
-                    is Resource.Data -> _chats.value = rooms.payload
+                    is Resource.Data -> withSuccess { _chats.value = rooms.payload }
                     is Resource.Error -> setErrorMessage(rooms.message)
                     is Resource.Loading -> Unit
                 }

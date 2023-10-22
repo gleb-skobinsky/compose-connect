@@ -48,7 +48,7 @@ class ConversationViewModel(
                 val chat = getRoomUseCase(RoomRepositoryImpl, MessageRepositoryImpl, chatId, currentUser)
                 chat.onEach {
                     when (it) {
-                        is Resource.Data -> _currentConversation.value = it.payload
+                        is Resource.Data -> withSuccess { _currentConversation.value = it.payload }
                         is Resource.Loading -> Unit
                         is Resource.Error -> setErrorMessage(it.message)
                     }
