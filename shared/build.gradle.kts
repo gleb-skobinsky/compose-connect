@@ -50,7 +50,6 @@ kotlin {
                 implementation(Dependencies.Koin.core)
                 implementation(Dependencies.datetime)
                 implementation(Dependencies.kamel)
-                implementation(Dependencies.Firebase.storage)
             }
         }
         val commonTest by getting {
@@ -111,10 +110,10 @@ android {
         minSdk = (findProperty("android.minSdk") as String).toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 }
