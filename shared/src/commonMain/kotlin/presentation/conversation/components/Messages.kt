@@ -23,19 +23,16 @@ import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import common.util.invoke
-import common.util.toLabel
-import common.util.toLocal
+import common.util.*
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.model.User
+import io.kamel.image.KamelImage
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.messagesParser.SymbolAnnotationType
 import presentation.common.messagesParser.messageFormatter
-import presentation.common.resourceBindings.drawable_ali
-import presentation.common.resourceBindings.drawable_someone_else
 
 private val messagesPadding = PaddingValues(
     start = 10.dp,
@@ -116,7 +113,7 @@ fun MessageWidget(
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
         if (isLastMessageByAuthor) {
-            Image(
+            KamelImage(
                 modifier = Modifier
                     .clickable(onClick = { onAuthorClick(msg.author.email) })
                     .padding(horizontal = 16.dp)
@@ -124,7 +121,7 @@ fun MessageWidget(
                     .border(1.5.dp, borderColor, CircleShape)
                     .clip(CircleShape)
                     .align(Alignment.Top),
-                painter = painterResource(if (isUserMe) drawable_ali else drawable_someone_else),
+                resource = ioPainterResource(msg.author.image.toResourceUrl()),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )

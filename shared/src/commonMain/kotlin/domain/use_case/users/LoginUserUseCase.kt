@@ -17,7 +17,11 @@ fun loginUseCase(
         val tokens = repository.login(email, password)
         val user = User(email = email, accessToken = tokens.access, refreshToken = tokens.refresh)
         val filledUser = repository.getUser(email, user)
-        val finalUser = user.copy(firstName = filledUser.firstName, lastName = filledUser.lastName)
+        val finalUser = user.copy(
+            firstName = filledUser.firstName,
+            lastName = filledUser.lastName,
+            image = filledUser.image
+        )
         emit(Resource.Data(finalUser))
     } catch (e: IOException) {
         emit(Resource.Error(e.message ?: "Couldn't reach server. Check your internet connection."))

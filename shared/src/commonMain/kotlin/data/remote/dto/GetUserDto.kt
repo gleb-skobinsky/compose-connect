@@ -10,4 +10,5 @@ data class GetUserDto(
     val firstName: String = "",
     @SerialName("last_name")
     val lastName: String = "",
+    val image: String = ""
 )
