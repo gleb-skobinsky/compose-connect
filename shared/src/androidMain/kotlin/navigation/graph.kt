@@ -4,6 +4,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,7 +21,6 @@ import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
 import presentation.profile.components.ProfileScreen
-import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun NavigatedApp() {

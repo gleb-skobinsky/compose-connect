@@ -58,6 +58,12 @@ kotlin {
                 implementation(Dependencies.Coroutines.test)
             }
         }
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(Dependencies.Coroutines.test)
+            }
+        }
         val androidMain by getting {
             dependencies {
                 implementation(Dependencies.Android.androidx_core)

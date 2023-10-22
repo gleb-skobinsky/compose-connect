@@ -1,6 +1,5 @@
 package presentation.drawer.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,7 +24,9 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import common.util.ioPainterResource
 import data.exampleAccountsState
+import io.kamel.image.KamelImage
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -236,8 +237,8 @@ private fun ProfileItem(
             .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
             .size(24.dp)
         if (profilePic != null) {
-            Image(
-                painter = painterResource(profilePic),
+            KamelImage(
+                resource = ioPainterResource(profilePic),
                 modifier = paddingSizeModifier.then(Modifier.clip(CircleShape)),
                 contentScale = ContentScale.Crop,
                 contentDescription = null

@@ -1,6 +1,5 @@
 package data
 
-import presentation.common.resourceBindings.drawable_ali
 import presentation.common.resourceBindings.drawable_someone_else
 
 
@@ -24,7 +23,7 @@ val colleagueProfile = ProfileScreenState(
  */
 val meProfile = ProfileScreenState(
     userId = "me",
-    photo = drawable_ali,
+    photo = "https://res.cloudinary.com/chirrio/image/upload/v1697935800/cld-sample-4.jpg",
     name = "Ali Conors",
     status = "Online",
     displayName = "aliconors",
