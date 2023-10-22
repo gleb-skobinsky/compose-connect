@@ -27,7 +27,7 @@ class LoginViewModel(
 
                 is Resource.Error -> {
                     setUser(null)
-                    setErrorMessage(resource.message)
+                    setErrorMessage(resource)
                 }
 
                 is Resource.Loading -> Unit
@@ -40,7 +40,7 @@ class LoginViewModel(
         result.onEach {
             when (it) {
                 is Resource.Data -> withSuccess { setUser(it.payload) }
-                is Resource.Error -> setErrorMessage(it.message)
+                is Resource.Error -> setErrorMessage(it)
                 is Resource.Loading -> Unit
             }
         }.launchIn(vmScope)

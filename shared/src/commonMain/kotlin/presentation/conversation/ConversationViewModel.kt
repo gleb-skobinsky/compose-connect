@@ -50,7 +50,7 @@ class ConversationViewModel(
                     when (it) {
                         is Resource.Data -> withSuccess { _currentConversation.value = it.payload }
                         is Resource.Loading -> Unit
-                        is Resource.Error -> setErrorMessage(it.message)
+                        is Resource.Error -> setErrorMessage(it)
                     }
                 }.launchIn(vmScope)
             }

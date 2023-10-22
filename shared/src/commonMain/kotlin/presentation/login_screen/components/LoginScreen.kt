@@ -55,7 +55,7 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
     LaunchedEffect(error) {
         error?.let {
             scaffoldState.snackbarHostState.showSnackbar(
-                message = it,
+                message = it.message,
                 actionLabel = null,
                 duration = SnackbarDuration.Short
             )

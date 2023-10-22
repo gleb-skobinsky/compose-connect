@@ -23,9 +23,9 @@ interface SharedAppData {
 
     fun setUser(user: User?)
 
-    val errorMessage: StateFlow<String?>
+    val errorMessage: StateFlow<Resource.Error<*>?>
 
-    fun setErrorMessage(message: String?)
+    fun setErrorMessage(message: Resource.Error<*>?)
 
     fun withSuccess(block: () -> Unit) {
         setErrorMessage(null)
@@ -45,9 +45,9 @@ class SharedAppDataImpl : SharedAppData, ViewModelPlatformImpl() {
         _user.value = user
     }
 
-    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _errorMessage = MutableStateFlow<Resource.Error<*>?>(null)
     override val errorMessage = _errorMessage.asStateFlow()
-    override fun setErrorMessage(message: String?) {
+    override fun setErrorMessage(message: Resource.Error<*>?) {
         _errorMessage.value = message
     }
 
@@ -73,7 +73,7 @@ class SharedAppDataImpl : SharedAppData, ViewModelPlatformImpl() {
                             }
 
                             is Resource.Error -> {
-                                setErrorMessage("Could not confirm user session. Try to log in again.")
+                                setErrorMessage(result)
                             }
 
                             is Resource.Loading -> Unit

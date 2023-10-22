@@ -67,7 +67,7 @@ class DrawerViewModel(
                 when (conversation) {
                     is Resource.Data -> withSuccess { _chats.update { it + conversation.payload } }
                     is Resource.Loading -> Unit
-                    is Resource.Error -> setErrorMessage(conversation.message)
+                    is Resource.Error -> setErrorMessage(conversation)
                 }
             }.launchIn(vmScope)
             closeRoomDialog()
@@ -80,7 +80,7 @@ class DrawerViewModel(
             result.onEach {
                 when (it) {
                     is Resource.Data -> withSuccess { _searchedUsers.value = it.payload }
-                    is Resource.Error -> setErrorMessage(it.message)
+                    is Resource.Error -> setErrorMessage(it)
                     is Resource.Loading -> Unit
                 }
             }.launchIn(vmScope)
@@ -99,7 +99,7 @@ class DrawerViewModel(
                     setUser(null)
                 } else {
                     setUser(null)
-                    setErrorMessage(it)
+                    setErrorMessage(Resource.Error<String>(it))
                 }
             }.launchIn(vmScope)
         }
@@ -111,7 +111,7 @@ class DrawerViewModel(
             result.onEach { rooms ->
                 when (rooms) {
                     is Resource.Data -> withSuccess { _chats.value = rooms.payload }
-                    is Resource.Error -> setErrorMessage(rooms.message)
+                    is Resource.Error -> setErrorMessage(rooms)
                     is Resource.Loading -> Unit
                 }
             }.launchIn(vmScope)

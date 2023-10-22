@@ -28,56 +28,46 @@ const val NAVIGATION_TIMEOUT = 700
 fun SharedNavigatedApp() {
     ChirrioAppTheme {
         var screen: Screens by remember { mutableStateOf(Screens.Login()) }
-        AnimatedContent(
-            targetState = screen,
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            transitionSpec = {
-                fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(tween(NAVIGATION_TIMEOUT))
-            }
-        ) { currentScreen ->
-            when (currentScreen) {
-                is Screens.Login -> {
-                    LoginScreen(LoginViewModel(provideViewModel())) { screen = it }
+        ChirrioScaffold(onNavigate = { screen = it }) {
+            AnimatedContent(
+                targetState = screen,
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                transitionSpec = {
+                    fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(tween(NAVIGATION_TIMEOUT))
                 }
-
-                is Screens.Signup -> {
-                    SignupScreen(LoginViewModel(provideViewModel())) { screen = it }
-                }
-
-                is Screens.Chat -> {
-                    val shared: SharedAppDataImpl = provideViewModel()
-                    val drawer: DrawerViewModel = provideViewModel()
-                    drawer.setChatId(currentScreen.id)
-                    val chatViewModel = remember(currentScreen.id) {
-                        ConversationViewModel(
-                            shared,
-                            currentScreen.id
-                        )
+            ) { currentScreen ->
+                when (currentScreen) {
+                    is Screens.Login -> {
+                        LoginScreen(LoginViewModel(provideViewModel())) { screen = it }
                     }
-                    ChirrioScaffold(
-                        viewModel = drawer,
-                        onNavigate = { screen = it }
-                    ) {
+
+                    is Screens.Signup -> {
+                        SignupScreen(LoginViewModel(provideViewModel())) { screen = it }
+                    }
+
+                    is Screens.Chat -> {
+                        val shared: SharedAppDataImpl = provideViewModel()
+                        val drawer: DrawerViewModel = provideViewModel()
+                        drawer.setChatId(currentScreen.id)
+                        val chatViewModel = remember(currentScreen.id) {
+                            ConversationViewModel(
+                                shared,
+                                currentScreen.id
+                            )
+                        }
                         ConversationContent(chatViewModel)
                     }
-                }
 
-                is Screens.Profile -> {
-                    val viewModel: DrawerViewModel = provideViewModel()
-                    viewModel.setUserId(currentScreen.id)
-                    ChirrioScaffold(
-                        viewModel = viewModel,
-                        onNavigate = { screen = it }
-                    ) {
+                    is Screens.Profile -> {
+                        val viewModel: DrawerViewModel = provideViewModel()
+                        viewModel.setUserId(currentScreen.id)
                         ProfileScreen(viewModel)
                     }
-                }
 
-                is Screens.Main -> {
-                    ChirrioScaffold(
-                        onNavigate = { screen = it }
-                    ) {
+                    is Screens.Main -> {
+
                         EmptyStartScreen()
+
                     }
                 }
             }

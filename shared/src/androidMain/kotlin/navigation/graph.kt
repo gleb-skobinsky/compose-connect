@@ -26,53 +26,41 @@ import presentation.profile.components.ProfileScreen
 fun NavigatedApp() {
     ChirrioAppTheme {
         val controller = rememberNavController()
-        NavHost(
-            navController = controller,
-            startDestination = "login",
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
-            exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
+        ChirrioScaffold(
+            onNavigate = { screen ->
+                controller.navigate(screen.toRoute())
+            }
         ) {
-            composable("login") {
-                LoginScreen { controller.navigate(it.toRoute()) }
-            }
-            composable("signup") {
-                SignupScreen { controller.navigate(it.toRoute()) }
-            }
-            composable("chat/{chatId}") {
-                val chatId = it.arguments?.getString("chatId") ?: ""
-                val drawer: DrawerViewModel = provideViewModel()
-                drawer.setChatId(chatId)
-                val viewModel: ConversationViewModel = viewModel(
-                    viewModelStoreOwner = it,
-                    factory = ConversationVMFactory(chatId, provideViewModel())
-                )
-                ChirrioScaffold(
-                    viewModel = drawer,
-                    onNavigate = { screen ->
-                        controller.navigate(screen.toRoute())
-                    }
-                ) {
+            NavHost(
+                navController = controller,
+                startDestination = "login",
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
+                exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
+            ) {
+                composable("login") {
+                    LoginScreen { controller.navigate(it.toRoute()) }
+                }
+                composable("signup") {
+                    SignupScreen { controller.navigate(it.toRoute()) }
+                }
+                composable("chat/{chatId}") {
+                    val chatId = it.arguments?.getString("chatId") ?: ""
+                    val drawer: DrawerViewModel = provideViewModel()
+                    drawer.setChatId(chatId)
+                    val viewModel: ConversationViewModel = viewModel(
+                        viewModelStoreOwner = it,
+                        factory = ConversationVMFactory(chatId, provideViewModel())
+                    )
                     ConversationContent(viewModel)
                 }
-            }
-            composable("profile/{profileId}") {
-                val profileId = it.arguments?.getString("profileId") ?: ""
-                val drawer: DrawerViewModel = provideViewModel()
-                drawer.setUserId(profileId)
-                ChirrioScaffold(
-                    viewModel = drawer,
-                    onNavigate = { screen ->
-                        controller.navigate(screen.toRoute())
-                    }
-                ) {
+                composable("profile/{profileId}") {
+                    val profileId = it.arguments?.getString("profileId") ?: ""
+                    val drawer: DrawerViewModel = provideViewModel()
+                    drawer.setUserId(profileId)
                     ProfileScreen(drawer)
                 }
-            }
-            composable("main") {
-                ChirrioScaffold(onNavigate = { screen ->
-                    controller.navigate(screen.toRoute())
-                }) {
+                composable("main") {
                     EmptyStartScreen()
                 }
             }
