@@ -1,5 +1,6 @@
 package data.remote.dto
 
+import domain.model.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,4 +12,11 @@ data class GetUserDto(
     @SerialName("last_name")
     val lastName: String = "",
     val image: String = ""
-)
+) {
+    fun toUser(): User = User(
+        email = email,
+        firstName = firstName,
+        lastName = lastName,
+        image = image
+    )
+}

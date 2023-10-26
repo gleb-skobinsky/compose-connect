@@ -20,6 +20,7 @@ import presentation.drawer.DrawerViewModel
 import presentation.login_screen.LoginViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
+import presentation.profile.ProfileViewModel
 import presentation.profile.components.ProfileScreen
 
 const val NAVIGATION_TIMEOUT = 700
@@ -66,7 +67,7 @@ fun SharedNavigatedApp() {
                         is Screens.Profile -> {
                             val viewModel: DrawerViewModel = provideViewModel()
                             viewModel.setUserId(currentScreen.id)
-                            ProfileScreen(viewModel)
+                            ProfileScreen(ProfileViewModel(provideViewModel(), currentScreen.id))
                         }
 
                         is Screens.Main -> {
