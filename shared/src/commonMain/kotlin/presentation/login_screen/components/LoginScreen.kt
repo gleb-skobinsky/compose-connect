@@ -44,8 +44,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import di.provideViewModel
-import navigation.NavigationCallback
+import navigation.LocalNavigator
 import navigation.Screens
+import navigation.navigateTo
 import presentation.SharedAppData
 import presentation.login_screen.LoginViewModel
 
@@ -66,7 +67,6 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
 @Composable
 fun SignupScreen(
     viewModel: LoginViewModel = provideViewModel(),
-    onNavigate: NavigationCallback = {},
 ) {
     val scrollState = rememberScrollState()
     var email by remember { mutableStateOf("") }
@@ -74,6 +74,7 @@ fun SignupScreen(
     var lastName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val navHost = LocalNavigator.current
     val signupButtonEnabled = email.isNotBlank() &&
             firstName.isNotBlank() &&
             lastName.isNotBlank() &&
@@ -126,7 +127,7 @@ fun SignupScreen(
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Log in") {
-                onNavigate(Screens.Login())
+                navHost?.navigateTo(Screens.Login())
             }
         }
         AuthSpacer()
@@ -139,12 +140,12 @@ fun AuthSpacer() = Spacer(Modifier.height(42.dp))
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
-    onNavigate: NavigationCallback = {},
 ) {
     val scrollState = rememberScrollState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
+    val navHost = LocalNavigator.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -173,12 +174,12 @@ fun LoginScreen(
             enabled = loginButtonEnabled,
             text = "Log in"
         ) {
-            viewModel.loginUser(email, password, onNavigate)
+            viewModel.loginUser(email, password, navHost)
         }
         Row(Modifier.padding(top = 32.dp)) {
             SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Register") {
-                onNavigate(Screens.Signup())
+                navHost?.navigateTo(Screens.Signup())
             }
         }
         AuthSpacer()

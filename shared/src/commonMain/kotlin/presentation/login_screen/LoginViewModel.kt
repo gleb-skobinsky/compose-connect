@@ -7,8 +7,9 @@ import domain.use_case.users.loginUseCase
 import domain.use_case.users.signupUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import navigation.NavigationCallback
 import navigation.Screens
+import navigation.SharedNavigator
+import navigation.navigateTo
 import presentation.SharedAppData
 import presentation.SharedAppDataImpl
 
@@ -16,13 +17,13 @@ class LoginViewModel(
     shared: SharedAppDataImpl,
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
 
-    fun loginUser(email: String, password: String, onNavigate: NavigationCallback) {
+    fun loginUser(email: String, password: String, navHost: SharedNavigator?) {
         val result = loginUseCase(RemoteUserRepository, email, password)
         result.onEach { resource ->
             when (resource) {
                 is Resource.Data -> withSuccess {
                     setUser(resource.payload)
-                    onNavigate(Screens.Main())
+                    navHost?.navigateTo(Screens.Main())
                 }
 
                 is Resource.Error -> {
