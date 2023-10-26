@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import common.util.toResourceUrl
 import data.ProfileScreenState
 import di.provideViewModel
 import io.kamel.image.KamelImage
@@ -178,7 +179,7 @@ private fun ProfileHeader(
                         end = 16.dp
                     )
                     .clip(CircleShape),
-                resource = asyncPainterResource(it),
+                resource = asyncPainterResource(it.toResourceUrl()),
                 contentScale = ContentScale.Crop,
                 contentDescription = null
             )

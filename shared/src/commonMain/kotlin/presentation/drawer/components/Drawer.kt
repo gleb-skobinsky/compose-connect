@@ -25,6 +25,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import common.util.ioPainterResource
+import common.util.toResourceUrl
 import io.kamel.image.KamelImage
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -238,7 +239,7 @@ private fun ProfileItem(
             .size(24.dp)
         if (profilePic != null) {
             KamelImage(
-                resource = ioPainterResource(profilePic),
+                resource = ioPainterResource(profilePic.toResourceUrl()),
                 modifier = paddingSizeModifier.then(Modifier.clip(CircleShape)),
                 contentScale = ContentScale.Crop,
                 contentDescription = null
