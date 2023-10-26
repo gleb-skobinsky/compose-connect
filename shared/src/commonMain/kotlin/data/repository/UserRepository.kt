@@ -46,6 +46,14 @@ object RemoteUserRepository: UserRepository {
         return Json.decodeFromString(response.bodyAsText())
     }
 
+    override suspend fun listUsers(currentUser: User): SearchUserDto {
+        val response = chirrioClient.get("${LocalRoute.currentUrl}/users/list/") {
+            contentType(ContentType.Application.Json)
+            headers.append("Authorization", currentUser.getBearer())
+        }
+        return Json.decodeFromString(response.bodyAsText())
+    }
+
     override suspend fun logout(currentUser: User): String? {
         val response = chirrioClient.post("${LocalRoute.currentUrl}/users/logout/") {
             contentType(ContentType.Application.Json)

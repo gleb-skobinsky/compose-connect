@@ -2,14 +2,21 @@ package presentation.drawer
 
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
-import data.repository.RoomRepositoryImpl
+import data.ProfileScreenState
 import data.repository.RemoteUserRepository
+import data.repository.RoomRepositoryImpl
 import domain.model.User
 import domain.use_case.rooms.createRoomUseCase
 import domain.use_case.rooms.getRooms
+import domain.use_case.users.listUsers
 import domain.use_case.users.logoutUseCase
 import domain.use_case.users.searchUsersUseCase
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import presentation.SharedAppData
 import presentation.SharedAppDataImpl
 
@@ -44,6 +51,9 @@ class DrawerViewModel(
 
     private val _chats: MutableStateFlow<Map<String, String>> = MutableStateFlow(emptyMap())
     val chats = _chats.asStateFlow()
+
+    private val _recentUsers = MutableStateFlow(emptyMap<String, ProfileScreenState>())
+    val recentUsers = _recentUsers.asStateFlow()
 
     private val _searchedUsers = MutableStateFlow(emptyList<User>())
     val searchedUsers = _searchedUsers.asStateFlow()
@@ -106,12 +116,20 @@ class DrawerViewModel(
     }
 
     init {
-        user.filterNotNull().onEach {
-            val result = getRooms(RoomRepositoryImpl, it)
-            result.onEach { rooms ->
+        user.filterNotNull().onEach { currentUser ->
+            val roomsResult = getRooms(RoomRepositoryImpl, currentUser)
+            roomsResult.onEach { rooms ->
                 when (rooms) {
                     is Resource.Data -> withSuccess { _chats.value = rooms.payload }
                     is Resource.Error -> setErrorMessage(rooms)
+                    is Resource.Loading -> Unit
+                }
+            }.launchIn(vmScope)
+            val usersResult = listUsers(RemoteUserRepository, currentUser)
+            usersResult.onEach {  users ->
+                when (users) {
+                    is Resource.Data -> withSuccess { _recentUsers.value = users.payload.associateBy { it.userId } }
+                    is Resource.Error -> setErrorMessage(users)
                     is Resource.Loading -> Unit
                 }
             }.launchIn(vmScope)
