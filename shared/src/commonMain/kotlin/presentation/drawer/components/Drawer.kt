@@ -25,7 +25,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import common.util.ioPainterResource
-import data.exampleAccountsState
+import common.util.toResourceUrl
 import io.kamel.image.KamelImage
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -49,6 +49,7 @@ fun AppDrawer(
     val chats by viewModel.chats.collectAsState()
     val selectedChat by viewModel.chatId.collectAsState()
     val selectedUser by viewModel.userId.collectAsState()
+    val recentUsers by viewModel.recentUsers.collectAsState()
     Box {
         Column {
             Spacer(Modifier.height(3.dp))
@@ -70,7 +71,7 @@ fun AppDrawer(
             RoomCreationButton(viewModel)
             DividerItem(modifier = Modifier.padding(horizontal = 28.dp))
             DrawerItemHeader("Recent Profiles")
-            exampleAccountsState.entries.forEach { (profileId, profile) ->
+            recentUsers.entries.forEach { (profileId, profile) ->
                 ProfileItem(profile.name, profile.photo, profileId == selectedUser) {
                     scope.launch {
                         scaffoldState.drawerState.close()
@@ -238,7 +239,7 @@ private fun ProfileItem(
             .size(24.dp)
         if (profilePic != null) {
             KamelImage(
-                resource = ioPainterResource(profilePic),
+                resource = ioPainterResource(profilePic.toResourceUrl()),
                 modifier = paddingSizeModifier.then(Modifier.clip(CircleShape)),
                 contentScale = ContentScale.Crop,
                 contentDescription = null

@@ -19,8 +19,9 @@ import di.provideViewModel
 import domain.model.ConversationUiState
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import navigation.NavigationCallback
+import navigation.LocalNavigator
 import navigation.Screens
+import navigation.navigateTo
 import presentation.common.platform.statusBarsPaddingMpp
 import presentation.common.platform.userInputModifier
 import presentation.conversation.ConversationViewModel
@@ -35,22 +36,22 @@ val LocalScaffold = compositionLocalOf {
 @Composable
 fun ChirrioScaffold(
     viewModel: DrawerViewModel = provideViewModel(),
-    onNavigate: NavigationCallback = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val scaffoldState = LocalScaffold.current
+    val navHost = LocalNavigator.current
     CompositionLocalProvider(LocalScaffold provides scaffoldState) {
         RoomCreationDialog(viewModel)
         AppScaffold(
             scaffoldState = scaffoldState,
             onChatClicked = { id ->
-                onNavigate(Screens.Chat(id = id))
+                navHost?.navigateTo(Screens.Chat(id = id))
             },
             onProfileClicked = { userId ->
-                onNavigate(Screens.Profile(id = userId))
+                navHost?.navigateTo(Screens.Profile(id = userId))
             },
             onLogoutClicked = {
-                onNavigate(Screens.Login())
+                navHost?.navigateTo(Screens.Login())
             },
             content = content
         )

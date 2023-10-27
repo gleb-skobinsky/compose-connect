@@ -7,6 +7,7 @@ import presentation.SharedAppDataImpl
 import presentation.conversation.ConversationViewModel
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.LoginViewModel
+import presentation.profile.ProfileViewModel
 
 expect fun startKoinApp(): KoinApplication
 
@@ -17,6 +18,7 @@ fun startCommonKoinApp() = startKoin {
             single { DrawerViewModel(get()) }
             single { LoginViewModel(get()) }
             single { ConversationViewModel(get()) }
+            single { ProfileViewModel(get()) }
         }
     )
 }

@@ -18,24 +18,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import common.util.toResourceUrl
 import data.ProfileScreenState
-import data.exampleAccountsState
 import di.provideViewModel
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import presentation.FunctionalityNotAvailablePopup
 import presentation.common.platform.statusBarsPaddingMpp
 import presentation.conversation.components.ChirrioAppBar
 import presentation.conversation.components.baselineHeight
-import presentation.drawer.DrawerViewModel
+import presentation.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    drawerViewModel: DrawerViewModel = provideViewModel()
+    viewModel: ProfileViewModel = provideViewModel()
 ) {
-    val selectedUserId by drawerViewModel.userId.collectAsState()
-    val selectedUser = exampleAccountsState[selectedUserId]
+    val selectedUser by viewModel.currentProfile.collectAsState()
+    val authenticatedUser by viewModel.user.collectAsState()
     selectedUser?.let { userData ->
         var functionalityNotAvailablePopupShown by remember { mutableStateOf(false) }
         if (functionalityNotAvailablePopupShown) {
@@ -85,7 +85,7 @@ fun ProfileScreen(
                     }
                 }
                 ProfileFab(
-                    userIsMe = userData.isMe(),
+                    userIsMe = userData.userId == authenticatedUser?.email,
                     modifier = Modifier.align(Alignment.BottomEnd)
                 ) { functionalityNotAvailablePopupShown = true }
             }
@@ -153,7 +153,6 @@ private fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ProfileHeader(
     scrollState: ScrollState,
@@ -164,13 +163,13 @@ private fun ProfileHeader(
     val offsetDp = with(LocalDensity.current) { offset.toDp() }
     val imageHeight = containerHeight / 2
     data.photo?.let {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(imageHeight),
             horizontalArrangement = Arrangement.Center
         ) {
-            Image(
+            KamelImage(
                 modifier = Modifier
                     .height(imageHeight)
                     .width(imageHeight)
@@ -180,7 +179,7 @@ private fun ProfileHeader(
                         end = 16.dp
                     )
                     .clip(CircleShape),
-                painter = painterResource(it),
+                resource = asyncPainterResource(it.toResourceUrl()),
                 contentScale = ContentScale.Crop,
                 contentDescription = null
             )

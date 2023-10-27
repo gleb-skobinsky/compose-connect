@@ -1,6 +1,7 @@
 package domain.model
 
 import androidx.compose.runtime.Stable
+import data.ProfileScreenState
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,6 +22,12 @@ data class User(
     fun getBearer() = "Bearer $accessToken"
 
     val fullName = "$firstName $lastName"
+
+    fun toProfileScreen() = ProfileScreenState(
+        userId = email,
+        name = fullName,
+        photo = image
+    )
 }
 
 

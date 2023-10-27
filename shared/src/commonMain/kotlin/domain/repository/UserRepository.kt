@@ -13,6 +13,8 @@ interface UserRepository {
 
     suspend fun getUser(email: String, currentUser: User): GetUserDto
 
+    suspend fun listUsers(currentUser: User): SearchUserDto
+
     suspend fun logout(currentUser: User): String?
 
     suspend fun search(query: String, currentUser: User): SearchUserDto

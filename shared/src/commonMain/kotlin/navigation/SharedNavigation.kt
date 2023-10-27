@@ -20,6 +20,7 @@ import presentation.drawer.DrawerViewModel
 import presentation.login_screen.LoginViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
+import presentation.profile.ProfileViewModel
 import presentation.profile.components.ProfileScreen
 
 const val NAVIGATION_TIMEOUT = 700
@@ -27,47 +28,53 @@ const val NAVIGATION_TIMEOUT = 700
 @Composable
 fun SharedNavigatedApp() {
     ChirrioAppTheme {
-        var screen: Screens by remember { mutableStateOf(Screens.Login()) }
-        ChirrioScaffold(onNavigate = { screen = it }) {
-            AnimatedContent(
-                targetState = screen,
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                transitionSpec = {
-                    fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(tween(NAVIGATION_TIMEOUT))
-                }
-            ) { currentScreen ->
-                when (currentScreen) {
-                    is Screens.Login -> {
-                        LoginScreen(LoginViewModel(provideViewModel())) { screen = it }
-                    }
-
-                    is Screens.Signup -> {
-                        SignupScreen(LoginViewModel(provideViewModel())) { screen = it }
-                    }
-
-                    is Screens.Chat -> {
-                        val shared: SharedAppDataImpl = provideViewModel()
-                        val drawer: DrawerViewModel = provideViewModel()
-                        drawer.setChatId(currentScreen.id)
-                        val chatViewModel = remember(currentScreen.id) {
-                            ConversationViewModel(
-                                shared,
-                                currentScreen.id
+        val navigator = rememberSharedNavigator()
+        CompositionLocalProvider(LocalNavigator provides navigator) {
+            ChirrioScaffold {
+                AnimatedContent(
+                    targetState = LocalNavigator.current?.screens,
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    transitionSpec = {
+                        fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(
+                            tween(
+                                NAVIGATION_TIMEOUT
                             )
+                        )
+                    }
+                ) { currentScreen ->
+                    when (currentScreen) {
+                        is Screens.Login -> {
+                            LoginScreen(LoginViewModel(provideViewModel()))
                         }
-                        ConversationContent(chatViewModel)
-                    }
 
-                    is Screens.Profile -> {
-                        val viewModel: DrawerViewModel = provideViewModel()
-                        viewModel.setUserId(currentScreen.id)
-                        ProfileScreen(viewModel)
-                    }
+                        is Screens.Signup -> {
+                            SignupScreen(LoginViewModel(provideViewModel()))
+                        }
 
-                    is Screens.Main -> {
+                        is Screens.Chat -> {
+                            val shared: SharedAppDataImpl = provideViewModel()
+                            val drawer: DrawerViewModel = provideViewModel()
+                            drawer.setChatId(currentScreen.id)
+                            val chatViewModel = remember(currentScreen.id) {
+                                ConversationViewModel(
+                                    shared,
+                                    currentScreen.id
+                                )
+                            }
+                            ConversationContent(chatViewModel)
+                        }
 
-                        EmptyStartScreen()
+                        is Screens.Profile -> {
+                            val viewModel: DrawerViewModel = provideViewModel()
+                            viewModel.setUserId(currentScreen.id)
+                            ProfileScreen(ProfileViewModel(provideViewModel(), currentScreen.id))
+                        }
 
+                        is Screens.Main -> {
+                            EmptyStartScreen()
+                        }
+
+                        else -> Unit
                     }
                 }
             }

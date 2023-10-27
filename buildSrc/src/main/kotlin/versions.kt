@@ -6,7 +6,7 @@ object Versions {
     const val serialization = "1.6.0"
     const val koin = "3.5.0"
     const val datetime = "0.4.1"
-    const val kamel = "0.8.1"
+    const val kamel = "0.8.2"
     const val firebase = "1.10.0"
     const val core_ktx = "1.12.0"
     const val accompanist = "0.21.0-beta"

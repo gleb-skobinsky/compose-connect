@@ -7,6 +7,7 @@ import presentation.SharedAppDataImpl
 import presentation.conversation.ConversationViewModel
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.LoginViewModel
+import presentation.profile.ProfileViewModel
 
 actual fun startKoinApp() = startKoin {
     modules(
@@ -15,6 +16,7 @@ actual fun startKoinApp() = startKoin {
             single { DrawerViewModel(get()) }
             viewModel { ConversationViewModel(get()) }
             viewModel { LoginViewModel(get()) }
+            viewModel { ProfileViewModel(get()) }
         }
     )
 }

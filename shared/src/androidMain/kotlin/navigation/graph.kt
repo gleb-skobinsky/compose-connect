@@ -26,11 +26,7 @@ import presentation.profile.components.ProfileScreen
 fun NavigatedApp() {
     ChirrioAppTheme {
         val controller = rememberNavController()
-        ChirrioScaffold(
-            onNavigate = { screen ->
-                controller.navigate(screen.toRoute())
-            }
-        ) {
+        ChirrioScaffold {
             NavHost(
                 navController = controller,
                 startDestination = "login",
@@ -39,10 +35,10 @@ fun NavigatedApp() {
                 exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
             ) {
                 composable("login") {
-                    LoginScreen { controller.navigate(it.toRoute()) }
+                    LoginScreen()
                 }
                 composable("signup") {
-                    SignupScreen { controller.navigate(it.toRoute()) }
+                    SignupScreen()
                 }
                 composable("chat/{chatId}") {
                     val chatId = it.arguments?.getString("chatId") ?: ""
