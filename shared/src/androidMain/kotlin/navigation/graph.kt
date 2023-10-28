@@ -20,6 +20,7 @@ import presentation.conversation.components.EmptyStartScreen
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
+import presentation.profile.ProfileViewModel
 import presentation.profile.components.ProfileScreen
 
 @Composable
@@ -54,7 +55,11 @@ fun NavigatedApp() {
                     val profileId = it.arguments?.getString("profileId") ?: ""
                     val drawer: DrawerViewModel = provideViewModel()
                     drawer.setUserId(profileId)
-                    ProfileScreen(drawer)
+                    val viewModel: ProfileViewModel = viewModel(
+                        viewModelStoreOwner = it,
+                        factory = ProfileVMFactory(profileId, provideViewModel())
+                    )
+                    ProfileScreen(viewModel)
                 }
                 composable("main") {
                     EmptyStartScreen()

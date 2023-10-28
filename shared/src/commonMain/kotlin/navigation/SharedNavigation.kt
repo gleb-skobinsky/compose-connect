@@ -7,7 +7,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import di.provideViewModel
 import presentation.SharedAppDataImpl
@@ -17,7 +19,6 @@ import presentation.conversation.components.ChirrioScaffold
 import presentation.conversation.components.ConversationContent
 import presentation.conversation.components.EmptyStartScreen
 import presentation.drawer.DrawerViewModel
-import presentation.login_screen.LoginViewModel
 import presentation.login_screen.components.LoginScreen
 import presentation.login_screen.components.SignupScreen
 import presentation.profile.ProfileViewModel
@@ -44,18 +45,18 @@ fun SharedNavigatedApp() {
                 ) { currentScreen ->
                     when (currentScreen) {
                         is Screens.Login -> {
-                            LoginScreen(LoginViewModel(provideViewModel()))
+                            LoginScreen()
                         }
 
                         is Screens.Signup -> {
-                            SignupScreen(LoginViewModel(provideViewModel()))
+                            SignupScreen()
                         }
 
                         is Screens.Chat -> {
                             val shared: SharedAppDataImpl = provideViewModel()
                             val drawer: DrawerViewModel = provideViewModel()
                             drawer.setChatId(currentScreen.id)
-                            val chatViewModel = remember(currentScreen.id) {
+                            val chatViewModel = remember {
                                 ConversationViewModel(
                                     shared,
                                     currentScreen.id
@@ -65,9 +66,11 @@ fun SharedNavigatedApp() {
                         }
 
                         is Screens.Profile -> {
-                            val viewModel: DrawerViewModel = provideViewModel()
-                            viewModel.setUserId(currentScreen.id)
-                            ProfileScreen(ProfileViewModel(provideViewModel(), currentScreen.id))
+                            val drawer: DrawerViewModel = provideViewModel()
+                            drawer.setUserId(currentScreen.id)
+                            val shared: SharedAppDataImpl = provideViewModel()
+                            val viewModel = remember { ProfileViewModel(shared, currentScreen.id) }
+                            ProfileScreen(viewModel)
                         }
 
                         is Screens.Main -> {
