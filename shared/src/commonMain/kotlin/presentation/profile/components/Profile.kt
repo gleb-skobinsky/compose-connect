@@ -93,8 +93,8 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun UserInfoFields(userData: ProfileScreenState) {
-    Column(Modifier.fillMaxWidth()) {
+private fun ColumnScope.UserInfoFields(userData: ProfileScreenState) {
+    Column(Modifier.fillMaxWidth().weight(1f)) {
         Spacer(modifier = Modifier.height(8.dp))
 
         NameAndPosition(userData)
@@ -153,21 +153,18 @@ private fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun ProfileHeader(
+private fun ColumnScope.ProfileHeader(
     data: ProfileScreenState,
 ) {
     data.photo?.let {
         Row(
             modifier = Modifier
-                .size(500.dp),
+                .weight(1f)
+                .aspectRatio(1f),
             horizontalArrangement = Arrangement.Center
         ) {
             KamelImage(
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp
-                    )
                     .clip(CircleShape),
                 resource = asyncPainterResource(it.toResourceUrl()),
                 contentScale = ContentScale.Crop,

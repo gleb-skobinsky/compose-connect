@@ -30,7 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,11 +69,11 @@ fun SignupScreen(
     viewModel: LoginViewModel = provideViewModel(),
 ) {
     val scrollState = rememberScrollState()
-    var email by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
     val navHost = LocalNavigator.current
     val signupButtonEnabled = email.isNotBlank() &&
             firstName.isNotBlank() &&
@@ -142,8 +142,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
 ) {
     val scrollState = rememberScrollState()
-    var email by remember { mutableStateOf("glebgytnik@gmail.com") }
-    var password by remember { mutableStateOf("LiuRuis5968!") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     val navHost = LocalNavigator.current
     Column(
@@ -193,7 +193,7 @@ fun LoginTextField(
     isPassword: Boolean = false,
     onValueChange: (String) -> Unit,
 ) = Column {
-    var passwordVisible by remember { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
     SecondaryLoginText(
         text = label,
         modifier = Modifier.padding(top = 12.dp, bottom = 6.dp)
