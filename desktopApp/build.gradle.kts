@@ -23,6 +23,9 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
+            jvmArgs(
+                "-Dapple.awt.application.appearance=system"
+            )
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "KotlinMultiplatformComposeDesktopApplication"
             packageVersion = "1.0.0"
