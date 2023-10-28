@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -27,42 +28,44 @@ import presentation.profile.components.ProfileScreen
 fun NavigatedApp() {
     ChirrioAppTheme {
         val controller = rememberNavController()
-        ChirrioScaffold {
-            NavHost(
-                navController = controller,
-                startDestination = "login",
-                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
-                exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
-            ) {
-                composable("login") {
-                    LoginScreen()
-                }
-                composable("signup") {
-                    SignupScreen()
-                }
-                composable("chat/{chatId}") {
-                    val chatId = it.arguments?.getString("chatId") ?: ""
-                    val drawer: DrawerViewModel = provideViewModel()
-                    drawer.setChatId(chatId)
-                    val viewModel: ConversationViewModel = viewModel(
-                        viewModelStoreOwner = it,
-                        factory = ConversationVMFactory(chatId, provideViewModel())
-                    )
-                    ConversationContent(viewModel)
-                }
-                composable("profile/{profileId}") {
-                    val profileId = it.arguments?.getString("profileId") ?: ""
-                    val drawer: DrawerViewModel = provideViewModel()
-                    drawer.setUserId(profileId)
-                    val viewModel: ProfileViewModel = viewModel(
-                        viewModelStoreOwner = it,
-                        factory = ProfileVMFactory(profileId, provideViewModel())
-                    )
-                    ProfileScreen(viewModel)
-                }
-                composable("main") {
-                    EmptyStartScreen()
+        CompositionLocalProvider(LocalNavigator provides controller) {
+            ChirrioScaffold {
+                NavHost(
+                    navController = controller,
+                    startDestination = "login",
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                    enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
+                    exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
+                ) {
+                    composable("login") {
+                        LoginScreen()
+                    }
+                    composable("signup") {
+                        SignupScreen()
+                    }
+                    composable("chat/{chatId}") {
+                        val chatId = it.arguments?.getString("chatId") ?: ""
+                        val drawer: DrawerViewModel = provideViewModel()
+                        drawer.setChatId(chatId)
+                        val viewModel: ConversationViewModel = viewModel(
+                            viewModelStoreOwner = it,
+                            factory = ConversationVMFactory(chatId, provideViewModel())
+                        )
+                        ConversationContent(viewModel)
+                    }
+                    composable("profile/{profileId}") {
+                        val profileId = it.arguments?.getString("profileId") ?: ""
+                        val drawer: DrawerViewModel = provideViewModel()
+                        drawer.setUserId(profileId)
+                        val viewModel: ProfileViewModel = viewModel(
+                            viewModelStoreOwner = it,
+                            factory = ProfileVMFactory(profileId, provideViewModel())
+                        )
+                        ProfileScreen(viewModel)
+                    }
+                    composable("main") {
+                        EmptyStartScreen()
+                    }
                 }
             }
         }
