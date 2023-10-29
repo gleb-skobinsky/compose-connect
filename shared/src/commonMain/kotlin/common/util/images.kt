@@ -6,6 +6,8 @@ import data.transport.LocalRoute
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.Job
 
+val imageFileExtensions = listOf(".jpg", ".jpeg", ".png", ".heic")
+
 @Composable
 fun ioPainterResource(path: String) = asyncPainterResource(path) {
     coroutineContext = Job() + IODispatcher

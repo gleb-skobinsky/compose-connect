@@ -50,6 +50,7 @@ kotlin {
                 implementation(Dependencies.Koin.core)
                 implementation(Dependencies.datetime)
                 implementation(Dependencies.kamel)
+                implementation(project(":filepicker"))
             }
         }
         val commonTest by getting {

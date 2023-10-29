@@ -22,3 +22,4 @@ shared/shared.podspec
 *.cache
 .env
 config.json
+/filepicker/filepicker.podspec

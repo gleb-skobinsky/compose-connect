@@ -43,6 +43,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.chirrio.filepicker.FilePicker
+import common.util.imageFileExtensions
 import di.provideViewModel
 import navigation.LocalNavigator
 import navigation.Screens
@@ -91,6 +93,14 @@ fun SignupScreen(
     ) {
         AuthSpacer()
         LoginHeaderText("Register")
+        var showPicker by rememberSaveable { mutableStateOf(false) }
+        Button({ showPicker = true }) {
+            Text("Import file")
+            FilePicker(show = showPicker, fileExtensions = imageFileExtensions) {
+                println(it?.path)
+                showPicker = false
+            }
+        }
         LoginTextField(
             label = "Email:",
             value = email,
