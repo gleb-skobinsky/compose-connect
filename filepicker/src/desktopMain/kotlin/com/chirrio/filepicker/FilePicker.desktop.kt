@@ -18,7 +18,9 @@ data class JvmFile(
     }
 }
 
-actual fun ByteArray.toImageBitmap(): ImageBitmap =
+
+@Composable
+actual fun ByteArray.toImageBitmap(file: MPFile<Any>): ImageBitmap =
     Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
@@ -64,7 +66,7 @@ actual fun DirectoryPicker(
                 extensions = emptyList()
             )
             onFileSelected(
-                files?.firstOrNull()?.path
+                files.firstOrNull()?.path
             )
         }
     }

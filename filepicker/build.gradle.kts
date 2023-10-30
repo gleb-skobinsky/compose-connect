@@ -48,6 +48,7 @@ kotlin {
             dependencies {
                 implementation(Dependencies.Android.appcompat)
                 implementation(Dependencies.Android.compose_activity)
+                implementation(Dependencies.Android.exif)
             }
         }
         val iosX64Main by getting

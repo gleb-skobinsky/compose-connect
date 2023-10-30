@@ -9,6 +9,7 @@ object Dependencies {
         const val compose_navigation = "androidx.navigation:navigation-compose:${Versions.compose_navigation}"
         const val compose_activity = "androidx.activity:activity-compose:${Versions.compose_activity}"
         const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
+        const val exif = "androidx.exifinterface:exifinterface:${Versions.exif}"
     }
     object Ktor {
         const val core = "io.ktor:ktor-client-core:${Versions.ktor}"

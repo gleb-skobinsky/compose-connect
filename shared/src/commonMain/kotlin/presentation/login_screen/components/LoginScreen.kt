@@ -57,6 +57,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.chirrio.filepicker.ImageWithData
 import com.chirrio.filepicker.PhotoPicker
 import com.chirrio.filepicker.toImageBitmap
 import di.provideViewModel
@@ -176,7 +177,7 @@ private fun UserImage(viewModel: LoginViewModel) {
             ) {
                 image?.let {
                     Image(
-                        bitmap = it,
+                        bitmap = it.data.toImageBitmap(it.file),
                         contentDescription = "User image",
                         modifier = Modifier.size(150.dp).clip(CircleShape),
                         contentScale = ContentScale.Crop
@@ -213,7 +214,9 @@ private fun UserImage(viewModel: LoginViewModel) {
                 PhotoPicker(show = showPicker, multiplePhotos = false) { files ->
                     files.firstOrNull()?.let { image ->
                         loaderScope.launch {
-                            viewModel.setUserImage(image.readAsBytes().toImageBitmap())
+                            image.readAsBytes()?.let {
+                                viewModel.setUserImage(ImageWithData(image, it))
+                            }
                         }
                     }
                     showPicker = false
@@ -243,8 +246,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
 ) {
     val scrollState = rememberScrollState()
-    var email by rememberSaveable { mutableStateOf("glebgytnik@gmail.com") }
-    var password by rememberSaveable { mutableStateOf("LiuRuis5968!") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     val navHost = LocalNavigator.current
     Column(

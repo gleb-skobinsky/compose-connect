@@ -1,7 +1,7 @@
 package presentation.login_screen
 
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.graphics.ImageBitmap
+import com.chirrio.filepicker.ImageWithData
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
 import data.repository.RemoteUserRepository
@@ -22,11 +22,11 @@ class LoginViewModel(
     shared: SharedAppDataImpl,
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
 
-    private val _userImage = MutableStateFlow<ImageBitmap?>(null)
+    private val _userImage = MutableStateFlow<ImageWithData?>(null)
     val userImage = _userImage.asStateFlow()
 
-    fun setUserImage(bitmap: ImageBitmap) {
-        _userImage.value = bitmap
+    fun setUserImage(image: ImageWithData) {
+        _userImage.value = image
     }
 
     fun loginUser(email: String, password: String, navHost: SharedNavigator?) {

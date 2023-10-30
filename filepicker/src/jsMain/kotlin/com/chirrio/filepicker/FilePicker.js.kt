@@ -23,7 +23,6 @@ data class WebFile(
     override val path: String,
     override val platformFile: File,
 ) : MPFile<File> {
-    suspend fun getFileContents(): String = readFileAsText(platformFile)
     override suspend fun readAsBytes(): ByteArray {
         val promise = readFileAsByteArray(platformFile)
         return promise.await()
@@ -54,7 +53,8 @@ fun readFileAsByteArray(file: File): Promise<ByteArray> {
     }
 }
 
-actual fun ByteArray.toImageBitmap() =
+@Composable
+actual fun ByteArray.toImageBitmap(file: MPFile<Any>) =
     Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable

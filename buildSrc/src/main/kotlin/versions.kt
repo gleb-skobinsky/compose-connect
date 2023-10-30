@@ -7,11 +7,11 @@ object Versions {
     const val koin = "3.5.0"
     const val datetime = "0.4.1"
     const val kamel = "0.8.2"
-    const val firebase = "1.10.0"
     const val core_ktx = "1.12.0"
     const val accompanist = "0.21.0-beta"
     const val compose_navigation = "2.7.4"
     const val compose_activity = "1.8.0"
     const val appcompat = "1.6.1"
     const val coroutines = "1.7.3"
+    const val exif = "1.3.6"
 }

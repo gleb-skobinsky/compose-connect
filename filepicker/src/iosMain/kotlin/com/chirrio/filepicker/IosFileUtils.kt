@@ -116,7 +116,7 @@ class FilePickerLauncher(
                                 openInPlace = false
                             ) { url, _, error ->
                                 if (error == null && url != null) {
-                                    file.complete(IosFile(url.toString(), url))
+                                    file.complete(IosFile(url.toString(), url, it.itemProvider))
                                 }
                             }
                         files += file.await()
