@@ -34,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,12 +42,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -55,7 +58,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chirrio.filepicker.PhotoPicker
+import com.chirrio.filepicker.toImageBitmap
 import di.provideViewModel
+import kotlinx.coroutines.launch
 import navigation.LocalNavigator
 import navigation.Screens
 import navigation.navigateTo
@@ -79,7 +84,6 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun SignupScreen(
     viewModel: LoginViewModel = provideViewModel(),
@@ -107,64 +111,7 @@ fun SignupScreen(
     ) {
         AuthSpacer()
         LoginHeaderText("Register")
-        var showPicker by rememberSaveable { mutableStateOf(false) }
-        with(LocalDensity.current) {
-            val borderColor = MaterialTheme.colorScheme.primary
-            val pathMeter = 5.dp.toPx()
-            Box {
-                Column(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .background(MaterialTheme.colorScheme.tertiary, CircleShape)
-                        .padding(4.dp)
-                        .drawWithCache {
-                            onDrawBehind {
-                                drawCircle(
-                                    color = borderColor, style = Stroke(
-                                        1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(
-                                            floatArrayOf(pathMeter, pathMeter)
-                                        )
-                                    )
-                                )
-                            }
-                        },
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(drawable_user_icon),
-                        contentDescription = "Add user photo",
-                        modifier = Modifier.size(100.dp).clip(CircleShape),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .shadow(24.dp, CircleShape)
-                        .size(48.dp)
-                        .background(MaterialTheme.colorScheme.tertiary, CircleShape)
-                        .align(Alignment.BottomEnd)
-                        .border(1.dp, color = MaterialTheme.colorScheme.primary, CircleShape)
-                        .pointerHoverIcon(PointerIcon.Hand)
-                        .clickable {
-                            showPicker = true
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit image",
-                        modifier = Modifier.size(36.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    PhotoPicker(show = showPicker, multiplePhotos = false) {
-                        println(it)
-                        showPicker = false
-                    }
-                }
-            }
-        }
+        UserImage(viewModel)
         LoginTextField(
             label = "Email:",
             value = email,
@@ -205,6 +152,86 @@ fun SignupScreen(
             }
         }
         AuthSpacer()
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+private fun UserImage(viewModel: LoginViewModel) {
+    var showPicker by rememberSaveable { mutableStateOf(false) }
+    val image by viewModel.userImage.collectAsState()
+    val loaderScope = rememberCoroutineScope()
+    with(LocalDensity.current) {
+        val borderColor = MaterialTheme.colorScheme.primary
+        val pathMeter = 5.dp.toPx()
+        Box {
+            Column(
+                modifier = Modifier
+                    .size(150.dp)
+                    .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+                    .padding(4.dp)
+                    .drawDashedCircle(borderColor, pathMeter),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                image?.let {
+                    Image(
+                        bitmap = it,
+                        contentDescription = "User image",
+                        modifier = Modifier.size(150.dp).clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } ?: run {
+                    Image(
+                        painter = painterResource(drawable_user_icon),
+                        contentDescription = "Add user photo",
+                        modifier = Modifier.size(100.dp).clip(CircleShape),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .shadow(24.dp, CircleShape)
+                    .size(48.dp)
+                    .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+                    .align(Alignment.BottomEnd)
+                    .border(1.dp, color = MaterialTheme.colorScheme.primary, CircleShape)
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .clickable {
+                        showPicker = true
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = "Edit image",
+                    modifier = Modifier.size(36.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                PhotoPicker(show = showPicker, multiplePhotos = false) { files ->
+                    files.firstOrNull()?.let { image ->
+                        loaderScope.launch {
+                            viewModel.setUserImage(image.readAsBytes().toImageBitmap())
+                        }
+                    }
+                    showPicker = false
+                }
+            }
+        }
+    }
+}
+
+fun Modifier.drawDashedCircle(borderColor: Color, pathMeter: Float) = drawWithCache {
+    onDrawBehind {
+        drawCircle(
+            color = borderColor, style = Stroke(
+                1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(
+                    floatArrayOf(pathMeter, pathMeter)
+                )
+            )
+        )
     }
 }
 

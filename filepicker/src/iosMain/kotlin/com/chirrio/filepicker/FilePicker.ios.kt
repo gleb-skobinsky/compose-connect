@@ -3,12 +3,20 @@ package com.chirrio.filepicker
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import org.jetbrains.skia.Image
 import platform.Foundation.NSURL
 
 data class IosFile(
     override val path: String,
     override val platformFile: NSURL,
-) : MPFile<NSURL>
+) : MPFile<NSURL> {
+    override suspend fun readAsBytes(): ByteArray {
+        TODO("Not yet implemented")
+    }
+}
+
+actual fun ByteArray.toImageBitmap() = Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
 actual fun PhotoPicker(

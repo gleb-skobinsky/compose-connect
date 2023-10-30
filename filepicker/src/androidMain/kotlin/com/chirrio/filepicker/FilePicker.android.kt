@@ -1,16 +1,32 @@
 package com.chirrio.filepicker
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.net.toFile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 data class AndroidFile(
     override val path: String,
     override val platformFile: Uri,
-) : MPFile<Uri>
+) : MPFile<Uri> {
+    override suspend fun readAsBytes(): ByteArray {
+        return withContext(Dispatchers.IO) { platformFile.toFile().readBytes() }
+    }
+}
+
+actual fun ByteArray.toImageBitmap() = toAndroidBitmap().asImageBitmap()
+
+private fun ByteArray.toAndroidBitmap(): Bitmap {
+    return BitmapFactory.decodeByteArray(this, 0, size);
+}
 
 @Composable
 actual fun FilePicker(

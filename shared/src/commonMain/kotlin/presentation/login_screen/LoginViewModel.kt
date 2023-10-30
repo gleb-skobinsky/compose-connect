@@ -1,10 +1,14 @@
 package presentation.login_screen
 
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.ImageBitmap
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
 import data.repository.RemoteUserRepository
 import domain.use_case.users.loginUseCase
 import domain.use_case.users.signupUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import navigation.Screens
@@ -13,9 +17,17 @@ import navigation.navigateTo
 import presentation.SharedAppData
 import presentation.SharedAppDataImpl
 
+@Stable
 class LoginViewModel(
     shared: SharedAppDataImpl,
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
+
+    private val _userImage = MutableStateFlow<ImageBitmap?>(null)
+    val userImage = _userImage.asStateFlow()
+
+    fun setUserImage(bitmap: ImageBitmap) {
+        _userImage.value = bitmap
+    }
 
     fun loginUser(email: String, password: String, navHost: SharedNavigator?) {
         val result = loginUseCase(RemoteUserRepository, email, password)

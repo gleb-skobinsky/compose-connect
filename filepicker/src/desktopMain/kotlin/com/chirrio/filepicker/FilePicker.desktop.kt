@@ -2,12 +2,24 @@ package com.chirrio.filepicker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.jetbrains.skia.Image
 import java.io.File
 
 data class JvmFile(
     override val path: String,
     override val platformFile: File,
-) : MPFile<File>
+) : MPFile<File> {
+    override suspend fun readAsBytes(): ByteArray {
+        return withContext(Dispatchers.IO) { platformFile.readBytes() }
+    }
+}
+
+actual fun ByteArray.toImageBitmap(): ImageBitmap =
+    Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
 actual fun FilePicker(

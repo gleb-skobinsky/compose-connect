@@ -15,7 +15,6 @@ fun awtFileChooser(
         filenameFilter = AwtFileNameFilter(extensions)
         isMultipleMode = multipleMode
     }
-    println(fileDialog.isMultipleMode)
     fileDialog.isVisible = true
     return if (fileDialog.directory != null && !fileDialog.files.isNullOrEmpty()) {
         return fileDialog.files.mapNotNull { JvmFile(it.path, it) }

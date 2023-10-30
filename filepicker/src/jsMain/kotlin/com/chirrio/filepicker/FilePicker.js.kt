@@ -2,7 +2,13 @@ package com.chirrio.filepicker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import kotlinx.browser.document
+import kotlinx.coroutines.await
+import org.jetbrains.skia.Image
+import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Int8Array
+import org.khronos.webgl.get
 import org.w3c.dom.Document
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.ItemArrayLike
@@ -11,13 +17,45 @@ import org.w3c.files.File
 import org.w3c.files.FileReader
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.js.Promise
 
 data class WebFile(
     override val path: String,
     override val platformFile: File,
 ) : MPFile<File> {
     suspend fun getFileContents(): String = readFileAsText(platformFile)
+    override suspend fun readAsBytes(): ByteArray {
+        val promise = readFileAsByteArray(platformFile)
+        return promise.await()
+    }
 }
+
+fun readFileAsByteArray(file: File): Promise<ByteArray> {
+    val reader = FileReader()
+
+    return Promise { resolve, reject ->
+        reader.onload = { event ->
+            val arrayBuffer = event.target.asDynamic().result as ArrayBuffer
+            val byteArray = ByteArray(arrayBuffer.byteLength)
+            val view = Int8Array(arrayBuffer)
+
+            for (i in byteArray.indices) {
+                byteArray[i] = view[i]
+            }
+
+            resolve(byteArray)
+        }
+
+        reader.onerror = { _ ->
+            reject(reader.error as Throwable)
+        }
+
+        reader.readAsArrayBuffer(file)
+    }
+}
+
+actual fun ByteArray.toImageBitmap() =
+    Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
 actual fun FilePicker(
