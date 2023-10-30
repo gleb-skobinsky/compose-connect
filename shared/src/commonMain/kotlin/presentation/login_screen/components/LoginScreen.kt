@@ -1,8 +1,11 @@
 package presentation.login_screen.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +25,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,9 +38,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -48,7 +59,10 @@ import di.provideViewModel
 import navigation.LocalNavigator
 import navigation.Screens
 import navigation.navigateTo
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import presentation.SharedAppData
+import presentation.common.resourceBindings.drawable_user_icon
 import presentation.login_screen.LoginViewModel
 
 @Composable
@@ -65,6 +79,7 @@ fun ShowOrHideSnackbar(viewModel: SharedAppData, scaffoldState: ScaffoldState) {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun SignupScreen(
     viewModel: LoginViewModel = provideViewModel(),
@@ -93,11 +108,61 @@ fun SignupScreen(
         AuthSpacer()
         LoginHeaderText("Register")
         var showPicker by rememberSaveable { mutableStateOf(false) }
-        Button({ showPicker = true }) {
-            Text("Import file")
-            PhotoPicker(show = showPicker, multiplePhotos = false) {
-                println(it)
-                showPicker = false
+        with(LocalDensity.current) {
+            val borderColor = MaterialTheme.colorScheme.primary
+            val pathMeter = 5.dp.toPx()
+            Box {
+                Column(
+                    modifier = Modifier
+                        .size(150.dp)
+                        .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+                        .padding(4.dp)
+                        .drawWithCache {
+                            onDrawBehind {
+                                drawCircle(
+                                    color = borderColor, style = Stroke(
+                                        1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(
+                                            floatArrayOf(pathMeter, pathMeter)
+                                        )
+                                    )
+                                )
+                            }
+                        },
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(drawable_user_icon),
+                        contentDescription = "Add user photo",
+                        modifier = Modifier.size(100.dp).clip(CircleShape),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .shadow(24.dp, CircleShape)
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.tertiary, CircleShape)
+                        .align(Alignment.BottomEnd)
+                        .border(1.dp, color = MaterialTheme.colorScheme.primary, CircleShape)
+                        .pointerHoverIcon(PointerIcon.Hand)
+                        .clickable {
+                            showPicker = true
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit image",
+                        modifier = Modifier.size(36.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    PhotoPicker(show = showPicker, multiplePhotos = false) {
+                        println(it)
+                        showPicker = false
+                    }
+                }
             }
         }
         LoginTextField(
@@ -151,8 +216,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
 ) {
     val scrollState = rememberScrollState()
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("glebgytnik@gmail.com") }
+    var password by rememberSaveable { mutableStateOf("LiuRuis5968!") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     val navHost = LocalNavigator.current
     Column(
