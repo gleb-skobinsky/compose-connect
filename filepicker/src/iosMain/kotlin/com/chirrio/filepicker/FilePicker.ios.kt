@@ -8,6 +8,8 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.skia.Image
 import platform.Foundation.NSData
 import platform.Foundation.NSItemProvider
@@ -22,7 +24,7 @@ data class IosFile(
     override val platformFile: NSURL,
     val provider: NSItemProvider? = null
 ) : MPFile<NSURL> {
-    override suspend fun readAsBytes(): ByteArray? {
+    override suspend fun readAsBytes(): ByteArray? = withContext(Dispatchers.Default) {
         if (provider != null) {
             val bytesToComplete = CompletableDeferred<ByteArray?>(null)
             provider.loadDataRepresentationForContentType(UTTypeContent) { data, error ->
@@ -32,13 +34,14 @@ data class IosFile(
                     bytesToComplete.complete(data?.toByteArray())
                 }
             }
-            return bytesToComplete.await()
+            bytesToComplete.await()
         } else {
             val data = NSData.dataWithContentsOfURL(platformFile)
-            return data?.toByteArray()
+            data?.toByteArray()
         }
     }
 }
+
 
 @OptIn(ExperimentalForeignApi::class)
 internal fun NSData.toByteArray(): ByteArray {
@@ -51,7 +54,8 @@ internal fun NSData.toByteArray(): ByteArray {
 }
 
 @Composable
-actual fun ByteArray.toImageBitmap(file: MPFile<Any>) = Image.makeFromEncoded(this).toComposeImageBitmap()
+actual fun ByteArray.toImageBitmap(file: MPFile<Any>) =
+    Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
 actual fun PhotoPicker(
