@@ -24,16 +24,30 @@ actual fun FilePicker(
     show: Boolean,
     initialDirectory: String?,
     fileExtensions: List<String>,
+    multipleFiles: Boolean,
     onFileSelected: FileSelected
 ) {
     LaunchedEffect(show) {
         if (show) {
-            val fixedExtensions = fileExtensions.map { ".$it" }
-            val file: List<File> = document.selectFilesFromDisk(fixedExtensions.joinToString(","), true)
-            onFileSelected(WebFile(file.first().name, file.first())) // TODO support multiple files
+            val files: List<File> =
+                document.selectFilesFromDisk(fileExtensions.joinToString(","), multipleFiles)
+            onFileSelected(files.map { WebFile(it.name, it) })
         }
     }
 }
+
+@Composable
+actual fun PhotoPicker(
+    show: Boolean,
+    initialDirectory: String?,
+    multiplePhotos: Boolean,
+    onFileSelected: FileSelected
+) = FilePicker(
+    show = show,
+    initialDirectory = initialDirectory,
+    multipleFiles = multiplePhotos,
+    onFileSelected = onFileSelected
+)
 
 @Composable
 actual fun DirectoryPicker(

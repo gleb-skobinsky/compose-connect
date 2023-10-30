@@ -17,15 +17,15 @@ actual fun FilePicker(
     show: Boolean,
     initialDirectory: String?,
     fileExtensions: List<String>,
+    multipleFiles: Boolean,
     onFileSelected: FileSelected
 ) {
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { result ->
-        if (result != null) {
-            onFileSelected(AndroidFile(result.toString(), result))
-        } else {
-            onFileSelected(null)
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenMultipleDocuments()
+        ) { result ->
+            onFileSelected(result.map { AndroidFile(it.toString(), it) })
         }
-    }
 
     val mimeTypeMap = MimeTypeMap.getSingleton()
     val mimeTypes = if (fileExtensions.isNotEmpty()) {
@@ -44,14 +44,45 @@ actual fun FilePicker(
 }
 
 @Composable
+actual fun PhotoPicker(
+    show: Boolean,
+    initialDirectory: String?,
+    multiplePhotos: Boolean,
+    onFileSelected: FileSelected
+) {
+    val launcher =
+        if (multiplePhotos) {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetMultipleContents()
+            ) { result ->
+                onFileSelected(result.map { AndroidFile(it.toString(), it) })
+            }
+        } else {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { result ->
+                val file = result?.let { listOf(AndroidFile(it.toString(), it)) }.orEmpty()
+                onFileSelected(file)
+            }
+        }
+
+    LaunchedEffect(show) {
+        if (show) {
+            launcher.launch("image/*")
+        }
+    }
+}
+
+@Composable
 actual fun DirectoryPicker(
     show: Boolean,
     initialDirectory: String?,
     onFileSelected: (String?) -> Unit
 ) {
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { result ->
-        onFileSelected(result?.toString())
-    }
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { result ->
+            onFileSelected(result?.toString())
+        }
 
     LaunchedEffect(show) {
         if (show) {

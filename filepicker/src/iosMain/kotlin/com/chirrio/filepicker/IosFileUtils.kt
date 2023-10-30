@@ -1,18 +1,29 @@
 package com.chirrio.filepicker
 
+import com.chirrio.filepicker.FilePickerLauncher.Mode
+import com.chirrio.filepicker.FilePickerLauncher.Mode.Directory
+import com.chirrio.filepicker.FilePickerLauncher.Mode.File
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import platform.Foundation.NSURL
+import platform.PhotosUI.PHPickerConfiguration
+import platform.PhotosUI.PHPickerResult
+import platform.PhotosUI.PHPickerViewController
+import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
 import platform.UIKit.UIAdaptivePresentationControllerDelegateProtocol
 import platform.UIKit.UIApplication
 import platform.UIKit.UIDocumentPickerDelegateProtocol
 import platform.UIKit.UIDocumentPickerViewController
 import platform.UIKit.UIPresentationController
+import platform.UIKit.UIViewController
 import platform.UniformTypeIdentifiers.UTType
 import platform.UniformTypeIdentifiers.UTTypeContent
 import platform.UniformTypeIdentifiers.UTTypeFolder
+import platform.UniformTypeIdentifiers.UTTypeImage
+import platform.UniformTypeIdentifiers.loadFileRepresentationForContentType
 import platform.darwin.NSObject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 import kotlin.native.concurrent.ThreadLocal
 
 /**
@@ -27,6 +38,7 @@ import kotlin.native.concurrent.ThreadLocal
 class FilePickerLauncher(
     private val initialDirectory: String?,
     private val pickerMode: Mode,
+    private val multipleMode: Boolean,
     private val onFileSelected: FileSelected,
 ) {
 
@@ -60,24 +72,28 @@ class FilePickerLauncher(
          *  selected on this file picker.
          */
         data class File(val extensions: List<String>) : Mode
+
+        data object Images : Mode
     }
 
     private val pickerDelegate = object : NSObject(),
         UIDocumentPickerDelegateProtocol,
-        UIAdaptivePresentationControllerDelegateProtocol {
+        UIAdaptivePresentationControllerDelegateProtocol,
+        PHPickerViewControllerDelegateProtocol {
 
         override fun documentPicker(
             controller: UIDocumentPickerViewController, didPickDocumentsAtURLs: List<*>
         ) {
-            (didPickDocumentsAtURLs.firstOrNull() as? NSURL).let { selected ->
-                onFileSelected(selected?.path?.let { IosFile(it, selected) })
-            }
+            val files = didPickDocumentsAtURLs
+                .filterIsInstance<NSURL>()
+                .mapNotNull { it.path?.let { path -> IosFile(path, it) } }
+            onFileSelected(files)
         }
 
         override fun documentPickerWasCancelled(
             controller: UIDocumentPickerViewController
         ) {
-            onFileSelected(null)
+            onFileSelected(emptyList())
         }
 
         override fun presentationControllerWillDismiss(
@@ -86,21 +102,60 @@ class FilePickerLauncher(
             (presentationController.presentedViewController as? UIDocumentPickerViewController)
                 ?.let { documentPickerWasCancelled(it) }
         }
+
+        override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val files = mutableListOf<IosFile>()
+                didFinishPicking
+                    .filterIsInstance<PHPickerResult>()
+                    .map {
+                        val file = CompletableDeferred<IosFile>()
+                        it.itemProvider
+                            .loadFileRepresentationForContentType(
+                                contentType = UTTypeContent,
+                                openInPlace = false
+                            ) { url, _, error ->
+                                if (error == null && url != null) {
+                                    file.complete(IosFile(url.toString(), url))
+                                }
+                            }
+                        files += file.await()
+                    }
+                onFileSelected(files)
+                picker.dismissViewControllerAnimated(true) {}
+            }
+        }
     }
 
     private val contentTypes: List<UTType>
         get() = when (pickerMode) {
-            is Mode.Directory -> listOf(UTTypeFolder)
-            is Mode.File -> pickerMode.extensions
+            is Directory -> listOf(UTTypeFolder)
+            is File -> pickerMode.extensions
                 .mapNotNull { UTType.typeWithFilenameExtension(it) }
                 .ifEmpty { listOf(UTTypeContent) }
+
+            is Mode.Images -> listOf(UTTypeImage)
         }
 
-    private fun createPicker() = UIDocumentPickerViewController(
-        forOpeningContentTypes = contentTypes
-    ).apply {
-        delegate = pickerDelegate
-        initialDirectory?.let { directoryURL = NSURL(string = it) }
+    private fun createPicker(): UIViewController {
+        return when (pickerMode) {
+            is File, is Directory -> UIDocumentPickerViewController(
+                forOpeningContentTypes = contentTypes
+            ).apply {
+                delegate = pickerDelegate
+                initialDirectory?.let { directoryURL = NSURL(string = it) }
+                allowsMultipleSelection = multipleMode
+            }
+
+            is Mode.Images -> {
+                val configuration = PHPickerConfiguration().apply {
+                    selectionLimit = if (multipleMode) 10 else 1
+                }
+                PHPickerViewController(configuration = configuration).apply {
+                    delegate = pickerDelegate
+                }
+            }
+        }
     }
 
     fun launchFilePicker() {
@@ -109,61 +164,10 @@ class FilePickerLauncher(
         UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
             // Reusing a closed/dismissed picker causes problems with
             // triggering delegate functions, launch with a new one.
-            createPicker(),
+            viewControllerToPresent = createPicker(),
             animated = true,
             completion = null
         )
     }
 }
 
-suspend fun launchFilePicker(
-    initialDirectory: String? = null,
-    fileExtensions: List<String>,
-): List<MPFile<Any>> = suspendCoroutine { cont ->
-    try {
-        FilePickerLauncher(
-            initialDirectory = initialDirectory,
-            pickerMode = FilePickerLauncher.Mode.File(fileExtensions),
-            onFileSelected = { selected ->
-                // File selection has ended, no launcher is active anymore
-                // dereference it
-                FilePickerLauncher.activeLauncher = null
-                cont.resume(selected?.let { listOf(it) }.orEmpty())
-            }
-        ).also { launcher ->
-            // We're showing the file picker at this time so we set
-            // the activeLauncher here. This might be the last time
-            // there's an outside reference to the file picker.
-            FilePickerLauncher.activeLauncher = launcher
-            launcher.launchFilePicker()
-        }
-    } catch (e: Throwable) {
-        // don't swallow errors
-        cont.resumeWithException(e)
-    }
-}
-
-suspend fun launchDirectoryPicker(
-    initialDirectory: String? = null,
-): List<MPFile<Any>> = suspendCoroutine { cont ->
-    try {
-        FilePickerLauncher(
-            initialDirectory = initialDirectory,
-            pickerMode = FilePickerLauncher.Mode.Directory,
-            onFileSelected = { selected ->
-                // File selection has ended, no launcher is active anymore
-                // dereference it
-                FilePickerLauncher.activeLauncher = null
-                cont.resume(selected?.let { listOf(it) }.orEmpty())
-            },
-        ).also { launcher ->
-            // We're showing the file picker at this time so we set
-            // the activeLauncher here. This might be the last time
-            // there's an outside reference to the file picker.
-            FilePickerLauncher.activeLauncher = launcher
-            launcher.launchFilePicker()
-        }
-    } catch (e: Throwable) {
-        cont.resumeWithException(e)
-    }
-}

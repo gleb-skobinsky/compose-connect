@@ -34,6 +34,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
+                implementation(Dependencies.Coroutines.core)
             }
         }
         val commonTest by getting {

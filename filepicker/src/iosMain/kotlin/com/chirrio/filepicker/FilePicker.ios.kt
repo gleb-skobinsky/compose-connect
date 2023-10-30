@@ -11,16 +11,41 @@ data class IosFile(
 ) : MPFile<NSURL>
 
 @Composable
+actual fun PhotoPicker(
+    show: Boolean,
+    initialDirectory: String?,
+    multiplePhotos: Boolean,
+    onFileSelected: FileSelected
+) {
+    val launcher = remember {
+        FilePickerLauncher(
+            initialDirectory = initialDirectory,
+            pickerMode = FilePickerLauncher.Mode.Images,
+            multipleMode = multiplePhotos,
+            onFileSelected = onFileSelected,
+        )
+    }
+
+    LaunchedEffect(show) {
+        if (show) {
+            launcher.launchFilePicker()
+        }
+    }
+}
+
+@Composable
 actual fun FilePicker(
     show: Boolean,
     initialDirectory: String?,
     fileExtensions: List<String>,
+    multipleFiles: Boolean,
     onFileSelected: FileSelected
 ) {
     val launcher = remember {
         FilePickerLauncher(
             initialDirectory = initialDirectory,
             pickerMode = FilePickerLauncher.Mode.File(fileExtensions),
+            multipleMode = multipleFiles,
             onFileSelected = onFileSelected,
         )
     }
@@ -42,7 +67,10 @@ actual fun DirectoryPicker(
         FilePickerLauncher(
             initialDirectory = initialDirectory,
             pickerMode = FilePickerLauncher.Mode.Directory,
-            onFileSelected = { onFileSelected(it?.path) },
+            multipleMode = false,
+            onFileSelected = { files ->
+                onFileSelected(files.firstOrNull()?.path)
+            },
         )
     }
 

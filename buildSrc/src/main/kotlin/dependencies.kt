@@ -24,6 +24,7 @@ object Dependencies {
     }
 
     object Coroutines {
+        const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     }
 
@@ -40,9 +41,5 @@ object Dependencies {
             const val navigation = "io.insert-koin:koin-androidx-navigation:${Versions.koin}"
             const val compose = "io.insert-koin:koin-androidx-compose:${Versions.koin}"
         }
-    }
-
-    object Firebase {
-        const val storage = "dev.gitlive:firebase-storage:${Versions.firebase}"
     }
 }

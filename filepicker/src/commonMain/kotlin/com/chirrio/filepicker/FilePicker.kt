@@ -8,13 +8,24 @@ interface MPFile<out T : Any> {
     val platformFile: T
 }
 
-typealias FileSelected = (MPFile<Any>?) -> Unit
+val imageFileExtensions = listOf(".jpg", ".jpeg", ".png", ".heic")
+
+typealias FileSelected = (List<MPFile<Any>>) -> Unit
 
 @Composable
 expect fun FilePicker(
     show: Boolean,
     initialDirectory: String? = null,
     fileExtensions: List<String> = emptyList(),
+    multipleFiles: Boolean = true,
+    onFileSelected: FileSelected
+)
+
+@Composable
+expect fun PhotoPicker(
+    show: Boolean,
+    initialDirectory: String? = null,
+    multiplePhotos: Boolean = true,
     onFileSelected: FileSelected
 )
 

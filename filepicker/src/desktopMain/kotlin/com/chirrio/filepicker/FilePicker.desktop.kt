@@ -14,19 +14,29 @@ actual fun FilePicker(
     show: Boolean,
     initialDirectory: String?,
     fileExtensions: List<String>,
+    multipleFiles: Boolean,
     onFileSelected: FileSelected
 ) {
     LaunchedEffect(show) {
         if (show) {
             val initialDir = initialDirectory ?: System.getProperty("user.dir")
-            val file = awtFileChooser(
+            val files = awtFileChooser(
                 initialDirectory = initialDir,
-                extensions = fileExtensions
+                extensions = fileExtensions,
+                multipleMode = multipleFiles
             )
-            onFileSelected(file)
+            onFileSelected(files)
         }
     }
 }
+
+@Composable
+actual fun PhotoPicker(
+    show: Boolean,
+    initialDirectory: String?,
+    multiplePhotos: Boolean,
+    onFileSelected: FileSelected
+) = FilePicker(show, initialDirectory, imageFileExtensions, multiplePhotos, onFileSelected)
 
 @Composable
 actual fun DirectoryPicker(
@@ -37,7 +47,13 @@ actual fun DirectoryPicker(
     LaunchedEffect(show) {
         if (show) {
             val initialDir = initialDirectory ?: System.getProperty("user.dir")
-            onFileSelected(null) //TODO support directories
+            val files = awtFileChooser(
+                initialDirectory = initialDir,
+                extensions = emptyList()
+            )
+            onFileSelected(
+                files?.firstOrNull()?.path
+            )
         }
     }
 }

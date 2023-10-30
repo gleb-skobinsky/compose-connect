@@ -4,18 +4,22 @@ import androidx.compose.ui.awt.ComposeWindow
 import java.awt.FileDialog
 import java.io.File
 import java.io.FilenameFilter
-import java.nio.file.Paths
 
-fun awtFileChooser(initialDirectory: String, extensions: List<String>, ): JvmFile? {
-    val fileDialog = FileDialog(ComposeWindow(), "Choose a file", FileDialog.LOAD)
-    fileDialog.directory = initialDirectory
-    // fileDialog.file = "*.oeg"
-    fileDialog.filenameFilter = AwtFileNameFilter(extensions)
+fun awtFileChooser(
+    initialDirectory: String,
+    extensions: List<String>,
+    multipleMode: Boolean = true
+): List<JvmFile> {
+    val fileDialog = FileDialog(ComposeWindow(), "Choose a file", FileDialog.LOAD).apply {
+        directory = initialDirectory
+        filenameFilter = AwtFileNameFilter(extensions)
+        isMultipleMode = multipleMode
+    }
+    println(fileDialog.isMultipleMode)
     fileDialog.isVisible = true
-    return if (fileDialog.directory != null && fileDialog.file != null) {
-        val file = Paths.get(fileDialog.directory, fileDialog.file).toFile()
-        return JvmFile(file.path, file)
-    } else null
+    return if (fileDialog.directory != null && !fileDialog.files.isNullOrEmpty()) {
+        return fileDialog.files.mapNotNull { JvmFile(it.path, it) }
+    } else emptyList()
 }
 
 class AwtFileNameFilter(private val extensions: List<String>) : FilenameFilter {
