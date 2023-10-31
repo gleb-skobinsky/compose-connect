@@ -95,7 +95,6 @@ fun Messages(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun MessageWidget(
     onAuthorClick: (String) -> Unit,
@@ -254,7 +253,7 @@ fun ClickableMessage(
 
     ClickableText(
         text = styledMessage,
-        style = androidx.compose.material.MaterialTheme.typography.body1.copy(color = mainTextColor),
+        style = MaterialTheme.typography.bodyMedium.copy(color = mainTextColor),
         modifier = Modifier.padding(16.dp),
         onClick = {
             styledMessage
