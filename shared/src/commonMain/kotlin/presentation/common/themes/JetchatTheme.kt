@@ -87,7 +87,7 @@ fun ChirrioAppTheme(
     val theme by sharedViewModel.theme.collectAsState()
     MaterialTheme(
         colorScheme = JetChatTheme[theme],
-        typography = JetchatTypography
+        typography = JetchatTypography()
     ) {
         val rippleIndication = rememberRipple()
         CompositionLocalProvider(

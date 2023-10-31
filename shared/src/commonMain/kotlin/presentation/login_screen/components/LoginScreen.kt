@@ -51,7 +51,6 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -329,8 +328,8 @@ fun LoginTextField(
             .size(300.dp, 32.dp)
             .background(MaterialTheme.colorScheme.tertiary, CircleShape)
             .padding(8.dp),
-        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurfaceVariant),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant)
+        textStyle = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurfaceVariant),
     )
 }
 
@@ -357,7 +356,8 @@ fun SecondaryLoginText(
     Text(
         text = text,
         color = MaterialTheme.colorScheme.primaryContainer,
-        modifier = modifier
+        modifier = modifier,
+        style = MaterialTheme.typography.bodyMedium
     )
 }
 
@@ -375,8 +375,9 @@ fun AuthButton(
         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
     ) {
         Text(
-            text,
-            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+            text = text,
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
@@ -390,5 +391,6 @@ fun LoginHeaderText(
     fontSize = 56.sp,
     color = MaterialTheme.colorScheme.primary,
     textAlign = TextAlign.Center,
-    modifier = modifier.padding(bottom = 32.dp)
+    modifier = modifier.padding(bottom = 32.dp),
+    style = MaterialTheme.typography.headlineLarge
 )
