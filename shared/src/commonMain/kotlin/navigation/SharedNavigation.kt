@@ -31,28 +31,28 @@ fun SharedNavigatedApp() {
     ChirrioAppTheme {
         val navigator = rememberSharedNavigator()
         CompositionLocalProvider(LocalNavigator provides navigator) {
-            ChirrioScaffold {
-                AnimatedContent(
-                    targetState = LocalNavigator.current?.screens,
-                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                    transitionSpec = {
-                        fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(
-                            tween(
-                                NAVIGATION_TIMEOUT
-                            )
+            AnimatedContent(
+                targetState = LocalNavigator.current?.screens,
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                transitionSpec = {
+                    fadeIn(tween(NAVIGATION_TIMEOUT)) togetherWith fadeOut(
+                        tween(
+                            NAVIGATION_TIMEOUT
                         )
+                    )
+                }
+            ) { currentScreen ->
+                when (currentScreen) {
+                    is Screens.Login -> {
+                        LoginScreen()
                     }
-                ) { currentScreen ->
-                    when (currentScreen) {
-                        is Screens.Login -> {
-                            LoginScreen()
-                        }
 
-                        is Screens.Signup -> {
-                            SignupScreen()
-                        }
+                    is Screens.Signup -> {
+                        SignupScreen()
+                    }
 
-                        is Screens.Chat -> {
+                    is Screens.Chat -> {
+                        ChirrioScaffold {
                             val shared: SharedAppDataImpl = provideViewModel()
                             val drawer: DrawerViewModel = provideViewModel()
                             drawer.setChatId(currentScreen.id)
@@ -64,21 +64,26 @@ fun SharedNavigatedApp() {
                             }
                             ConversationContent(chatViewModel)
                         }
+                    }
 
-                        is Screens.Profile -> {
+                    is Screens.Profile -> {
+                        ChirrioScaffold {
                             val drawer: DrawerViewModel = provideViewModel()
                             drawer.setUserId(currentScreen.id)
                             val shared: SharedAppDataImpl = provideViewModel()
-                            val viewModel = remember { ProfileViewModel(shared, currentScreen.id) }
+                            val viewModel =
+                                remember { ProfileViewModel(shared, currentScreen.id) }
                             ProfileScreen(viewModel)
                         }
+                    }
 
-                        is Screens.Main -> {
+                    is Screens.Main -> {
+                        ChirrioScaffold {
                             EmptyStartScreen()
                         }
-
-                        else -> Unit
                     }
+
+                    null -> Unit
                 }
             }
         }

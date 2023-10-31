@@ -109,7 +109,6 @@ fun SignupScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AuthSpacer()
         LoginHeaderText("Register")
         UserImage(viewModel)
         LoginTextField(
@@ -139,19 +138,19 @@ fun SignupScreen(
             isPassword = true,
             onValueChange = { confirmPassword = it }
         )
+        Spacer(Modifier.height(18.dp))
         AuthButton(
             enabled = signupButtonEnabled,
             text = "Sign up"
         ) {
             viewModel.signupUser(email, firstName, lastName, password)
         }
-        Row(Modifier.padding(top = 32.dp)) {
+        Row(Modifier.padding(top = 12.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Log in") {
                 navHost?.navigateTo(Screens.Login())
             }
         }
-        AuthSpacer()
     }
 }
 
@@ -238,9 +237,6 @@ fun Modifier.drawDashedCircle(borderColor: Color, pathMeter: Float) = drawWithCa
 }
 
 @Composable
-fun AuthSpacer() = Spacer(Modifier.height(42.dp))
-
-@Composable
 fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
 ) {
@@ -257,7 +253,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AuthSpacer()
         Row(Modifier.fillMaxWidth()) {
             Spacer(Modifier.weight(1f))
             LoginHeaderText("Please log in", Modifier.weight(6f))
@@ -273,19 +268,19 @@ fun LoginScreen(
             value = password,
             isPassword = true,
         ) { password = it }
+        Spacer(Modifier.height(18.dp))
         AuthButton(
             enabled = loginButtonEnabled,
             text = "Log in"
         ) {
             viewModel.loginUser(email, password, navHost)
         }
-        Row(Modifier.padding(top = 32.dp)) {
+        Row(Modifier.padding(top = 12.dp)) {
             SecondaryLoginText("Don't have an account?", Modifier.padding(end = 20.dp))
             ClickableSecondaryLoginText("Register") {
                 navHost?.navigateTo(Screens.Signup())
             }
         }
-        AuthSpacer()
     }
 }
 
@@ -324,7 +319,6 @@ fun LoginTextField(
             innerTextField()
         },
         modifier = Modifier
-            .padding(bottom = 24.dp)
             .size(300.dp, 32.dp)
             .background(MaterialTheme.colorScheme.tertiary, CircleShape)
             .padding(8.dp),

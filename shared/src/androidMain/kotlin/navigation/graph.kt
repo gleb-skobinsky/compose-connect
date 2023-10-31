@@ -29,41 +29,45 @@ fun NavigatedApp() {
     ChirrioAppTheme {
         val controller = rememberNavController()
         CompositionLocalProvider(LocalNavigator provides controller) {
-            ChirrioScaffold {
-                NavHost(
-                    navController = controller,
-                    startDestination = "login",
-                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                    enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
-                    exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
-                ) {
-                    composable("login") {
-                        LoginScreen()
-                    }
-                    composable("signup") {
-                        SignupScreen()
-                    }
-                    composable("chat/{chatId}") {
-                        val chatId = it.arguments?.getString("chatId") ?: ""
+            NavHost(
+                navController = controller,
+                startDestination = "login",
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                enterTransition = { fadeIn(tween(NAVIGATION_TIMEOUT)) },
+                exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
+            ) {
+                composable("login") {
+                    LoginScreen()
+                }
+                composable("signup") {
+                    SignupScreen()
+                }
+                composable("chat/{chatId}") { entry ->
+                    ChirrioScaffold {
+                        val chatId = entry.arguments?.getString("chatId") ?: ""
                         val drawer: DrawerViewModel = provideViewModel()
                         drawer.setChatId(chatId)
                         val viewModel: ConversationViewModel = viewModel(
-                            viewModelStoreOwner = it,
+                            viewModelStoreOwner = entry,
                             factory = ConversationVMFactory(chatId, provideViewModel())
                         )
                         ConversationContent(viewModel)
                     }
-                    composable("profile/{profileId}") {
-                        val profileId = it.arguments?.getString("profileId") ?: ""
+                }
+                composable("profile/{profileId}") { entry ->
+                    ChirrioScaffold {
+                        val profileId = entry.arguments?.getString("profileId") ?: ""
                         val drawer: DrawerViewModel = provideViewModel()
                         drawer.setUserId(profileId)
                         val viewModel: ProfileViewModel = viewModel(
-                            viewModelStoreOwner = it,
+                            viewModelStoreOwner = entry,
                             factory = ProfileVMFactory(profileId, provideViewModel())
                         )
                         ProfileScreen(viewModel)
                     }
-                    composable("main") {
+                }
+                composable("main") {
+                    ChirrioScaffold {
                         EmptyStartScreen()
                     }
                 }
