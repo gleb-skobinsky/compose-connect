@@ -64,10 +64,8 @@ import kotlinx.coroutines.launch
 import navigation.LocalNavigator
 import navigation.Screens
 import navigation.navigateTo
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import presentation.SharedAppData
-import presentation.common.resourceBindings.drawable_user_icon
+import presentation.common.resourceBindings.Drawables
 import presentation.login_screen.LoginViewModel
 
 @Composable
@@ -154,7 +152,6 @@ fun SignupScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun UserImage(viewModel: LoginViewModel) {
     var showPicker by rememberSaveable { mutableStateOf(false) }
@@ -182,7 +179,7 @@ private fun UserImage(viewModel: LoginViewModel) {
                     )
                 } ?: run {
                     Image(
-                        painter = painterResource(drawable_user_icon),
+                        painter = Drawables.user_icon,
                         contentDescription = "Add user photo",
                         modifier = Modifier.size(100.dp).clip(CircleShape),
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)

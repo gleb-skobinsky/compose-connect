@@ -18,10 +18,8 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import presentation.common.platform.pointerCursor
-import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
+import presentation.common.resourceBindings.Drawables
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +63,6 @@ fun ChirrioAppBar(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ChirrioIcon(
     contentDescription: String?,
@@ -81,7 +78,7 @@ fun ChirrioIcon(
     }
     Box(modifier = modifier.then(semantics)) {
         Image(
-            painter = painterResource(drawable_jetchat_icon_mpp),
+            painter = Drawables.jetchat_icon_mpp,
             contentDescription = null,
             // tint = MaterialTheme.colorScheme.primaryContainer
         )

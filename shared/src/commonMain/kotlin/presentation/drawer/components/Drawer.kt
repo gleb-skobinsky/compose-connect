@@ -2,7 +2,17 @@ package presentation.drawer.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
@@ -27,10 +37,8 @@ import androidx.compose.ui.unit.dp
 import common.util.ioPainterResource
 import common.util.toResourceUrl
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import presentation.common.platform.pointerCursor
-import presentation.common.resourceBindings.drawable_jetchat_icon_mpp
+import presentation.common.resourceBindings.Drawables
 import presentation.conversation.components.ChirrioIcon
 import presentation.conversation.components.LocalScaffold
 import presentation.drawer.DrawerViewModel
@@ -172,7 +180,6 @@ private fun DrawerItemHeader(text: String) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit) {
     val background = if (selected) {
@@ -197,7 +204,7 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
             MaterialTheme.colorScheme.onSurfaceVariant
         }
         Icon(
-            painter = painterResource(drawable_jetchat_icon_mpp),
+            painter = Drawables.jetchat_icon_mpp,
             tint = iconTint,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
             contentDescription = null

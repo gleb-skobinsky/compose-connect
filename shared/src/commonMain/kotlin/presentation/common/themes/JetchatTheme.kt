@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import di.provideViewModel
 import presentation.SharedAppDataImpl
+import presentation.common.resourceBindings.Drawables
 import presentation.common.typography.JetchatTypography
 
 private object JetChatTheme {
@@ -84,6 +85,7 @@ fun ChirrioAppTheme(
     sharedViewModel: SharedAppDataImpl = provideViewModel(),
     content: @Composable () -> Unit,
 ) {
+    Drawables.load()
     val theme by sharedViewModel.theme.collectAsState()
     MaterialTheme(
         colorScheme = JetChatTheme[theme],

@@ -24,11 +24,9 @@ import data.ProfileScreenState
 import di.provideViewModel
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import presentation.FunctionalityNotAvailablePopup
 import presentation.common.platform.statusBarsPaddingMpp
-import presentation.common.resourceBindings.drawable_user_icon
+import presentation.common.resourceBindings.Drawables
 import presentation.conversation.components.ChirrioAppBar
 import presentation.conversation.components.baselineHeight
 import presentation.profile.ProfileViewModel
@@ -159,7 +157,6 @@ private fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ColumnScope.ProfileHeader(
     data: ProfileScreenState,
@@ -180,7 +177,7 @@ private fun ColumnScope.ProfileHeader(
             )
         } ?: run {
             Image(
-                painter = painterResource(drawable_user_icon),
+                painter = Drawables.user_icon,
                 contentScale = ContentScale.FillHeight,
                 contentDescription = null,
                 modifier = Modifier
@@ -192,7 +189,6 @@ private fun ColumnScope.ProfileHeader(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun UserImage(
     resource: Resource<Painter>,
@@ -206,7 +202,7 @@ fun UserImage(
         contentDescription = "User image",
         onFailure = {
             Image(
-                painter = painterResource(drawable_user_icon),
+                painter = Drawables.user_icon,
                 contentScale = ContentScale.FillHeight,
                 contentDescription = null,
                 modifier = Modifier.align(Alignment.Center).fillMaxSize(),

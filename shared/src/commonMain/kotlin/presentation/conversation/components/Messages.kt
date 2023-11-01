@@ -32,7 +32,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.messagesParser.SymbolAnnotationType
 import presentation.common.messagesParser.messageFormatter
-import presentation.common.resourceBindings.drawable_user_icon
+import presentation.common.resourceBindings.Drawables
 import presentation.profile.components.UserImage
 
 private val messagesPadding = PaddingValues(
@@ -135,7 +135,7 @@ fun MessageWidget(
                         .border(1.5.dp, borderColor, CircleShape)
                         .clip(CircleShape)
                         .align(Alignment.Top),
-                    painter = painterResource(drawable_user_icon),
+                    painter = Drawables.user_icon,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )

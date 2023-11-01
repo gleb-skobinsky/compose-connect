@@ -1,4 +1,21 @@
 package presentation.common.resourceBindings
 
-const val drawable_jetchat_icon_mpp = "jetchat_icon_mpp.png"
-const val drawable_user_icon = "user_icon.xml"
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+
+object Drawables {
+    lateinit var jetchat_icon_mpp: Painter
+        private set
+
+    lateinit var user_icon: Painter
+        private set
+
+    @OptIn(ExperimentalResourceApi::class)
+    @Composable
+    fun load() {
+        jetchat_icon_mpp = painterResource("jetchat_icon_mpp.png")
+        user_icon = painterResource("user_icon.xml")
+    }
+}
