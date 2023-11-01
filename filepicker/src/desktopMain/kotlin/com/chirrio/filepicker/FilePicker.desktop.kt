@@ -2,6 +2,7 @@ package com.chirrio.filepicker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import kotlinx.coroutines.Dispatchers
@@ -18,9 +19,11 @@ data class JvmFile(
     }
 }
 
-
 @Composable
-actual fun ByteArray.toImageBitmap(file: MPFile<Any>): ImageBitmap =
+actual fun localContext(): Any = remember { Any() }
+
+
+actual fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>): ImageBitmap =
     Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
@@ -29,6 +32,7 @@ actual fun FilePicker(
     initialDirectory: String?,
     fileExtensions: List<String>,
     multipleFiles: Boolean,
+    maxNumberOfFiles: Int,
     onFileSelected: FileSelected
 ) {
     LaunchedEffect(show) {
@@ -37,7 +41,8 @@ actual fun FilePicker(
             val files = awtFileChooser(
                 initialDirectory = initialDir,
                 extensions = fileExtensions,
-                multipleMode = multipleFiles
+                multipleMode = multipleFiles,
+                maxFiles = maxNumberOfFiles
             )
             onFileSelected(files)
         }
@@ -49,8 +54,16 @@ actual fun PhotoPicker(
     show: Boolean,
     initialDirectory: String?,
     multiplePhotos: Boolean,
+    maxNumberOfPhotos: Int,
     onFileSelected: FileSelected
-) = FilePicker(show, initialDirectory, imageFileExtensions, multiplePhotos, onFileSelected)
+) = FilePicker(
+    show = show,
+    initialDirectory = initialDirectory,
+    fileExtensions = imageFileExtensions,
+    multipleFiles = multiplePhotos,
+    maxNumberOfFiles = maxNumberOfPhotos,
+    onFileSelected = onFileSelected
+)
 
 @Composable
 actual fun DirectoryPicker(

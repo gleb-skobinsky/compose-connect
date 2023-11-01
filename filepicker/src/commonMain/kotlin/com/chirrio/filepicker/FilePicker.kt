@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 
 @Composable
-expect fun ByteArray.toImageBitmap(file: MPFile<Any>): ImageBitmap
+expect fun localContext(): Any
+
+expect fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>): ImageBitmap
 
 interface MPFile<out T : Any> {
     // on JS this will be a file name, on other platforms it will be a file path
@@ -24,6 +26,7 @@ expect fun FilePicker(
     initialDirectory: String? = null,
     fileExtensions: List<String> = emptyList(),
     multipleFiles: Boolean = true,
+    maxNumberOfFiles: Int = 10,
     onFileSelected: FileSelected
 )
 
@@ -32,6 +35,7 @@ expect fun PhotoPicker(
     show: Boolean,
     initialDirectory: String? = null,
     multiplePhotos: Boolean = true,
+    maxNumberOfPhotos: Int = 10,
     onFileSelected: FileSelected
 )
 

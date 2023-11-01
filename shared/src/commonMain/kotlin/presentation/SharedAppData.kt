@@ -1,5 +1,6 @@
 package presentation
 
+import androidx.compose.runtime.Stable
 import common.Resource
 import common.viewmodel.IODispatcher
 import common.viewmodel.ViewModelPlatformImpl
@@ -37,6 +38,7 @@ interface SharedAppData {
     fun switchTheme(theme: ThemeMode)
 }
 
+@Stable
 class SharedAppDataImpl : SharedAppData, ViewModelPlatformImpl() {
 
     private val _user: MutableStateFlow<User?> = MutableStateFlow(null)

@@ -27,9 +27,9 @@ import common.util.*
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.model.User
+import io.kamel.image.KamelImage
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import presentation.common.messagesParser.SymbolAnnotationType
 import presentation.common.messagesParser.messageFormatter
 import presentation.common.resourceBindings.Drawables
@@ -228,20 +228,20 @@ fun ChatItemBubble(
                 authorClicked = authorClicked,
             )
         }
-
-        message.image?.let {
-            val msgImage = painterResource(it)
-            Spacer(modifier = Modifier.height(4.dp))
-            Surface(
-                color = backgroundBubbleColor,
-                shape = chatBubbleShape
-            ) {
-                Image(
-                    painter = msgImage,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(160.dp),
-                    contentDescription = "Image"
-                )
+        if (message.images.isNotEmpty()) {
+            for (image in message.images) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    color = backgroundBubbleColor,
+                    shape = chatBubbleShape
+                ) {
+                    KamelImage(
+                        resource = ioPainterResource(image.toResourceUrl()),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(160.dp),
+                        contentDescription = "Image"
+                    )
+                }
             }
         }
     }

@@ -39,6 +39,7 @@ class FilePickerLauncher(
     private val initialDirectory: String?,
     private val pickerMode: Mode,
     private val multipleMode: Boolean,
+    private val maxNumber: Int = 10,
     private val onFileSelected: FileSelected,
 ) {
 
@@ -149,7 +150,7 @@ class FilePickerLauncher(
 
             is Mode.Images -> {
                 val configuration = PHPickerConfiguration().apply {
-                    selectionLimit = if (multipleMode) 10 else 1
+                    selectionLimit = if (multipleMode) maxNumber.toLong() else 1
                 }
                 PHPickerViewController(configuration = configuration).apply {
                     delegate = pickerDelegate

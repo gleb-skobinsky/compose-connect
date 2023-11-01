@@ -8,7 +8,8 @@ import java.io.FilenameFilter
 fun awtFileChooser(
     initialDirectory: String,
     extensions: List<String>,
-    multipleMode: Boolean = true
+    multipleMode: Boolean = true,
+    maxFiles: Int = 10
 ): List<JvmFile> {
     val fileDialog = FileDialog(ComposeWindow(), "Choose a file", FileDialog.LOAD).apply {
         directory = initialDirectory
@@ -17,7 +18,7 @@ fun awtFileChooser(
     }
     fileDialog.isVisible = true
     return if (fileDialog.directory != null && !fileDialog.files.isNullOrEmpty()) {
-        return fileDialog.files.mapNotNull { JvmFile(it.path, it) }
+        return fileDialog.files.filterNotNull().take(maxFiles).map { JvmFile(it.path, it) }
     } else emptyList()
 }
 

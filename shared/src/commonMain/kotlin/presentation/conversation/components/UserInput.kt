@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusTarget
@@ -23,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -31,26 +34,31 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.chirrio.filepicker.PhotoPicker
+import com.chirrio.filepicker.localContext
+import di.provideViewModel
 import presentation.FunctionalityNotAvailablePopup
 import presentation.common.platform.pointerCursor
 import presentation.common.platform.textCursor
+import presentation.conversation.ConversationViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserInput(
+    viewModel: ConversationViewModel = provideViewModel(),
     onMessageSent: (String) -> Unit,
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {},
 ) {
-    var currentInputSelector by rememberSaveable { mutableStateOf(InputSelector.NONE) }
-    val dismissKeyboard = { currentInputSelector = InputSelector.NONE }
+    val currentInputSelector by viewModel.inputSelector.collectAsState()
+    val dismissKeyboard = { viewModel.setInputSelector(InputSelector.NONE) }
 
     // Intercept back navigation if there's a InputSelector visible
 //    if (currentInputSelector != InputSelector.NONE) {
 //        BackPressHandler(onBackPressed = dismissKeyboard)
 //    }
 
-    var textState by remember { mutableStateOf("") }
+    var textState by rememberSaveable { mutableStateOf("") }
 
     // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
@@ -76,7 +84,7 @@ fun UserInput(
                 // Close extended selector if text field receives focus
                 onTextFieldFocused = { focused ->
                     if (focused) {
-                        currentInputSelector = InputSelector.NONE
+                        viewModel.setInputSelector(InputSelector.NONE)
                         resetScroll()
                     }
                     textFieldFocusState = focused
@@ -85,12 +93,14 @@ fun UserInput(
                 onMessageSent = actualOnMessageSent
             )
             UserInputSelector(
-                onSelectorChange = { currentInputSelector = it },
+                viewModel = viewModel,
+                onSelectorChange = { viewModel.setInputSelector(it) },
                 sendMessageEnabled = textState.isNotBlank(),
                 onMessageSent = actualOnMessageSent,
                 currentInputSelector = currentInputSelector
             )
             SelectorExpanded(
+                viewModel = viewModel,
                 onCloseRequested = dismissKeyboard,
                 onTextAdded = { textState += it },
                 currentSelector = currentInputSelector
@@ -101,6 +111,7 @@ fun UserInput(
 
 @Composable
 private fun SelectorExpanded(
+    viewModel: ConversationViewModel,
     currentSelector: InputSelector,
     onCloseRequested: () -> Unit,
     onTextAdded: (String) -> Unit,
@@ -120,11 +131,41 @@ private fun SelectorExpanded(
         when (currentSelector) {
             InputSelector.EMOJI -> EmojiSelector(onTextAdded, focusRequester)
             InputSelector.DM -> NotAvailablePopup(onCloseRequested)
-            InputSelector.PICTURE -> FunctionalityNotAvailablePanel()
+            InputSelector.PICTURE -> SelectedImagesPanel(viewModel)
             InputSelector.MAP -> FunctionalityNotAvailablePanel()
             InputSelector.PHONE -> FunctionalityNotAvailablePanel()
             else -> {
                 throw NotImplementedError()
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectedImagesPanel(viewModel: ConversationViewModel) {
+    val images by viewModel.currentImages.collectAsState()
+    AnimatedVisibility(visible = images.isNotEmpty()) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(12.dp),
+        ) {
+            items(
+                count = images.size,
+                key = { images[it].file },
+                contentType = { images[it] }
+            ) {
+                val image = images[it]
+                Image(
+                    bitmap = image.imageBitmap,
+                    contentDescription = "Image attachment",
+                    modifier = Modifier
+                        .size(150.dp, 100.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .padding(end = if (it != images.size - 1) 24.dp else 0.dp),
+                    contentScale = ContentScale.Crop
+                )
             }
         }
     }
@@ -260,6 +301,7 @@ private fun UserInputText(
 
 @Composable
 private fun UserInputSelector(
+    viewModel: ConversationViewModel,
     onSelectorChange: (InputSelector) -> Unit,
     sendMessageEnabled: Boolean,
     onMessageSent: () -> Unit,
@@ -285,11 +327,10 @@ private fun UserInputSelector(
             selected = currentInputSelector == InputSelector.DM,
             description = "Direct message"
         )
-        InputSelectorButton(
-            onClick = { onSelectorChange(InputSelector.PICTURE) },
-            icon = Icons.Outlined.InsertPhoto,
-            selected = currentInputSelector == InputSelector.PICTURE,
-            description = "Attach photo"
+        PicturesSelectorButton(
+            viewModel = viewModel,
+            currentSelector = currentInputSelector,
+            onSelectorChange = onSelectorChange
         )
         InputSelectorButton(
             onClick = { onSelectorChange(InputSelector.MAP) },
@@ -335,6 +376,31 @@ private fun UserInputSelector(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
+    }
+}
+
+@Composable
+fun PicturesSelectorButton(
+    viewModel: ConversationViewModel,
+    currentSelector: InputSelector,
+    onSelectorChange: (InputSelector) -> Unit
+) {
+    var photoPickerOpen by rememberSaveable { mutableStateOf(false) }
+    InputSelectorButton(
+        onClick = {
+            onSelectorChange(InputSelector.PICTURE)
+            photoPickerOpen = true
+        },
+        icon = Icons.Outlined.InsertPhoto,
+        selected = currentSelector == InputSelector.PICTURE,
+        description = "Attach photo"
+    )
+    val context = localContext()
+    PhotoPicker(
+        show = photoPickerOpen,
+    ) { images ->
+        photoPickerOpen = false
+        viewModel.setImages(images, context)
     }
 }
 

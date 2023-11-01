@@ -2,6 +2,7 @@ package com.chirrio.filepicker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import kotlinx.browser.document
 import kotlinx.coroutines.await
@@ -54,7 +55,9 @@ fun readFileAsByteArray(file: File): Promise<ByteArray> {
 }
 
 @Composable
-actual fun ByteArray.toImageBitmap(file: MPFile<Any>) =
+actual fun localContext(): Any = remember { Any() }
+
+actual fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>) =
     Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
@@ -63,13 +66,14 @@ actual fun FilePicker(
     initialDirectory: String?,
     fileExtensions: List<String>,
     multipleFiles: Boolean,
+    maxNumberOfFiles: Int,
     onFileSelected: FileSelected
 ) {
     LaunchedEffect(show) {
         if (show) {
             val files: List<File> =
                 document.selectFilesFromDisk(fileExtensions.joinToString(","), multipleFiles)
-            onFileSelected(files.map { WebFile(it.name, it) })
+            onFileSelected(files.take(maxNumberOfFiles).map { WebFile(it.name, it) })
         }
     }
 }
@@ -79,11 +83,14 @@ actual fun PhotoPicker(
     show: Boolean,
     initialDirectory: String?,
     multiplePhotos: Boolean,
+    maxNumberOfPhotos: Int,
     onFileSelected: FileSelected
 ) = FilePicker(
     show = show,
     initialDirectory = initialDirectory,
+    fileExtensions = imageFileExtensions,
     multipleFiles = multiplePhotos,
+    maxNumberOfFiles = maxNumberOfPhotos,
     onFileSelected = onFileSelected
 )
 

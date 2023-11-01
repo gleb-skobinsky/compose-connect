@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chirrio.filepicker.ImageWithData
 import com.chirrio.filepicker.PhotoPicker
+import com.chirrio.filepicker.localContext
 import com.chirrio.filepicker.toImageBitmap
 import di.provideViewModel
 import kotlinx.coroutines.launch
@@ -172,7 +173,7 @@ private fun UserImage(viewModel: LoginViewModel) {
             ) {
                 image?.let {
                     Image(
-                        bitmap = it.data.toImageBitmap(it.file),
+                        bitmap = it.imageBitmap,
                         contentDescription = "User image",
                         modifier = Modifier.size(150.dp).clip(CircleShape),
                         contentScale = ContentScale.Crop
@@ -206,11 +207,18 @@ private fun UserImage(viewModel: LoginViewModel) {
                     modifier = Modifier.size(36.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
+                val context = localContext()
                 PhotoPicker(show = showPicker, multiplePhotos = false) { files ->
                     files.firstOrNull()?.let { image ->
                         loaderScope.launch {
                             image.readAsBytes()?.let {
-                                viewModel.setUserImage(ImageWithData(image, it))
+                                viewModel.setUserImage(
+                                    ImageWithData(
+                                        file = image,
+                                        data = it,
+                                        imageBitmap = it.toImageBitmap(context, image)
+                                    )
+                                )
                             }
                         }
                     }

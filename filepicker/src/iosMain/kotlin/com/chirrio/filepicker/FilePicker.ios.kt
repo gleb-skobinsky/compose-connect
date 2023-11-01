@@ -54,7 +54,9 @@ internal fun NSData.toByteArray(): ByteArray {
 }
 
 @Composable
-actual fun ByteArray.toImageBitmap(file: MPFile<Any>) =
+actual fun localContext(): Any = remember { Any() }
+
+actual fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>) =
     Image.makeFromEncoded(this).toComposeImageBitmap()
 
 @Composable
@@ -62,6 +64,7 @@ actual fun PhotoPicker(
     show: Boolean,
     initialDirectory: String?,
     multiplePhotos: Boolean,
+    maxNumberOfPhotos: Int,
     onFileSelected: FileSelected
 ) {
     val launcher = remember {
@@ -69,6 +72,7 @@ actual fun PhotoPicker(
             initialDirectory = initialDirectory,
             pickerMode = FilePickerLauncher.Mode.Images,
             multipleMode = multiplePhotos,
+            maxNumber = maxNumberOfPhotos,
             onFileSelected = onFileSelected,
         )
     }
@@ -86,6 +90,7 @@ actual fun FilePicker(
     initialDirectory: String?,
     fileExtensions: List<String>,
     multipleFiles: Boolean,
+    maxNumberOfFiles: Int,
     onFileSelected: FileSelected
 ) {
     val launcher = remember {
@@ -93,6 +98,7 @@ actual fun FilePicker(
             initialDirectory = initialDirectory,
             pickerMode = FilePickerLauncher.Mode.File(fileExtensions),
             multipleMode = multipleFiles,
+            maxNumber = maxNumberOfFiles,
             onFileSelected = onFileSelected,
         )
     }

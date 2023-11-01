@@ -15,7 +15,7 @@ data class Message(
     val author: User,
     val content: String,
     val timestamp: LocalDateTime,
-    val image: String? = null
+    val images: List<String> = emptyList()
 )
 
 

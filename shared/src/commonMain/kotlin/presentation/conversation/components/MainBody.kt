@@ -104,6 +104,7 @@ fun BoxScope.ChatRoom(
             scrollState = scrollState, modifier = Modifier.weight(1f).fillMaxSize()
         )
         UserInput(
+            viewModel = viewModel,
             onMessageSent = { content ->
                 viewModel.user.value?.let { currentUser ->
                     val message = MessageDto(

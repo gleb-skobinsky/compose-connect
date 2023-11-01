@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,6 +15,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -29,15 +29,17 @@ class AndroidFile(
     private val content: ByteArray? = null
 ) : MPFile<Uri> {
     override suspend fun readAsBytes(): ByteArray {
-        return content ?: withContext(Dispatchers.IO) { platformFile.path?.let { File(it).readBytes() } ?: byteArrayOf() }
+        return content ?: withContext(Dispatchers.IO) {
+            platformFile.path?.let { File(it).readBytes() } ?: byteArrayOf()
+        }
     }
 }
 
 @Composable
-actual fun ByteArray.toImageBitmap(file: MPFile<Any>): ImageBitmap {
-    val context = LocalContext.current
-    val androidBitmap = toAndroidBitmap()
-    return androidBitmap.asImageBitmap().rotate(context, file as AndroidFile)
+actual fun localContext(): Any = LocalContext.current
+
+actual fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>): ImageBitmap {
+    return toAndroidBitmap().asImageBitmap().rotate(context as Context, file as AndroidFile)
 }
 
 fun ImageBitmap.rotate(context: Context, file: AndroidFile): ImageBitmap {
@@ -70,13 +72,14 @@ actual fun FilePicker(
     initialDirectory: String?,
     fileExtensions: List<String>,
     multipleFiles: Boolean,
+    maxNumberOfFiles: Int,
     onFileSelected: FileSelected
 ) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.OpenMultipleDocuments()
         ) { result ->
-            onFileSelected(result.map { AndroidFile(it.toString(), it) })
+            onFileSelected(result.take(maxNumberOfFiles).map { AndroidFile(it.toString(), it) })
         }
 
     val mimeTypeMap = MimeTypeMap.getSingleton()
@@ -100,6 +103,7 @@ actual fun PhotoPicker(
     show: Boolean,
     initialDirectory: String?,
     multiplePhotos: Boolean,
+    maxNumberOfPhotos: Int,
     onFileSelected: FileSelected
 ) {
     val imageLoadingScope = rememberCoroutineScope()
@@ -110,7 +114,7 @@ actual fun PhotoPicker(
                 contract = ActivityResultContracts.GetMultipleContents()
             ) { result ->
                 imageLoadingScope.launch {
-                    val files = result.map { uri ->
+                    val files = result.take(maxNumberOfPhotos).map { uri ->
                         async(Dispatchers.IO) {
                             val item = context.contentResolver.openInputStream(uri)
                             val bytes = item?.readBytes().also { item?.close() }
