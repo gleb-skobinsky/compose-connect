@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -13,48 +12,41 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import common.viewmodel.IODispatcher
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.resource
 
 @Composable
 fun MontserratFontFamily(): FontFamily {
-    var family: FontFamily by remember { mutableStateOf(FontFamily.Default) }
-    val scope = rememberCoroutineScope()
-    scope.launch {
-        family = FontFamily(
-            fontResources("montserrat_light.ttf", FontWeight.Light),
-            fontResources("montserrat_medium.ttf", FontWeight.Medium),
-            fontResources("montserrat_regular.ttf", FontWeight.W500),
-            fontResources("montserrat_semibold.ttf", FontWeight.SemiBold)
-        )
-    }
-    return family
+    return LoadingFontFamily(
+        fontResources("montserrat_light.ttf", FontWeight.Light),
+        fontResources("montserrat_medium.ttf", FontWeight.Medium),
+        fontResources("montserrat_regular.ttf", FontWeight.W500),
+        fontResources("montserrat_semibold.ttf", FontWeight.SemiBold)
+    )
 }
 
 @Composable
 fun KarlaFontFamily(): FontFamily {
+    return LoadingFontFamily(
+        fontResources("karla_bold.ttf", FontWeight.Bold),
+        fontResources("karla_regular.ttf", FontWeight.W500)
+    )
+}
+
+@Composable
+fun LoadingFontFamily(vararg font: Font?): FontFamily {
     var family: FontFamily by remember { mutableStateOf(FontFamily.Default) }
-    val scope = rememberCoroutineScope()
-    scope.launch {
-        family = FontFamily(
-            fontResources("karla_bold.ttf", FontWeight.Bold),
-            fontResources("karla_regular.ttf", FontWeight.W500)
-        )
+    val fonts = font.asList().filterNotNull()
+    if (fonts.isNotEmpty()) {
+        family = FontFamily(fonts)
     }
     return family
 }
 
-@OptIn(ExperimentalResourceApi::class)
-suspend fun fontResources(
+@Composable
+expect fun fontResources(
     font: String,
     weight: FontWeight,
     style: FontStyle = FontStyle.Normal
-): Font = withContext(IODispatcher) {
-    androidx.compose.ui.text.platform.Font(font, resource("fonts/$font").readBytes(), weight, style)
-}
+): Font?
 
 @Composable
 fun JetchatTypography(): Typography {

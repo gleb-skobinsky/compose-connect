@@ -19,5 +19,12 @@ interface UserRepository {
 
     suspend fun search(query: String, currentUser: User): SearchUserDto
 
-    suspend fun signup(email: String, password: String, firstName: String, lastName: String): User
+    suspend fun signup(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        image: ByteArray?,
+        imageExtension: String
+    ): User
 }

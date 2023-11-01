@@ -48,11 +48,26 @@ class LoginViewModel(
         }.launchIn(vmScope)
     }
 
-    fun signupUser(email: String, firstName: String, lastName: String, password: String) {
-        val result = signupUseCase(RemoteUserRepository, email, firstName, lastName, password)
+    fun signupUser(
+        email: String,
+        firstName: String,
+        lastName: String,
+        password: String,
+        navHost: SharedNavigator?
+    ) {
+        val ext = userImage.value?.file?.path?.substringAfterLast(".")
+        val result = signupUseCase(
+            repository = RemoteUserRepository,
+            email = email,
+            firstName = firstName,
+            lastName = lastName,
+            password = password,
+            image = userImage.value?.data,
+            fileExtension = ext ?: ""
+        )
         result.onEach {
             when (it) {
-                is Resource.Data -> withSuccess { setUser(it.payload) }
+                is Resource.Data -> withSuccess { setUser(it.payload); navHost?.navigateTo(Screens.Main()) }
                 is Resource.Error -> setErrorMessage(it)
                 is Resource.Loading -> Unit
             }

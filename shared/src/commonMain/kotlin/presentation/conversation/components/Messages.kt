@@ -27,12 +27,13 @@ import common.util.*
 import domain.model.ConversationUiState
 import domain.model.Message
 import domain.model.User
-import io.kamel.image.KamelImage
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.common.messagesParser.SymbolAnnotationType
 import presentation.common.messagesParser.messageFormatter
+import presentation.common.resourceBindings.drawable_user_icon
+import presentation.profile.components.UserImage
 
 private val messagesPadding = PaddingValues(
     start = 10.dp,
@@ -95,6 +96,7 @@ fun Messages(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun MessageWidget(
     onAuthorClick: (String) -> Unit,
@@ -112,18 +114,32 @@ fun MessageWidget(
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
     Row(modifier = spaceBetweenAuthors) {
         if (isLastMessageByAuthor) {
-            KamelImage(
-                modifier = Modifier
-                    .clickable(onClick = { onAuthorClick(msg.author.email) })
-                    .padding(horizontal = 16.dp)
-                    .size(42.dp)
-                    .border(1.5.dp, borderColor, CircleShape)
-                    .clip(CircleShape)
-                    .align(Alignment.Top),
-                resource = ioPainterResource(msg.author.image.toResourceUrl()),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-            )
+            msg.author.image?.let {
+                UserImage(
+                    modifier = Modifier
+                        .clickable(onClick = { onAuthorClick(msg.author.email) })
+                        .padding(horizontal = 16.dp)
+                        .size(42.dp)
+                        .border(1.5.dp, borderColor, CircleShape)
+                        .clip(CircleShape)
+                        .align(Alignment.Top),
+                    resource = ioPainterResource(msg.author.image.toResourceUrl()),
+                    contentScale = ContentScale.Crop,
+                )
+            } ?: run {
+                Image(
+                    modifier = Modifier
+                        .clickable(onClick = { onAuthorClick(msg.author.email) })
+                        .padding(horizontal = 16.dp)
+                        .size(42.dp)
+                        .border(1.5.dp, borderColor, CircleShape)
+                        .clip(CircleShape)
+                        .align(Alignment.Top),
+                    painter = painterResource(drawable_user_icon),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                )
+            }
         } else {
             // Space under avatar
             Spacer(modifier = Modifier.width(74.dp))

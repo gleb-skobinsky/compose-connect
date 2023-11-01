@@ -13,16 +13,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import common.util.ioPainterResource
 import common.util.toResourceUrl
 import data.ProfileScreenState
 import di.provideViewModel
+import io.kamel.core.Resource
 import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import presentation.FunctionalityNotAvailablePopup
 import presentation.common.platform.statusBarsPaddingMpp
+import presentation.common.resourceBindings.drawable_user_icon
 import presentation.conversation.components.ChirrioAppBar
 import presentation.conversation.components.baselineHeight
 import presentation.profile.ProfileViewModel
@@ -153,26 +159,61 @@ private fun Position(userData: ProfileScreenState, modifier: Modifier = Modifier
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ColumnScope.ProfileHeader(
     data: ProfileScreenState,
 ) {
-    data.photo?.let {
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .aspectRatio(1f),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            KamelImage(
+    Row(
+        modifier = Modifier
+            .weight(1f)
+            .aspectRatio(1f)
+            .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        data.photo?.let {
+            UserImage(
+                resource = ioPainterResource(it.toResourceUrl()),
+                modifier = Modifier.fillMaxSize().clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        } ?: run {
+            Image(
+                painter = painterResource(drawable_user_icon),
+                contentScale = ContentScale.FillHeight,
+                contentDescription = null,
                 modifier = Modifier
+                    .fillMaxSize()
                     .clip(CircleShape),
-                resource = asyncPainterResource(it.toResourceUrl()),
-                contentScale = ContentScale.Crop,
-                contentDescription = null
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
         }
     }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun UserImage(
+    resource: Resource<Painter>,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale
+) {
+    KamelImage(
+        modifier = modifier,
+        resource = resource,
+        contentScale = contentScale,
+        contentDescription = "User image",
+        onFailure = {
+            Image(
+                painter = painterResource(drawable_user_icon),
+                contentScale = ContentScale.FillHeight,
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.Center).fillMaxSize(),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+            )
+        }
+    )
 }
 
 @Composable

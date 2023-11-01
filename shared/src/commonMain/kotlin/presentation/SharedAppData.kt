@@ -48,6 +48,7 @@ class SharedAppDataImpl : SharedAppData, ViewModelPlatformImpl() {
     private val _errorMessage = MutableStateFlow<Resource.Error<*>?>(null)
     override val errorMessage = _errorMessage.asStateFlow()
     override fun setErrorMessage(message: Resource.Error<*>?) {
+        message?.let { println(it.message) }
         _errorMessage.value = message
     }
 

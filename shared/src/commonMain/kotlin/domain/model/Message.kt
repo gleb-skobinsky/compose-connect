@@ -5,7 +5,6 @@ import common.util.uuid
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import presentation.common.resourceBindings.drawable_default_user
 
 @Immutable
 @Serializable
@@ -16,8 +15,7 @@ data class Message(
     val author: User,
     val content: String,
     val timestamp: LocalDateTime,
-    val image: String? = null,
-    val authorImage: String = drawable_default_user,
+    val image: String? = null
 )
 
 

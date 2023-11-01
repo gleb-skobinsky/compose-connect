@@ -1,5 +1,6 @@
 package data.repository
 
+import common.util.uuid
 import data.remote.dto.CredentialsDto
 import data.remote.dto.GetUserDto
 import data.remote.dto.LoginDto
@@ -12,11 +13,15 @@ import data.transport.LocalRoute
 import data.transport.chirrioClient
 import domain.model.User
 import domain.repository.UserRepository
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
@@ -75,12 +80,29 @@ object RemoteUserRepository: UserRepository {
         email: String,
         password: String,
         firstName: String,
-        lastName: String
+        lastName: String,
+        image: ByteArray?,
+        imageExtension: String
     ): User {
         val request = SignupDto(email, firstName, lastName, password)
         val response = chirrioClient.post("${LocalRoute.currentUrl}/users/signup/") {
             contentType(ContentType.Application.Json)
-            setBody(request)
+            setBody(MultiPartFormDataContent(
+                formData {
+                    append("email", request.email)
+                    append("first_name", request.firstName)
+                    append("last_name", request.lastName)
+                    append("password", request.password)
+                    image?.let {
+                        append("image", it, Headers.build {
+                            append(HttpHeaders.ContentType, "image/$imageExtension")
+                            append(HttpHeaders.ContentDisposition, "filename=\"${uuid()}.$imageExtension\"")
+                        })
+                    }
+                },
+                boundary = "WebAppBoundary"
+            )
+            )
         }
         return Json.decodeFromString(response.bodyAsText())
     }

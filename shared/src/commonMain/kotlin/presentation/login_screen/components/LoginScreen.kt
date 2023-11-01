@@ -143,7 +143,7 @@ fun SignupScreen(
             enabled = signupButtonEnabled,
             text = "Sign up"
         ) {
-            viewModel.signupUser(email, firstName, lastName, password)
+            viewModel.signupUser(email, firstName, lastName, password, navHost)
         }
         Row(Modifier.padding(top = 12.dp)) {
             SecondaryLoginText("Already have an account?", Modifier.padding(end = 20.dp))

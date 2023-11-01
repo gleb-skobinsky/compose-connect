@@ -26,7 +26,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import common.util.ioPainterResource
 import common.util.toResourceUrl
-import io.kamel.image.KamelImage
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -36,6 +35,7 @@ import presentation.conversation.components.ChirrioIcon
 import presentation.conversation.components.LocalScaffold
 import presentation.drawer.DrawerViewModel
 import presentation.login_screen.components.AuthButton
+import presentation.profile.components.UserImage
 
 @Composable
 fun AppDrawer(
@@ -215,7 +215,6 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ProfileItem(
     text: String,
@@ -237,16 +236,13 @@ private fun ProfileItem(
         val paddingSizeModifier = Modifier
             .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
             .size(24.dp)
-        if (profilePic != null) {
-            KamelImage(
-                resource = ioPainterResource(profilePic.toResourceUrl()),
-                modifier = paddingSizeModifier.then(Modifier.clip(CircleShape)),
-                contentScale = ContentScale.Crop,
-                contentDescription = null
-            )
-        } else {
-            Spacer(modifier = paddingSizeModifier)
-        }
+
+        UserImage(
+            resource = ioPainterResource(profilePic.toString().toResourceUrl()),
+            modifier = paddingSizeModifier.then(Modifier.clip(CircleShape)),
+            contentScale = ContentScale.Crop
+        )
+
         Text(
             text,
             style = MaterialTheme.typography.bodyMedium,
