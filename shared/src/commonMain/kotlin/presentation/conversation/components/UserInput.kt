@@ -250,7 +250,7 @@ private fun UserInputText(
                             .align(Alignment.CenterStart)
                             .padding(start = 32.dp),
                         text = "Enter message...",
-                        style = androidx.compose.material.MaterialTheme.typography.body1.copy(color = disableContentColor)
+                        style = MaterialTheme.typography.bodyMedium.copy(color = disableContentColor)
                     )
                 }
             }

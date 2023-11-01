@@ -52,7 +52,8 @@ fun BoxScope.JumpToBottom(
             text = {
                 Text(
                     text = "Jump to bottom",
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                    style = MaterialTheme.typography.labelMedium
                 )
             },
             onClick = {
