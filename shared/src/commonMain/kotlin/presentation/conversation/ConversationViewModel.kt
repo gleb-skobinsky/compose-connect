@@ -62,7 +62,7 @@ class ConversationViewModel(
             val loadedImages = images.map {
                 async {
                     it.readAsBytes()?.let { data ->
-                        ImageWithData(uuid(), it, data.toImageBitmap(context, it).downscale())
+                        ImageWithData(uuid(), it, data, data.toImageBitmap(context, it).downscale())
                     }
                 }
             }

@@ -2,7 +2,6 @@ package presentation.login_screen
 
 import androidx.compose.runtime.Stable
 import com.chirrio.filepicker.ImageWithData
-import com.chirrio.filepicker.toByteArray
 import common.Resource
 import common.viewmodel.ViewModelPlatformImpl
 import data.repository.RemoteUserRepository
@@ -63,7 +62,7 @@ class LoginViewModel(
             firstName = firstName,
             lastName = lastName,
             password = password,
-            image = userImage.value?.imageBitmap?.toByteArray(),
+            image = userImage.value?.data,
             fileExtension = ext ?: ""
         )
         result.onEach {

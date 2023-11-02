@@ -15,22 +15,27 @@ fun ImageBitmap.sharedDownscale(): ImageBitmap {
 
 internal fun ImageBitmap.nativeScale(width: Int, height: Int): ImageBitmap {
     val pixels: IntArray = this.toPixelMap().buffer
-    val scaled = NativeImage(width, height, premultiplied = false)
-    scaled.writePixelsUnsafe(x = 0, y = 0, width, height, pixels, offset = 0)
+    val scaled = NativeImage(this.width, this.height, premultiplied = false)
+    scaled.writePixelsUnsafe(x = 0, y = 0, this.width, this.height, pixels, offset = 0)
     scaled.resized(width, height, ScaleMode.COVER, Anchor.CENTER, native = true)
-
     val scaledPixels = scaled.readPixelsUnsafe(0, 0, scaled.width, scaled.height)
-    return imageBitmapFromArgb(scaledPixels, width, height)
+    return imageBitmapFromArgb(scaledPixels, scaled.width, scaled.height)
 }
 
+private const val BYTES_PER_PIXEL = 4
+
 private fun imageBitmapFromArgb(rawArgbImageData: IntArray, width: Int, height: Int): ImageBitmap {
-    val bytesPerPixel = 4
-    val pixels = ByteArray(width * height * bytesPerPixel)
+    val pixels = rawArgbImageData.toByteArray(width, height)
+    return imageBitmapFromArgb(pixels, width, height)
+}
+
+fun IntArray.toByteArray(width: Int, height: Int): ByteArray {
+    val pixels = ByteArray(width * height * BYTES_PER_PIXEL)
 
     var k = 0
     for (y in 0 until height) {
         for (x in 0 until width) {
-            val argb = rawArgbImageData[y * width + x]
+            val argb = this[y * width + x]
             val a = (argb shr 24) and 0xff
             val r = (argb shr 16) and 0xff
             val g = (argb shr 8) and 0xff
@@ -41,30 +46,12 @@ private fun imageBitmapFromArgb(rawArgbImageData: IntArray, width: Int, height: 
             pixels[k++] = a.toByte()
         }
     }
-
-    return imageBitmapFromArgb(pixels, width, height)
+    return pixels
 }
 
 fun ImageBitmap.sharedByteArray(): ByteArray {
-    val bytesPerPixel = 4
-    val pixels: IntArray = this.toPixelMap().buffer
-    val nativeImage = NativeImage(width, height, premultiplied = false)
-    nativeImage.writePixelsUnsafe(x = 0, y = 0, width, height, pixels, offset = 0)
-    val rawData = nativeImage.readPixelsUnsafe(0, 0, nativeImage.width, nativeImage.height)
-    val output = ByteArray(width * height * bytesPerPixel)
-    var k = 0
-    for (y in 0 until height) {
-        for (x in 0 until width) {
-            val argb = rawData[y * width + x]
-            val a = (argb shr 24) and 0xff
-            val r = (argb shr 16) and 0xff
-            val g = (argb shr 8) and 0xff
-            val b = (argb shr 0) and 0xff
-            output[k++] = b.toByte()
-            output[k++] = g.toByte()
-            output[k++] = r.toByte()
-            output[k++] = a.toByte()
-        }
-    }
-    return output
+    val pixels = toPixelMap().buffer
+    val nativeImage = NativeImage(this.width, this.height, premultiplied = false)
+    nativeImage.writePixelsUnsafe(x = 0, y = 0, this.width, this.height, pixels, offset = 0)
+    return pixels.toByteArray(nativeImage.width, nativeImage.height)
 }

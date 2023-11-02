@@ -219,6 +219,7 @@ private fun UserImage(viewModel: LoginViewModel) {
                                     ImageWithData(
                                         id = uuid(),
                                         file = image,
+                                        data = it,
                                         imageBitmap = it.toImageBitmap(context, image).downscale()
                                     )
                                 )

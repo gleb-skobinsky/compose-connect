@@ -3,6 +3,7 @@
 object Dependencies {
     const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime:${Versions.datetime}"
     const val kamel = "media.kamel:kamel-image:${Versions.kamel}"
+    const val korlibs = "com.soywiz.korlibs.korim:korim:${Versions.korlibs}"
     object Android {
         const val androidx_core = "androidx.core:core-ktx:${Versions.core_ktx}"
         const val accompanist = "com.google.accompanist:accompanist-insets:${Versions.accompanist}"
