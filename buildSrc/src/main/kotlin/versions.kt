@@ -1,6 +1,6 @@
 object Versions {
     const val agp = "8.1.0"
-    const val kotlin = "1.9.20"
+    const val kotlin = "1.9.10"
     const val compose = "1.5.10"
     const val ktor = "2.3.5"
     const val serialization = "1.6.0"
