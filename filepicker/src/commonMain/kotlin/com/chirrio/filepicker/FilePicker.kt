@@ -1,12 +1,9 @@
 package com.chirrio.filepicker
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.ImageBitmap
 
 @Composable
 expect fun localContext(): Any
-
-expect fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>): ImageBitmap
 
 interface MPFile<out T : Any> {
     // on JS this will be a file name, on other platforms it will be a file path
@@ -40,6 +37,7 @@ expect fun PhotoPicker(
 )
 
 @Composable
+@Suppress("Unused")
 expect fun DirectoryPicker(
     show: Boolean,
     initialDirectory: String? = null,

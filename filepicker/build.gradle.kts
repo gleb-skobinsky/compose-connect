@@ -36,6 +36,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(Dependencies.Coroutines.core)
+                implementation("com.soywiz.korlibs.korim:korim:4.0.10")
             }
         }
         val commonTest by getting {

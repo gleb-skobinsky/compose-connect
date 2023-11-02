@@ -58,8 +58,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chirrio.filepicker.ImageWithData
 import com.chirrio.filepicker.PhotoPicker
+import com.chirrio.filepicker.downscale
 import com.chirrio.filepicker.localContext
 import com.chirrio.filepicker.toImageBitmap
+import common.util.uuid
 import di.provideViewModel
 import kotlinx.coroutines.launch
 import navigation.LocalNavigator
@@ -172,6 +174,7 @@ private fun UserImage(viewModel: LoginViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 image?.let {
+                    println(it.imageBitmap.width)
                     Image(
                         bitmap = it.imageBitmap,
                         contentDescription = "User image",
@@ -214,9 +217,9 @@ private fun UserImage(viewModel: LoginViewModel) {
                             image.readAsBytes()?.let {
                                 viewModel.setUserImage(
                                     ImageWithData(
+                                        id = uuid(),
                                         file = image,
-                                        data = it,
-                                        imageBitmap = it.toImageBitmap(context, image)
+                                        imageBitmap = it.toImageBitmap(context, image).downscale()
                                     )
                                 )
                             }

@@ -153,7 +153,7 @@ fun SelectedImagesPanel(viewModel: ConversationViewModel) {
         ) {
             items(
                 count = images.size,
-                key = { images[it].file },
+                key = { images[it].id },
                 contentType = { images[it] }
             ) {
                 val image = images[it]

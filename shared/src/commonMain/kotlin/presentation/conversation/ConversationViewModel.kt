@@ -3,8 +3,10 @@ package presentation.conversation
 import androidx.compose.runtime.Stable
 import com.chirrio.filepicker.ImageWithData
 import com.chirrio.filepicker.MPFile
+import com.chirrio.filepicker.downscale
 import com.chirrio.filepicker.toImageBitmap
 import common.Resource
+import common.util.uuid
 import common.viewmodel.IODispatcher
 import common.viewmodel.ViewModelPlatformImpl
 import data.remote.dto.MessageDto
@@ -60,7 +62,7 @@ class ConversationViewModel(
             val loadedImages = images.map {
                 async {
                     it.readAsBytes()?.let { data ->
-                        ImageWithData(it, data, data.toImageBitmap(context, it))
+                        ImageWithData(uuid(), it, data.toImageBitmap(context, it).downscale())
                     }
                 }
             }
