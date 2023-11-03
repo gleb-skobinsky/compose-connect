@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import di.provideViewModel
 import presentation.SharedAppDataImpl
 import presentation.common.resourceBindings.Drawables
-import presentation.common.typography.JetchatTypography
+import presentation.common.typography.ChirrioTypography
 
 private object JetChatTheme {
     val AppDarkColorScheme = darkColorScheme(
@@ -89,7 +89,7 @@ fun ChirrioAppTheme(
     val theme by sharedViewModel.theme.collectAsState()
     MaterialTheme(
         colorScheme = JetChatTheme[theme],
-        typography = JetchatTypography()
+        typography = ChirrioTypography()
     ) {
         val rippleIndication = rememberRipple()
         CompositionLocalProvider(

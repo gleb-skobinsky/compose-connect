@@ -32,6 +32,13 @@ fun KarlaFontFamily(): FontFamily {
 }
 
 @Composable
+fun EmojisFontFamily(): FontFamily {
+    return LoadingFontFamily(
+        fontResources("noto_bw.ttf", FontWeight.W500)
+    )
+}
+
+@Composable
 fun LoadingFontFamily(vararg font: Font?): FontFamily {
     var family: FontFamily by remember { mutableStateOf(FontFamily.Default) }
     val fonts = font.asList().filterNotNull()
@@ -49,9 +56,10 @@ expect fun fontResources(
 ): Font?
 
 @Composable
-fun JetchatTypography(): Typography {
+fun ChirrioTypography(): Typography {
     val montserrat = MontserratFontFamily()
     val karla = KarlaFontFamily()
+    val emojis = EmojisFontFamily()
     return Typography(
         displayLarge = TextStyle(
             fontFamily = montserrat,
@@ -110,11 +118,11 @@ fun JetchatTypography(): Typography {
             letterSpacing = 0.15.sp
         ),
         titleSmall = TextStyle(
-            fontFamily = karla,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
+            fontFamily = emojis,
+            fontWeight = FontWeight.Normal,
+            fontSize = 20.sp,
             lineHeight = 20.sp,
-            letterSpacing = 0.1.sp
+            letterSpacing = 0.15.sp
         ),
         bodyLarge = TextStyle(
             fontFamily = karla,

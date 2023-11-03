@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -14,7 +15,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
 val symbolPattern by lazy {
-    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)""")
+    Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)|([\uD83C-\uDBFF\uDC00-\uDFFF]+)""")
+}
+
+// with emojis: Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)|([\uD83C-\uDBFF\uDC00-\uDFFF]+)""")
+
+val emojiPattern by lazy {
+    Regex("""[\uD83C-\uDBFF\uDC00-\uDFFF]+""")
 }
 
 // Accepted annotations for the ClickableTextWrapper
@@ -26,81 +33,97 @@ typealias StringAnnotation = AnnotatedString.Range<String>
 typealias SymbolAnnotation = Pair<AnnotatedString, StringAnnotation?>
 
 @Composable
+expect fun emojiFontFamily(): TextStyle
+
+@Composable
 private fun getSymbolAnnotation(
     matchResult: MatchResult,
     primary: Boolean,
     codeSnippetBackground: Color,
 ): SymbolAnnotation {
-    return when (matchResult.value.first()) {
-        '@' -> SymbolAnnotation(
+    return if (emojiPattern.find(matchResult.value) != null) {
+        SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value,
                 spanStyle = SpanStyle(
-                    color = if (primary) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant,
-                    fontWeight = FontWeight.Bold
+                    fontFamily = emojiFontFamily().fontFamily
                 )
             ),
-            StringAnnotation(
-                item = matchResult.value.substring(1),
-                start = matchResult.range.first,
-                end = matchResult.range.last,
-                tag = SymbolAnnotationType.PERSON.name
+            null
+        )
+    } else {
+        when (matchResult.value.first()) {
+
+            '@' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value,
+                    spanStyle = SpanStyle(
+                        color = if (primary) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
+                ),
+                StringAnnotation(
+                    item = matchResult.value.substring(1),
+                    start = matchResult.range.first,
+                    end = matchResult.range.last,
+                    tag = SymbolAnnotationType.PERSON.name
+                )
             )
-        )
 
-        '*' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('*'),
-                spanStyle = SpanStyle(fontWeight = FontWeight.Bold)
-            ),
-            null
-        )
-
-        '_' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('_'),
-                spanStyle = SpanStyle(fontStyle = FontStyle.Italic)
-            ),
-            null
-        )
-
-        '~' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('~'),
-                spanStyle = SpanStyle(textDecoration = TextDecoration.LineThrough)
-            ),
-            null
-        )
-
-        '`' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value.trim('`'),
-                spanStyle = SpanStyle(
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 12.sp,
-                    background = codeSnippetBackground,
-                    baselineShift = BaselineShift(0.2f)
-                )
-            ),
-            null
-        )
-
-        'h' -> SymbolAnnotation(
-            AnnotatedString(
-                text = matchResult.value,
-                spanStyle = SpanStyle(
-                    color = if (primary) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
-                )
-            ),
-            StringAnnotation(
-                item = matchResult.value,
-                start = matchResult.range.first,
-                end = matchResult.range.last,
-                tag = SymbolAnnotationType.LINK.name
+            '*' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('*'),
+                    spanStyle = SpanStyle(fontWeight = FontWeight.Bold)
+                ),
+                null
             )
-        )
 
-        else -> SymbolAnnotation(AnnotatedString(matchResult.value), null)
+            '_' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('_'),
+                    spanStyle = SpanStyle(fontStyle = FontStyle.Italic)
+                ),
+                null
+            )
+
+            '~' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('~'),
+                    spanStyle = SpanStyle(textDecoration = TextDecoration.LineThrough)
+                ),
+                null
+            )
+
+            '`' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value.trim('`'),
+                    spanStyle = SpanStyle(
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 12.sp,
+                        background = codeSnippetBackground,
+                        baselineShift = BaselineShift(0.2f)
+                    )
+                ),
+                null
+            )
+
+            'h' -> SymbolAnnotation(
+                AnnotatedString(
+                    text = matchResult.value,
+                    spanStyle = SpanStyle(
+                        color = if (primary) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ),
+                StringAnnotation(
+                    item = matchResult.value,
+                    start = matchResult.range.first,
+                    end = matchResult.range.last,
+                    tag = SymbolAnnotationType.LINK.name
+                )
+            )
+
+            else -> SymbolAnnotation(AnnotatedString(matchResult.value), null)
+        }
     }
 }
 
@@ -128,7 +151,7 @@ fun messageFormatter(
             val (annotatedString, stringAnnotation) = getSymbolAnnotation(
                 matchResult = token,
                 primary = primary,
-                codeSnippetBackground = codeSnippetBackground,
+                codeSnippetBackground = codeSnippetBackground
             )
             append(annotatedString)
 
