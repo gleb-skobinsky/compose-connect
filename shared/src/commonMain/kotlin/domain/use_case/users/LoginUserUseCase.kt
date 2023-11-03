@@ -3,6 +3,7 @@ package domain.use_case.users
 import common.Resource
 import domain.model.User
 import domain.repository.UserRepository
+import io.ktor.util.network.UnresolvedAddressException
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,6 +25,8 @@ fun loginUseCase(
         )
         emit(Resource.Data(finalUser))
     } catch (e: IOException) {
+        emit(Resource.Error("Couldn't reach server. Check your internet connection."))
+    } catch (e: UnresolvedAddressException) {
         emit(Resource.Error("Couldn't reach server. Check your internet connection."))
     } catch (e: kotlinx.serialization.SerializationException) {
         emit(Resource.Error("An unexpected error occurred. Check your email and password."))
