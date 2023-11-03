@@ -28,6 +28,9 @@ class LoginViewModel(
     shared: SharedAppDataImpl,
 ) : ViewModelPlatformImpl(), SharedAppData by shared {
 
+    private val _loginLoading = MutableStateFlow(false)
+    val loginLoading = _loginLoading.asStateFlow()
+
     private val _userImage = MutableStateFlow<ImageWithData?>(null)
     val userImage = _userImage.asStateFlow()
 
@@ -51,15 +54,17 @@ class LoginViewModel(
             when (resource) {
                 is Resource.Data -> withSuccess {
                     setUser(resource.payload)
+                    _loginLoading.value = false
                     navHost?.navigateTo(Screens.Main())
                 }
 
                 is Resource.Error -> {
                     setUser(null)
+                    _loginLoading.value = false
                     setErrorMessage(resource)
                 }
 
-                is Resource.Loading -> Unit
+                is Resource.Loading -> _loginLoading.value = true
             }
         }.launchIn(vmScope)
     }
