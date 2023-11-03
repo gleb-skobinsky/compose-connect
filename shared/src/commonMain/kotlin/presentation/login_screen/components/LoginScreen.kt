@@ -34,7 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,14 +55,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.chirrio.filepicker.ImageWithData
 import com.chirrio.filepicker.PhotoPicker
-import com.chirrio.filepicker.downscale
 import com.chirrio.filepicker.localContext
-import com.chirrio.filepicker.toImageBitmap
-import common.util.uuid
 import di.provideViewModel
-import kotlinx.coroutines.launch
 import navigation.LocalNavigator
 import navigation.Screens
 import navigation.navigateTo
@@ -159,7 +153,6 @@ fun SignupScreen(
 private fun UserImage(viewModel: LoginViewModel) {
     var showPicker by rememberSaveable { mutableStateOf(false) }
     val image by viewModel.userImage.collectAsState()
-    val loaderScope = rememberCoroutineScope()
     with(LocalDensity.current) {
         val borderColor = MaterialTheme.colorScheme.primary
         val pathMeter = 5.dp.toPx()
@@ -213,18 +206,7 @@ private fun UserImage(viewModel: LoginViewModel) {
                 val context = localContext()
                 PhotoPicker(show = showPicker, multiplePhotos = false) { files ->
                     files.firstOrNull()?.let { image ->
-                        loaderScope.launch {
-                            image.readAsBytes()?.let {
-                                viewModel.setUserImage(
-                                    ImageWithData(
-                                        id = uuid(),
-                                        file = image,
-                                        data = it,
-                                        imageBitmap = it.toImageBitmap(context, image).downscale()
-                                    )
-                                )
-                            }
-                        }
+                        viewModel.setUserImage(image, context)
                     }
                     showPicker = false
                 }

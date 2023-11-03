@@ -29,6 +29,9 @@ import domain.model.Message
 import domain.model.User
 import io.kamel.image.KamelImage
 import kotlinx.datetime.Clock
+import navigation.LocalNavigator
+import navigation.Screens
+import navigation.navigateTo
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import presentation.common.messagesParser.SymbolAnnotationType
 import presentation.common.messagesParser.messageFormatter
@@ -51,6 +54,7 @@ fun Messages(
 ) {
     val currentDate = Clock.System.now().toLocal().date
     val messages = remember(conversationUiState) { conversationUiState?.messages }
+    val navHost = LocalNavigator.current
     Box(modifier = modifier) {
         messages?.let {
             LazyColumn(
@@ -79,7 +83,7 @@ fun Messages(
                             }
                         }
                         MessageWidget(
-                            onAuthorClick = { name -> println(name) },
+                            onAuthorClick = { name -> navHost?.navigateTo(Screens.Profile(id = name)) },
                             msg = msg,
                             isUserMe = msg.author.email == user?.email,
                             isFirstMessageByAuthor = prevMessage?.author != msg.author,

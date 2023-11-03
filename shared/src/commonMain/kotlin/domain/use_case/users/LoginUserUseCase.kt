@@ -24,8 +24,8 @@ fun loginUseCase(
         )
         emit(Resource.Data(finalUser))
     } catch (e: IOException) {
-        emit(Resource.Error(e.message ?: "Couldn't reach server. Check your internet connection."))
+        emit(Resource.Error("Couldn't reach server. Check your internet connection."))
     } catch (e: kotlinx.serialization.SerializationException) {
-        emit(Resource.Error(e.message ?: "An unexpected error occurred."))
+        emit(Resource.Error("An unexpected error occurred. Check your email and password."))
     }
 }

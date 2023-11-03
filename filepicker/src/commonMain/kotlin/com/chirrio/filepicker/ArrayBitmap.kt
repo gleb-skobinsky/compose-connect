@@ -4,9 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 expect fun ByteArray.toImageBitmap(context: Any, file: MPFile<Any>): ImageBitmap
 
-expect fun ImageBitmap.toByteArray(): ByteArray
-
-expect fun ImageBitmap.downscale(): ImageBitmap
+expect suspend fun ImageBitmap.downscale(): ImageBitmap
 
 expect fun imageBitmapFromArgb(
     rawArgbImageData: ByteArray,

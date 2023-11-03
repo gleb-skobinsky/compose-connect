@@ -44,11 +44,15 @@ fun SharedNavigatedApp() {
             ) { currentScreen ->
                 when (currentScreen) {
                     is Screens.Login -> {
-                        LoginScreen()
+                        ChirrioScaffold(false) {
+                            LoginScreen()
+                        }
                     }
 
                     is Screens.Signup -> {
-                        SignupScreen()
+                        ChirrioScaffold(false) {
+                            SignupScreen()
+                        }
                     }
 
                     is Screens.Chat -> {

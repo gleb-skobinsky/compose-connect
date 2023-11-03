@@ -30,26 +30,29 @@ fun AppScaffold(
     onProfileClicked: (String) -> Unit,
     onChatClicked: (String) -> Unit,
     onLogoutClicked: () -> Unit,
+    hasDrawer: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     ShowOrHideSnackbar(viewModel, scaffoldState)
     Scaffold(
         scaffoldState = scaffoldState,
-        drawerContent = {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxHeight()
-                    .width(300.dp)
-            ) {
-                AppDrawer(
-                    onProfileClicked = onProfileClicked,
-                    onChatClicked = onChatClicked,
-                    onLogoutClicked = onLogoutClicked,
-                    viewModel = viewModel
-                )
+        drawerContent = if (hasDrawer) {
+            {
+                Column(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxHeight()
+                        .width(300.dp)
+                ) {
+                    AppDrawer(
+                        onProfileClicked = onProfileClicked,
+                        onChatClicked = onChatClicked,
+                        onLogoutClicked = onLogoutClicked,
+                        viewModel = viewModel
+                    )
+                }
             }
-        },
+        } else null,
         content = content,
         drawerShape = NavShape(300.dp, 0f)
     )

@@ -110,6 +110,9 @@ fun UserInput(
 }
 
 @Composable
+expect fun ImageLoadingIndicator()
+
+@Composable
 private fun SelectorExpanded(
     viewModel: ConversationViewModel,
     currentSelector: InputSelector,
@@ -144,28 +147,41 @@ private fun SelectorExpanded(
 @Composable
 fun SelectedImagesPanel(viewModel: ConversationViewModel) {
     val images by viewModel.currentImages.collectAsState()
-    AnimatedVisibility(visible = images.isNotEmpty()) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(12.dp),
-        ) {
-            items(
-                count = images.size,
-                key = { images[it].id },
-                contentType = { images[it] }
+    if (images.images.isNotEmpty() || images.isLoading) {
+        if (images.isLoading) {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .height(112.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val image = images[it]
-                Image(
-                    bitmap = image.imageBitmap,
-                    contentDescription = "Image attachment",
-                    modifier = Modifier
-                        .size(150.dp, 100.dp)
-                        .clip(RoundedCornerShape(5.dp))
-                        .padding(end = if (it != images.size - 1) 24.dp else 0.dp),
-                    contentScale = ContentScale.Crop
-                )
+                ImageLoadingIndicator()
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(12.dp),
+            ) {
+                items(
+                    count = images.size,
+                    key = { images[it].id },
+                    contentType = { images[it] }
+                ) {
+                    val image = images[it]
+                    Image(
+                        bitmap = image.imageBitmap,
+                        contentDescription = "Image attachment",
+                        modifier = Modifier
+                            .size(150.dp, 100.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .padding(end = if (it != images.size - 1) 24.dp else 0.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
     }

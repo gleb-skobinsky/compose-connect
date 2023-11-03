@@ -6,9 +6,7 @@ import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ImageInfo
 
-actual fun ImageBitmap.toByteArray(): ByteArray = sharedByteArray()
-
-actual fun ImageBitmap.downscale(): ImageBitmap = sharedDownscale()
+actual suspend fun ImageBitmap.downscale(): ImageBitmap = sharedDownscale()
 
 actual fun imageBitmapFromArgb(rawArgbImageData: ByteArray, width: Int, height: Int): ImageBitmap {
     val bitmap = Bitmap()

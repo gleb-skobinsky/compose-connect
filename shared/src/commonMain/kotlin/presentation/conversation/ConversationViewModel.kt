@@ -13,6 +13,7 @@ import data.remote.dto.MessageDto
 import data.repository.MessageRepositoryImpl
 import data.repository.RoomRepositoryImpl
 import data.transport.WsHandler
+import domain.model.Attachment
 import domain.model.ConversationUiState
 import domain.use_case.rooms.getRoomUseCase
 import kotlinx.coroutines.async
@@ -54,11 +55,12 @@ class ConversationViewModel(
         }
     }
 
-    private val _currentImages = MutableStateFlow(emptyList<ImageWithData>())
+    private val _currentImages = MutableStateFlow(Attachment())
     val currentImages = _currentImages.asStateFlow()
 
     fun setImages(images: List<MPFile<Any>>, context: Any) {
         vmScope.launch(IODispatcher) {
+            _currentImages.update { it.copy(isLoading = true) }
             val loadedImages = images.map {
                 async {
                     it.readAsBytes()?.let { data ->
@@ -66,7 +68,7 @@ class ConversationViewModel(
                     }
                 }
             }
-            _currentImages.update { loadedImages.awaitAll().filterNotNull() }
+            _currentImages.update { Attachment(false, loadedImages.awaitAll().filterNotNull()) }
         }
     }
 

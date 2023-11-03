@@ -14,7 +14,7 @@ fun ImageBitmap.sharedDownscale(): ImageBitmap {
 }
 
 internal fun ImageBitmap.nativeScale(width: Int, height: Int): ImageBitmap {
-    val pixels: IntArray = this.toPixelMap().buffer
+    val pixels: IntArray = toPixelMap().buffer
     val scaled = NativeImage(this.width, this.height, premultiplied = false)
     scaled.writePixelsUnsafe(x = 0, y = 0, this.width, this.height, pixels, offset = 0)
     scaled.resized(width, height, ScaleMode.COVER, Anchor.CENTER, native = true)
@@ -24,7 +24,11 @@ internal fun ImageBitmap.nativeScale(width: Int, height: Int): ImageBitmap {
 
 private const val BYTES_PER_PIXEL = 4
 
-private fun imageBitmapFromArgb(rawArgbImageData: IntArray, width: Int, height: Int): ImageBitmap {
+private fun imageBitmapFromArgb(
+    rawArgbImageData: IntArray,
+    width: Int,
+    height: Int
+): ImageBitmap {
     val pixels = rawArgbImageData.toByteArray(width, height)
     return imageBitmapFromArgb(pixels, width, height)
 }
@@ -47,11 +51,4 @@ fun IntArray.toByteArray(width: Int, height: Int): ByteArray {
         }
     }
     return pixels
-}
-
-fun ImageBitmap.sharedByteArray(): ByteArray {
-    val pixels = toPixelMap().buffer
-    val nativeImage = NativeImage(this.width, this.height, premultiplied = false)
-    nativeImage.writePixelsUnsafe(x = 0, y = 0, this.width, this.height, pixels, offset = 0)
-    return pixels.toByteArray(nativeImage.width, nativeImage.height)
 }

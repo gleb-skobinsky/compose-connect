@@ -35,6 +35,7 @@ val LocalScaffold = compositionLocalOf {
 
 @Composable
 fun ChirrioScaffold(
+    hasDrawer: Boolean = true,
     viewModel: DrawerViewModel = provideViewModel(),
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -53,6 +54,7 @@ fun ChirrioScaffold(
             onLogoutClicked = {
                 navHost?.navigateTo(Screens.Login())
             },
+            hasDrawer = hasDrawer,
             content = content
         )
     }

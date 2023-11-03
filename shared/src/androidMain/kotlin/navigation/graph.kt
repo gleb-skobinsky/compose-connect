@@ -37,10 +37,14 @@ fun NavigatedApp() {
                 exitTransition = { fadeOut(tween(NAVIGATION_TIMEOUT)) },
             ) {
                 composable("login") {
-                    LoginScreen()
+                    ChirrioScaffold(false) {
+                        LoginScreen()
+                    }
                 }
                 composable("signup") {
-                    SignupScreen()
+                    ChirrioScaffold(false) {
+                        SignupScreen()
+                    }
                 }
                 composable("chat/{chatId}") { entry ->
                     ChirrioScaffold {
