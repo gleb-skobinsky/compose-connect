@@ -24,27 +24,16 @@ fun buildAnnotatedStringWithEmojis(text: String, fontFamily: FontFamily?): Annot
     val matches = emojiPattern.findAll(text).toList()
     val annotated = buildAnnotatedString {
         var currentIndex = 0
-
         for (match in matches) {
             val emojiRange = match.range
             val textBeforeEmoji = text.substring(currentIndex, emojiRange.first)
             val emoji = text.substring(emojiRange)
             append(textBeforeEmoji)
-            // Annotate the emoji with the specified fontFamily
-            withStyle(
-                style = SpanStyle(fontFamily = fontFamily),
-                // range = emojiRange.first until emojiRange.last + 1
-            ) {
+            withStyle(SpanStyle(fontFamily = fontFamily)) {
                 append(emoji)
             }
-
-            // Append the text before the emoji
-
-
             currentIndex = emojiRange.last + 1
         }
-
-        // Append any remaining text after the last emoji
         if (currentIndex < text.length) {
             append(text.substring(currentIndex))
         }
