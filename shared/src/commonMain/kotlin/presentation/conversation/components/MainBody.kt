@@ -123,7 +123,6 @@ fun ImageNavigate(
         modifier = modifier
             .fillMaxHeight()
             .width(100.dp)
-            .background(Color.Black.copy(0.5f))
             .pointerHoverIcon(PointerIcon.Hand)
             .clickable(onClick = onClick),
         verticalArrangement = Arrangement.Center,
