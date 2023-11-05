@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import com.chirrio.filepicker.ImageWithData
 
 @Stable
-data class Attachment(
+data class Attachments(
     val isLoading: Boolean = false,
     val images: List<ImageWithData> = emptyList()
 ) {

@@ -1,18 +1,26 @@
 package presentation.conversation.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import data.remote.dto.MessageDto
 import di.provideViewModel
@@ -67,6 +75,69 @@ fun ConversationContent(
     val selectedRoom by viewModel.currentConversation.collectAsState()
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         ChatRoom(selectedRoom, viewModel)
+        DetailedImageOverlay(viewModel)
+    }
+}
+
+@Composable
+fun DetailedImageOverlay(viewModel: ConversationViewModel) {
+    val uploadingImages by viewModel.imagesForUpload.collectAsState()
+    val displayedImage by viewModel.detailedImage.collectAsState()
+    displayedImage?.let { imageIndex ->
+        uploadingImages.images.getOrNull(imageIndex)?.let { currentImage ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .clickable { viewModel.setDetailedImage(null) }
+            ) {
+                Image(
+                    bitmap = currentImage.imageBitmap,
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+                ImageNavigate(ImageNavigation.PREV, Modifier.align(Alignment.CenterStart)) {
+                    viewModel.setDetailedImage(displayedImage?.let { it - 1 })
+                }
+                ImageNavigate(ImageNavigation.NEXT, Modifier.align(Alignment.CenterEnd)) {
+                    viewModel.setDetailedImage(displayedImage?.let { it + 1 })
+                }
+            }
+        }
+    }
+}
+
+@Stable
+enum class ImageNavigation {
+    PREV,
+    NEXT
+}
+
+@Composable
+fun ImageNavigate(
+    type: ImageNavigation,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(100.dp)
+            .background(Color.Black.copy(0.5f))
+            .pointerHoverIcon(PointerIcon.Hand)
+            .clickable(onClick = onClick),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        when (type) {
+            ImageNavigation.PREV -> {
+                Icon(Icons.Outlined.ArrowBack, null, tint = Color.White)
+            }
+
+            ImageNavigation.NEXT -> {
+                Icon(Icons.Outlined.ArrowForward, null, tint = Color.White)
+            }
+        }
     }
 }
 
@@ -77,7 +148,8 @@ fun EmptyStartScreen() {
         ChirrioAppBar(title = {})
         Text(
             text = "Select a chat to start messaging",
-            modifier = Modifier.align(Alignment.Center).border(2.dp, MaterialTheme.colorScheme.tertiary, CircleShape).padding(8.dp),
+            modifier = Modifier.align(Alignment.Center)
+                .border(2.dp, MaterialTheme.colorScheme.tertiary, CircleShape).padding(8.dp),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodyMedium
         )

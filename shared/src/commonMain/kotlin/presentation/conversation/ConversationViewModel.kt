@@ -13,7 +13,7 @@ import data.remote.dto.MessageDto
 import data.repository.MessageRepositoryImpl
 import data.repository.RoomRepositoryImpl
 import data.transport.WsHandler
-import domain.model.Attachment
+import domain.model.Attachments
 import domain.model.ConversationUiState
 import domain.use_case.rooms.getRoomUseCase
 import kotlinx.coroutines.async
@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import presentation.SharedAppData
 import presentation.SharedAppDataImpl
 import presentation.conversation.components.InputSelector
+
 
 @Stable
 class ConversationViewModel(
@@ -55,12 +56,33 @@ class ConversationViewModel(
         }
     }
 
-    private val _currentImages = MutableStateFlow(Attachment())
-    val currentImages = _currentImages.asStateFlow()
+    private val _detailedImage = MutableStateFlow<Int?>(null)
+    val detailedImage = _detailedImage.asStateFlow()
+
+    fun setDetailedImage(index: Int?) {
+        if (index == null) {
+            _detailedImage.value = index
+        } else {
+            imagesForUpload.value.images.getOrNull(index)?.let {
+                _detailedImage.value = index
+            }
+        }
+    }
+
+    private val _imagesForUpload = MutableStateFlow(Attachments())
+    val imagesForUpload = _imagesForUpload.asStateFlow()
+
+    fun removeFromImagesForUpload(index: Int) {
+        _imagesForUpload.update {
+            val oldImages = it.images.toMutableList()
+            oldImages.removeAt(index)
+            it.copy(images = oldImages)
+        }
+    }
 
     fun setImages(images: List<MPFile<Any>>, context: Any) {
         vmScope.launch(IODispatcher) {
-            _currentImages.update { it.copy(isLoading = true) }
+            _imagesForUpload.update { it.copy(isLoading = true) }
             val loadedImages = images.map {
                 async {
                     it.readAsBytes()?.let { data ->
@@ -68,7 +90,7 @@ class ConversationViewModel(
                     }
                 }
             }
-            _currentImages.update { Attachment(false, loadedImages.awaitAll().filterNotNull()) }
+            _imagesForUpload.update { Attachments(false, loadedImages.awaitAll().filterNotNull()) }
         }
     }
 

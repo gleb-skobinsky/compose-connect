@@ -5,6 +5,7 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,6 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.semantics.contentDescription
@@ -34,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chirrio.filepicker.PhotoPicker
@@ -149,7 +153,7 @@ private fun SelectorExpanded(
 
 @Composable
 fun SelectedImagesPanel(viewModel: ConversationViewModel) {
-    val images by viewModel.currentImages.collectAsState()
+    val images by viewModel.imagesForUpload.collectAsState()
     if (images.images.isNotEmpty() || images.isLoading) {
         if (images.isLoading) {
             Column(
@@ -173,21 +177,50 @@ fun SelectedImagesPanel(viewModel: ConversationViewModel) {
                     count = images.size,
                     key = { images[it].id },
                     contentType = { images[it] }
-                ) {
-                    val image = images[it]
-                    Image(
-                        bitmap = image.imageBitmap,
-                        contentDescription = "Image attachment",
-                        modifier = Modifier
-                            .size(150.dp, 100.dp)
-                            .clip(RoundedCornerShape(5.dp))
-                            .padding(end = if (it != images.size - 1) 24.dp else 0.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                ) { index ->
+                    val image = images[index]
+                    val endPadding = if (index != images.size - 1) 24.dp else 0.dp
+                    Box {
+                        Image(
+                            bitmap = image.imageBitmap,
+                            contentDescription = "Image attachment",
+                            modifier = Modifier
+                                .padding(end = endPadding)
+                                .clickable { viewModel.setDetailedImage(index) }
+                                .size(150.dp, 100.dp)
+                                .clip(RoundedCornerShape(5.dp))
+                                .pointerHoverIcon(PointerIcon.Hand),
+                            contentScale = ContentScale.Crop
+                        )
+                        RemoveImageIcon(endPadding, viewModel, index)
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun BoxScope.RemoveImageIcon(
+    endPadding: Dp,
+    viewModel: ConversationViewModel,
+    index: Int
+) {
+    Icon(
+        Icons.Outlined.Close,
+        contentDescription = "Remove image",
+        tint = Color.White,
+        modifier = Modifier
+            .padding(top = 5.dp, end = endPadding + 5.dp)
+            .pointerHoverIcon(PointerIcon.Hand)
+            .align(Alignment.TopEnd)
+            .clickable {
+                viewModel.removeFromImagesForUpload(index)
+            }
+            .size(36.dp)
+            .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+            .padding(5.dp)
+    )
 }
 
 @Composable
@@ -391,7 +424,7 @@ private fun UserInputSelector(
         val disabledContentColor = Color.DarkGray
 
         val buttonColors = ButtonDefaults.buttonColors(
-            disabledBackgroundColor = Color.Transparent,
+            disabledBackgroundColor = MaterialTheme.colorScheme.tertiary,
             disabledContentColor = disabledContentColor
         )
 

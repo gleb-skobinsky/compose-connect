@@ -18,8 +18,6 @@ val symbolPattern by lazy {
     Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)|([\uD83C-\uDBFF\uDC00-\uDFFF]+)""")
 }
 
-// with emojis: Regex("""(https?://[^\s\t\n]+)|(`[^`]+`)|(@\w+)|(\*[\w]+\*)|(_[\w]+_)|(~[\w]+~)|([\uD83C-\uDBFF\uDC00-\uDFFF]+)""")
-
 val emojiPattern by lazy {
     Regex("""[\uD83C-\uDBFF\uDC00-\uDFFF]+""")
 }
