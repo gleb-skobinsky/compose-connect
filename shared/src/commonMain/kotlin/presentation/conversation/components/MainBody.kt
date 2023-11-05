@@ -1,38 +1,17 @@
 package presentation.conversation.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.ArrowForward
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.unit.dp
-import data.remote.dto.MessageDto
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.DrawerState
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import di.provideViewModel
-import domain.model.ConversationUiState
-import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import navigation.LocalNavigator
 import navigation.Screens
 import navigation.navigateTo
-import presentation.common.platform.statusBarsPaddingMpp
-import presentation.common.platform.userInputModifier
-import presentation.conversation.ConversationViewModel
 import presentation.drawer.DrawerViewModel
 import presentation.drawer.components.AppScaffold
 import presentation.drawer.components.RoomCreationDialog
@@ -66,144 +45,4 @@ fun ChirrioScaffold(
             content = content
         )
     }
-}
-
-@Composable
-fun ConversationContent(
-    viewModel: ConversationViewModel = provideViewModel(),
-) {
-    val selectedRoom by viewModel.currentConversation.collectAsState()
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        ChatRoom(selectedRoom, viewModel)
-        DetailedImageOverlay(viewModel)
-    }
-}
-
-@Composable
-fun DetailedImageOverlay(viewModel: ConversationViewModel) {
-    val uploadingImages by viewModel.imagesForUpload.collectAsState()
-    val displayedImage by viewModel.detailedImage.collectAsState()
-    displayedImage?.let { imageIndex ->
-        uploadingImages.images.getOrNull(imageIndex)?.let { currentImage ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .clickable { viewModel.setDetailedImage(null) }
-            ) {
-                Image(
-                    bitmap = currentImage.imageBitmap,
-                    contentDescription = null,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-                ImageNavigate(ImageNavigation.PREV, Modifier.align(Alignment.CenterStart)) {
-                    viewModel.setDetailedImage(displayedImage?.let { it - 1 })
-                }
-                ImageNavigate(ImageNavigation.NEXT, Modifier.align(Alignment.CenterEnd)) {
-                    viewModel.setDetailedImage(displayedImage?.let { it + 1 })
-                }
-            }
-        }
-    }
-}
-
-@Stable
-enum class ImageNavigation {
-    PREV,
-    NEXT
-}
-
-@Composable
-fun ImageNavigate(
-    type: ImageNavigation,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .width(100.dp)
-            .pointerHoverIcon(PointerIcon.Hand)
-            .clickable(onClick = onClick),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        when (type) {
-            ImageNavigation.PREV -> {
-                Icon(Icons.Outlined.ArrowBack, null, tint = Color.White)
-            }
-
-            ImageNavigation.NEXT -> {
-                Icon(Icons.Outlined.ArrowForward, null, tint = Color.White)
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EmptyStartScreen() {
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        ChirrioAppBar(title = {})
-        Text(
-            text = "Select a chat to start messaging",
-            modifier = Modifier.align(Alignment.Center)
-                .border(2.dp, MaterialTheme.colorScheme.tertiary, CircleShape).padding(8.dp),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BoxScope.ChatRoom(
-    chat: ConversationUiState?,
-    viewModel: ConversationViewModel
-) {
-    val user by viewModel.user.collectAsState()
-    val scrollState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    Column(
-        Modifier
-            .fillMaxSize()
-            .align(Alignment.BottomCenter)
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) {
-        Messages(
-            conversationUiState = chat,
-            user = user,
-            scrollState = scrollState, modifier = Modifier.weight(1f).fillMaxSize()
-        )
-        UserInput(
-            viewModel = viewModel,
-            onMessageSent = { content ->
-                viewModel.user.value?.let { currentUser ->
-                    val message = MessageDto(
-                        chatRoom = chat?.id ?: "",
-                        user = currentUser,
-                        text = content,
-                        timestamp = Clock.System.now()
-                    )
-                    viewModel.sendMessage(message)
-                }
-            },
-            resetScroll = {
-                scope.launch {
-                    scrollState.scrollToItem(0)
-                }
-            },
-            // Use navigationBarsWithImePadding(), to move the input panel above both the
-            // navigation bar, and on-screen keyboard (IME)
-            modifier = Modifier.userInputModifier().weight(1f),
-        )
-    }
-    ChannelNameBar(
-        channelName = chat?.channelName ?: "",
-        channelMembers = chat?.channelMembers ?: 0,
-        scrollBehavior = scrollBehavior,
-        // Use statusBarsPadding() to move the app bar content below the status bar
-        modifier = Modifier.statusBarsPaddingMpp(),
-    )
 }
