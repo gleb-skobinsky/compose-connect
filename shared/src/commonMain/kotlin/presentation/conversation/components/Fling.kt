@@ -19,11 +19,11 @@ fun Modifier.desktopSnapFling(pagerState: PagerState, scrollScope: CoroutineScop
             sJob?.cancel()
             if (offset > SCROLL_THRESHOLD) {
                 sJob = scrollScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1, 0f)
                 }
             } else if (offset < -SCROLL_THRESHOLD) {
                 sJob = scrollScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                    pagerState.animateScrollToPage(pagerState.currentPage - 1, 0f)
                 }
             } else if (offset != 0f) {
                 sJob = scrollScope.launch {
