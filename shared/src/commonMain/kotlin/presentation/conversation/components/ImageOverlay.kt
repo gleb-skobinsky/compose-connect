@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,8 +24,7 @@ import androidx.compose.ui.unit.dp
 import presentation.conversation.ConversationViewModel
 
 
-@OptIn(ExperimentalFoundationApi::class)
-expect fun Modifier.onScrollCancel(pagerState: PagerState, action: () -> Unit): Modifier
+expect fun Modifier.onScrollCancel(action: () -> Unit): Modifier
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
