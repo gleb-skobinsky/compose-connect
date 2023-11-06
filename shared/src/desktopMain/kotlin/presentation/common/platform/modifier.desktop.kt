@@ -13,3 +13,4 @@ actual fun Modifier.pointerCursor(): Modifier {
 }
 
 actual fun Modifier.textCursor(): Modifier = this
+

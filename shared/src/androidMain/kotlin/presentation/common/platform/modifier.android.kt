@@ -11,3 +11,4 @@ actual fun Modifier.statusBarsPaddingMpp(): Modifier = this.statusBarsPadding()
 actual fun Modifier.pointerCursor() = this
 
 actual fun Modifier.textCursor(): Modifier = this
+

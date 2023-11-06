@@ -41,3 +41,4 @@ fun Modifier.jsCursor(cursor: String) = composed {
 actual fun Modifier.pointerCursor(): Modifier = jsCursor("pointer")
 
 actual fun Modifier.textCursor(): Modifier = jsCursor("text")
+

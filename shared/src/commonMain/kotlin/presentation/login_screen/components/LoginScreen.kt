@@ -235,8 +235,8 @@ fun LoginScreen(
     viewModel: LoginViewModel = provideViewModel(),
 ) {
     val scrollState = rememberScrollState()
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("glebgytnik@gmail.com") }
+    var password by rememberSaveable { mutableStateOf("LiuRuis5968!") }
     val loginButtonEnabled = email.isNotBlank() && password.isNotBlank()
     val navHost = LocalNavigator.current
     val loading by viewModel.loginLoading.collectAsState()
