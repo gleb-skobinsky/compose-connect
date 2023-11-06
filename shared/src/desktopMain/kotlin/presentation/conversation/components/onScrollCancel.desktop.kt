@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import kotlinx.coroutines.delay
@@ -21,7 +22,7 @@ actual fun Modifier.onScrollCancel(action: () -> Unit): Modifier = composed {
             action()
         }
     }
-    return@composed onPointerEvent(PointerEventType.Scroll) {
+    return@composed onPointerEvent(PointerEventType.Scroll, PointerEventPass.Initial) {
         currentEventCount += 1
     }
 }
