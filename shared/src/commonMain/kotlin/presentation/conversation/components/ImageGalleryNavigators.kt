@@ -19,14 +19,14 @@ fun BoxScope.ImageNavigators(pagerState: PagerState, scrollScope: CoroutineScope
     if (pagerState.canScrollBackward) {
         ImageNavigate(ImageNavigation.PREV, Modifier.align(Alignment.CenterStart)) {
             scrollScope.launch {
-                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                pagerState.animateScrollToPage(pagerState.currentPage - 1, 0f)
             }
         }
     }
     if (pagerState.canScrollForward) {
         ImageNavigate(ImageNavigation.NEXT, Modifier.align(Alignment.CenterEnd)) {
             scrollScope.launch {
-                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                pagerState.animateScrollToPage(pagerState.currentPage + 1, 0f)
             }
         }
     }

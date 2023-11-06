@@ -1,5 +1,7 @@
 package presentation.conversation.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,12 +15,12 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalComposeUiApi::class)
-actual fun Modifier.onScrollCancel(action: () -> Unit): Modifier = composed {
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
+actual fun Modifier.onScrollCancel(pagerState: PagerState, action: () -> Unit): Modifier= composed {
     var currentEventCount by remember { mutableStateOf(0) }
     LaunchedEffect(currentEventCount) {
         if (currentEventCount != 0) {
-            delay(50L)
+            delay(100L)
             action()
         }
     }
