@@ -13,8 +13,12 @@ private var sJob: Job? = null
 private const val SCROLL_THRESHOLD = 0.2f
 
 @OptIn(ExperimentalFoundationApi::class)
-fun Modifier.desktopSnapFling(pagerState: PagerState, pageHasChanged: MutableState<Boolean>, scrollScope: CoroutineScope) =
-    onScrollCancel(pagerState) {
+fun Modifier.desktopSnapFling(
+    pagerState: PagerState,
+    pageHasChanged: MutableState<Boolean>,
+    scrollScope: CoroutineScope
+) =
+    onScrollCancel {
         val offset = pagerState.currentPageOffsetFraction
         if (!pagerState.isScrollInProgress) {
             sJob?.cancel()
