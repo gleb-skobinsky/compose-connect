@@ -102,7 +102,7 @@ fun BoxWithConstraintsScope.DesktopHorizontalPager(
                 modifier = Modifier
                     .width(maxWidth)
                     .height(maxHeight)
-                    .desktopSnapFling(listState) { direction ->
+                    .desktopSnapFling(listState, scrollScope) { direction ->
                         val curPage = calcPage(
                             listState.firstVisibleItemIndex,
                             maxWidth.value,
