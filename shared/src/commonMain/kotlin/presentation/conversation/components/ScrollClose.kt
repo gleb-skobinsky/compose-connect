@@ -5,8 +5,8 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,25 +70,25 @@ fun Modifier.closeOnDrag(maxHeight: Dp, onClose: () -> Unit): Modifier =
 
 fun Modifier.closeOnScroll(
     maxHeight: Dp,
-    offset: MutableState<Dp>,
     onClose: () -> Unit
 ) = composed {
     with(LocalDensity.current) {
         val quarter = maxHeight / 4
+        var offset by remember { mutableStateOf(0.dp) }
         var alpha by remember { mutableStateOf(1f) }
         val scrollable = rememberScrollableState {
-            offset.value += it.dp
-            alpha = quarter.value / abs(offset.value.value) / 3f
-            offset.value.value
+            offset += it.dp
+            alpha = quarter.value / abs(offset.value) / 3f
+            offset.value
         }
         LaunchedEffect(offset.value) {
             snapshotFlow { offset }.collectLatest {
                 delay(50)
-                if (offset.value !in -quarter..quarter) {
+                if (offset !in -quarter..quarter) {
                     onClose()
                 } else {
                     scrollable.animateScrollBy(
-                        value = -offset.value.value,
+                        value = -offset.value,
                         animationSpec = tween(1000)
                     )
                 }
@@ -96,5 +96,6 @@ fun Modifier.closeOnScroll(
         }
         return@composed scrollable(scrollable, Orientation.Vertical)
             .alpha(alpha)
+            .offset(y = offset)
     }
 }
